@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "liang-tavily-search": {
+      "version": "1.0.1",
+      "installedAt": 1777027857609
+    },
+    "supabase": {
+      "version": "1.0.0",
+      "installedAt": 1777028033695
+    },
+    "stripe-api": {
+      "version": "1.0.8",
+      "installedAt": 1777032231343
+    },
+    "ga4-analytics": {
+      "version": "1.0.0",
+      "installedAt": 1777032851481
+    },
+    "brevo": {
+      "version": "1.0.0",
+      "installedAt": 1777037065042
+    },
+    "github-cli": {
+      "version": "1.0.0",
+      "installedAt": 1777040640020
+    }
+  }
+}

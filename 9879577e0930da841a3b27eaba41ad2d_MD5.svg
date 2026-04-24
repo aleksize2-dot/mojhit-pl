@@ -1,0 +1,20 @@
+<svg width="84" height="20" viewBox="0 0 840 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="licenses: MIT">
+  <title>licenses: MIT</title>
+  <linearGradient id="jUXze" x2="0" y2="100%">
+    <stop offset="0" stop-opacity=".1" stop-color="#EEE"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <mask id="Wxcva"><rect width="840" height="200" rx="30" fill="#FFF"/></mask>
+  <g mask="url(#Wxcva)">
+    <rect width="533" height="200" fill="#555"/>
+    <rect width="307" height="200" fill="#3C1" x="533"/>
+    <rect width="840" height="200" fill="url(#jUXze)"/>
+  </g>
+  <g aria-hidden="true" fill="#fff" text-anchor="start" font-family="Verdana,DejaVu Sans,sans-serif" font-size="110">
+    <text x="60" y="148" textLength="433" fill="#000" opacity="0.25">licenses</text>
+    <text x="50" y="138" textLength="433">licenses</text>
+    <text x="588" y="148" textLength="207" fill="#000" opacity="0.25">MIT</text>
+    <text x="578" y="138" textLength="207">MIT</text>
+  </g>
+  
+</svg>

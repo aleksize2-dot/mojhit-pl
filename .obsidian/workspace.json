@@ -1,0 +1,246 @@
+{
+  "main": {
+    "id": "4338f994e2916464",
+    "type": "split",
+    "children": [
+      {
+        "id": "9fdd773640d87ed6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "50f90e5e5125df2c",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Граф"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "e432fbf1ce64e39d",
+    "type": "split",
+    "children": [
+      {
+        "id": "a2f752a0969ecc8b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "fd60ac571e98376e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Файловый менеджер"
+            }
+          },
+          {
+            "id": "76314d332abd3b1c",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Поиск"
+            }
+          },
+          {
+            "id": "57dd055254ae545f",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Закладки"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "74eeb2f267ce1a01",
+    "type": "split",
+    "children": [
+      {
+        "id": "96c65ef73a41e01c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "357919b3393b0489",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "memory/2026-03-31.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Обратные ссылки для 2026-03-31"
+            }
+          },
+          {
+            "id": "49e1bdb16768f841",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "memory/2026-03-31.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Исходящие ссылки из 2026-03-31"
+            }
+          },
+          {
+            "id": "6374c24cd054d353",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Теги"
+            }
+          },
+          {
+            "id": "feae975f0120843f",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Все свойства"
+            }
+          },
+          {
+            "id": "6f7b8890e3f9eec4",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "memory/2026-03-31.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Структура 2026-03-31"
+            }
+          },
+          {
+            "id": "33c3edda95aa48b8",
+            "type": "leaf",
+            "state": {
+              "type": "calendar",
+              "state": {},
+              "icon": "calendar-with-checkmark",
+              "title": "Calendar"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Меню быстрого перехода": false,
+      "graph:Граф": false,
+      "canvas:Создать новый холст": false,
+      "daily-notes:Сегодняшняя заметка": false,
+      "templates:Вставить шаблон": false,
+      "command-palette:Открыть палитру команд": false,
+      "bases:Создать новую базу": false,
+      "obsidian-local-images-plus:Local Images Plus  0.16.4\r\nLocalize attachments (plugin folder)": false,
+      "templater-obsidian:Templater": false,
+      "terminal:Open terminal": false,
+      "fileorganizer2000:Note Companion": false,
+      "obsidian-excalidraw-plugin:Создать новый чертеж": false
+    }
+  },
+  "active": "fd60ac571e98376e",
+  "lastOpenFiles": [
+    "memory/nightly-summary-2026-04-16.txt",
+    "memory/wiki/meta-pixel.md",
+    "memory/wiki/dj-marek-ai-composer.md",
+    "raw/MH/client/public/avatars/maja.webp",
+    "raw/MH/client/public/avatars/kosa.webp",
+    "raw/MH/client/public/avatars/marek.webp",
+    "raw/MH/client/public/avatars/Maja.webp",
+    "raw/MH/client/public/avatars/Kosa.webp",
+    "raw/MH/client/public/avatars",
+    "raw/MH/client/public/Nowy folder",
+    "raw/MH/client/src/components/ChatMessage.tsx",
+    "test_dashscope.json",
+    "memory/wiki/cookie-rodo.md",
+    "memory/wiki/regulamin.md",
+    "memory/wiki/dj-marek-copyright.md",
+    "memory/wiki/clarity.md",
+    "memory/wiki/ga4.md",
+    "raw/MH/client/src/lib/cookieConsent.ts",
+    "raw/MH/client/src/lib",
+    "memory/2026-04-16.md",
+    "raw/MH/client/node_modules/@clerk/shared/loadClerkJsScript/package.json",
+    "raw/MH/client/node_modules/@clerk/shared/loadClerkJsScript",
+    "raw/MH/client/node_modules/@clerk/shared/error/package.json",
+    "raw/MH/client/node_modules/@clerk/shared/error",
+    "raw/MH/MEMORY.md",
+    "raw/MH/memory/2026-04-16.md",
+    "raw/MH/server/node_modules/openai/src/internal/qs/README.md",
+    "raw/MH/server/node_modules/openai/src/internal/qs/LICENSE.md",
+    "raw/MH/server/node_modules/openai/src/internal/README.md",
+    "raw/MH/server/node_modules/openai/src/core/README.md",
+    "raw/MH/server/node_modules/openai/src/_vendor/zod-to-json-schema/README.md",
+    "raw/MH/server/node_modules/openai/src/_vendor/partial-json-parser/README.md",
+    "raw/MH/server/node_modules/openai/README.md",
+    "raw/MH/server/node_modules/openai/src/resources/webhooks/api.md",
+    "raw/MH/server/node_modules/openai/src/resources/responses/api.md",
+    "raw/MH/server/node_modules/openai/src/resources/realtime/api.md",
+    "raw/MH/server/node_modules/openai/src/resources/conversations/api.md",
+    "raw/MH/client/node_modules/@clerk/localizations/node_modules/@clerk/shared/README.md",
+    "raw/MH/client/node_modules/ansi-styles/readme.md",
+    "raw/MH/client/node_modules/@types/json-schema/README.md",
+    "raw/MH/client/node_modules/is-glob/README.md",
+    "8966970192460b816a54b11336347035_MD5.svg",
+    "322c0f6098366664ee51952db364b52e_MD5.svg",
+    "5d6b3bc80c16b23c146f921ea67ece3b_MD5.svg",
+    "f2ea74f4f30a9b112fd93cb4ee12cd4e_MD5.svg",
+    "4e37d075aff025b536250df7b7cdd561_MD5.svg"
+  ]
+}

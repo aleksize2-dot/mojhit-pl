@@ -1,0 +1,157 @@
+/* Dlaczego mojhit.pl? (Features) */
+ .features {
+ display: grid;
+ grid-template-columns: 1fr;
+ gap: 24px;
+ width: 100%;
+ max-width: 1000px;
+ }
+
+ @media (min-width: 768px) {
+ .features {
+ grid-template-columns: repeat(3, 1fr);
+ gap: 32px;
+ }
+ }
+
+ .feature-box {
+ background-color: #F8F9FA;
+ border-radius: 20px;
+ padding: 32px 24px;
+ text-align: center;
+ border: 1px solid var(--border-color);
+ transition: transform 0.3s ease;
+ }
+
+ .feature-box:hover {
+ transform: translateY(-4px);
+ background-color: #fff;
+ box-shadow: var(--shadow-soft);
+ }
+
+ .feature-icon {
+ width: 56px;
+ height: 56px;
+ margin: 0 auto 20px;
+ background-color: rgba(255, 106, 0, 0.1);
+ color: var(--primary-orange);
+ border-radius: 14px;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ }
+
+ .feature-icon svg {
+ width: 28px;
+ height: 28px;
+ stroke-width: 2;
+ stroke: currentColor;
+ fill: none;
+ stroke-linecap: round;
+ stroke-linejoin: round;
+ }
+
+ .feature-title {
+ font-size: 1.2rem;
+ font-weight: 700;
+ color: #1A1A1A;
+ margin-bottom: 12px;
+ }
+
+ .feature-desc {
+ font-size: 0.95rem;
+ color: #4A5568;
+ line-height: 1.5;
+ }
+
+ /* FAQ */
+ .faq-wrapper {
+ width: 100%;
+ max-width: 700px;
+ }
+
+ details {
+ width: 100%;
+ border-bottom: 1px solid var(--border-color);
+ padding: 20px 0;
+ }
+ 
+ details:first-of-type {
+ border-top: 1px solid var(--border-color);
+ }
+
+ summary {
+ font-size: 1.15rem;
+ font-weight: 600;
+ color: #1A1A1A;
+ cursor: pointer;
+ list-style: none; /* Hide default triangle */
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ transition: color 0.2s ease;
+ }
+ 
+ summary::-webkit-details-marker {
+ display: none; /* Hide defauly triangle in Webkit */
+ }
+
+ summary:hover {
+ color: var(--primary-orange);
+ }
+
+ summary::after {
+ content: '+';
+ font-size: 1.5rem;
+ font-weight: 400;
+ color: #718096;
+ margin-left: 16px;
+ transition: transform 0.3s ease;
+ }
+
+ details[open] summary::after {
+ content: '−'; /* Minus sign */
+ transform: rotate(180deg);
+ }
+ 
+ details[open] summary {
+ color: var(--primary-orange);
+ margin-bottom: 16px;
+ }
+
+ .faq-content {
+ font-size: 1rem;
+ color: #4A5568;
+ line-height: 1.6;
+ padding-right: 24px;
+ animation: fadeIn 0.3s ease;
+ }
+
+ @keyframes fadeIn {
+ from { opacity: 0; transform: translateY(-10px); }
+ to { opacity: 1; transform: translateY(0); }
+ }
+
+ /* Footer */
+ footer {
+ border-top: 1px solid var(--border-color);
+ padding: 32px 24px;
+ background-color: #F8F9FA;
+ }
+
+ .footer-content {
+ max-width: var(--app-max-width);
+ margin: 0 auto;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: 16px;
+ }
+
+ @media (min-width: 768px) {
+ .footer-content {
+ flex-direction: row;
+ justify-content: space-between;
+ padding: 0 16px;
+ }
+ }

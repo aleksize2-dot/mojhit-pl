@@ -1,0 +1,8 @@
+# https://mojhit.pl/robots.txt
+User-agent: *
+Allow: /
+
+Sitemap: https://mojhit.pl/sitemap.xml
+
+# Crawl-delay for politeness
+Crawl-delay: 1

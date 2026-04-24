@@ -1,0 +1,17 @@
+# TikTok Marketing Funnel for mojhit.pl
+
+**Core Concept:** 
+Use nano-influencers on TikTok and Instagram Reels to generate hype without upfront ad spend.
+
+**Mechanics:**
+1. We give influencers a promo code for 50 free coins (enough for 100 tracks).
+2. They generate funny, weird, or highly relatable Polish songs (e.g., "song about eating pierogi at 3 AM" or "disco polo about my ex").
+3. They post the video with the track and our hashtag #mojhitPL.
+4. The link in their bio goes to our guest-generation page (Lead Magnet).
+
+**Economics:**
+- Target CPA (Cost Per Acquisition): < 2 PLN per registered user.
+- The 50 coins cost us virtually nothing in API tokens but hold a perceived value of ~15 PLN.
+
+**Milestone:** 
+Launch this campaign immediately after the BLIK Stripe integration is verified.

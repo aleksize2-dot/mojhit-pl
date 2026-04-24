@@ -1,0 +1,24 @@
+Nightly Memory Compiler Summary (2026‑04‑15)
+
+Source: memory/2026-04-15.md
+
+Extracted facts:
+
+1. **Infrastructure changes:**
+   - Qwen provider switched from DashScope to OpenRouter for better pricing.
+   - OpenRouter API key stored in openclaw.json (models.providers.qwen).
+   - DeepSeek API health check passed.
+   - Web-search provider changed from Gemini to DeepSeek, then disabled due to missing Gemini key (tools.web.search.enabled = false).
+   - Vision model added: ERNIE 4.5 VL (424B) via OpenRouter for image analysis.
+   - Free model discovered: NVIDIA Nemotron 3 Super (120B) via OpenRouter, integrated and tested successfully.
+
+2. **Project updates:**
+   - mojhit.pl moved to workspace raw/MH (monorepo). Updated mojhit-architecture.md.
+
+3. **Wiki updates:**
+   - Updated system-resilience.md with current model providers, API keys, provider changes, gateway health, and free models.
+   - Added nightly compilation entry to today's log.
+
+No new wiki files created. Existing index (MEMORY.md) remains valid.
+
+Compilation completed at 2026‑04‑15 18:00 (Europe/Warsaw).

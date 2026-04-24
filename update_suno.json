@@ -1,0 +1,30 @@
+{
+  "settings": {
+    "kie": {
+      "apiKey": "KIE_API_KEY=e9ee7b9518edae610b1a95bb46365c35",
+      "config": {},
+      "baseUrl": "https://api.kie.ai/v1",
+      "enabled": true,
+      "priority": 2
+    },
+    "suno": {
+      "apiKey": "b2974f2578ec3485abbace6b3505ef64",
+      "config": {},
+      "baseUrl": "https://api.sunoapi.org/api/v1",
+      "enabled": true,
+      "priority": 1
+    },
+    "openrouter": {
+      "apiKey": "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",
+      "config": {},
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "enabled": true,
+      "priority": 3
+    },
+    "createdAt": "2026-04-20T20:56:22.906Z",
+    "updatedAt": "2026-04-20T21:04:14.690Z",
+    "lastTestedAt": null,
+    "fallbackEnabled": true,
+    "autoSwitchOnFailure": true
+  }
+}

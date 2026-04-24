@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>mojhit.pl - Twoja historia, Twój hit</title>
+ <style>
+ @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+ :root {
+ --bg-color: #FFFFFF;
+ --text-color: #1A1A1A;
+ --primary-orange: #FF6A00;
+ --secondary-orange: #FFA033;
+ --border-color: #E5E5E5;
+ --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.05);
+ --shadow-strong: 0 8px 24px rgba(255, 106, 0, 0.35);
+ --app-max-width: 1200px;
+ }
+
+ * { box-sizing: border-box; margin: 0; padding: 0; }
+
+ body {
+ font-family: 'Inter', sans-serif;
+ background-color: var(--bg-color);
+ color: var(--text-color);
+ min-height: 100vh;
+ line-height: 1.6;
+ }
+
+ .app-container {
+ width: 100%;
+ max-width: var(--app-max-width);
+ margin: 0 auto;
+ display: flex;
+ flex-direction: column;
+ min-height: 100vh;
+ }
+
+ /* ── HEADER ── */
+ header {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ padding: 20px 24px;
+ position: sticky;
+ top: 0;
+ background: rgba(255,255,255,0.92);
+ backdrop-filter: blur(12px);
+ -webkit-backdrop-filter: blur(12px);
+ border-bottom: 1px solid var(--border-color);
+ z-index: 100;
+ }
+
+ .logo {
+ font-size: 1.4rem;
+ font-weight: 800;
+ letter-spacing: -0.5px;
+ color: var(--text-color);
+ }
+
+ .logo span { color: var(--primary-orange); }
+
+ .header-right {
+ display: flex;
+ align-items: center;
+ gap: 12px;
+ }
+
+ .badge {
+ background-color: #F8F9FA;
+ border: 1px solid var(--border-color);
+ padding: 6px 12px;
+ border-radius: 8px;
+ font-size: 0.75rem;
+ display: flex;
+ align-items: center;
+ gap: 6px;
+ font-weight: 600;
+ color: #4A4A4A;
+ }
+
+ .badge .stars { color: #FFB800; font-size: 0.8rem; }
+
+ .header-cta {
+ display: none;
+ background: var(--primary-orange);
+ color: #fff;
+ border: none;
+ padding: 10px 20px;
+ border-radius: 10px;
+ font-weight: 700;
+ font-size: 0.9rem;
+ cursor: pointer;
+ transition: background 0.2s;
+ }
+
+ .header-cta:hover { background: #e55d00; }
+
+ @media (min-width: 768px) {
+ header { padding: 20px 40px; }
+ .logo { font-size: 1.8rem; }
+ .badge { font-size: 0.85rem; padding: 8px 16px; }
+ .header-cta { display: block; }
+ }
+
+ /* ── MAIN ── */
+ main {
+ flex: 1;
+ padding: 0 24px 60px;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ }
+
+ @media (min-width: 768px) {
+ main { padding: 0 40px 80px; }
+ }
+
+ section {
+ width: 100%;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ margin-bottom: 60px;
+ }
+
+ @media (min-width: 768px) {
+ section { margin-bottom: 100px; }
+ }
+
+ .section-header {
+ display: flex;
+ align-items: center;
+ width: 100%;
+ max-width: 800px;
+ margin-bottom: 32px;
+ }
+
+ .section-header::before,
+ .section-header::after {
+ content: "";
+ flex: 1;
+ height: 1px;
+ background-color: var(--border-color);
+ }
+ 
+ .section-header h2 {
+ font-size: 1.5rem;
+ font-weight: 800;
+ padding: 0 20px;
+ color: #2D3748;
+ white-space: nowrap;
+ }
+
+ @media (min-width: 768px) {
+ .section-header h2 { font-size: 2rem; padding: 0 32px; }
+ .section-header { margin-bottom: 48px; }
+ }
+
+ /* ── HERO ── */
+ .hero {
+ max-width: 800px;
+ text-align: center;
+ padding: 60px 0 20px;
+ }
+
+ .hero-tag {
+ display: inline-flex;
+ align-items: center;
+ gap: 6px;
+ background: rgba(255,106,0,0.08);
+ border: 1px solid rgba(255,106,0,0.2);
+ color: var(--primary-orange);
+ font-size: 0.85rem;
+ font-weight: 700;
+ padding: 6px 14px;
+ border-radius: 100px;
+ margin-bottom: 24px;
+ letter-spacing: 0.3px;
+ }
+
+ h1 {
+ font-size: 2.4rem;
+ font-weight: 800;
+ line-height: 1.2;
+ margin-bottom: 20px;
+ color: #1A1A1A;
+ letter-spacing: -1px;
+ }
+
+ h1 .highlight {
+ background: linear-gradient(90deg, var(--primary-orange), var(--secondary-orange));
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ background-clip: text;
+ }
+
+ .subtitle {
+ font-size: 1.1rem;
+ color: #4A5568;
+ margin-bottom: 36px;
+ font-weight: 500;
+ max-width: 560px;
+ margin-left: auto;
+ margin-right: auto;
+ }
+
+ @media (min-width: 768px) {
+ h1 { font-size: 3.8rem; margin-bottom: 24px; }
+ .subtitle { font-size: 1.25rem; margin-bottom: 44px; }
+ }
+
+ /* Social proof row */
+ .social-proof {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 8px;
+ margin-bottom: 28px;
+ flex-wrap: wrap;
+ }
+
+ .avatars {
+ display: flex;
+ }
+
+ .avatars span {
+ width: 34px;
+ height: 34px;
+ border-radius: 50%;
+ border: 2px solid #fff;
+ margin-left: -8px;
+ font-size: 1.2rem;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background: #f0f0f0;
+ }
+
+ .avatars span:first-child { margin-left: 0; }
+
+ .social-text {
+ font-size: 0.9rem;
+ color: #4A5568;
+ font-weight: 600;
+ }
+
+ .social-text strong {
+ color: var(--primary-orange);
+ }
+
+ /* CTA Button */
+ .cta-btn {
+ display: inline-flex;
+ justify-content: center;
+ align-items: center;
+ width: 100%;
+ max-width: 360px;
+ background: linear-gradient(90deg, var(--primary-orange), var(--secondary-orange), var(--primary-orange));
+ background-size: 200% auto;
+ color: #fff;
+ text-decoration: none;
+ font-size: 1.2rem;
+ font-weight: 700;
+ padding: 18px 28px;
+ border-radius: 16px;
+ border: none;
+ cursor: pointer;
+ box-shadow: var(--shadow-strong);
+ transition: transform 0.2s ease, box-shadow 0.2s ease;
+ animation: gradientShimmer 3s linear infinite;
+ position: relative;
+ overflow: hidden;
+ }
+
+ .cta-btn::after {
+ content: '';
+ position: absolute;
+ top: -50%;
+ left: -60%;
+ width: 40%;
+ height: 200%;
+ background: rgba(255,255,255,0.15);
+ transform: skewX(-20deg);
+ animation: shine 4s ease infinite;
+ }
+
+ @keyframes shine {
+ 0% { left: -60%; }
+ 30% { left: 120%; }
+ 100% { left: 120%; }
+ }
+ 
+ @media (min-width: 768px) {
+ .cta-btn {
+ font-size: 1.4rem;
+ padding: 22px 44px;
+ max-width: 420px;
+ border-radius: 20px;
+ }
+ }
+
+ .cta-btn:hover {
+ transform: translateY(-3px);
+ box-shadow: 0 12px 32px rgba(255, 106, 0, 0.45);
+ }
+
+ .cta-btn:active {
+ transform: translateY(0) scale(0.98);
+ }
+
+ @keyframes gradientShimmer {
+ 0% { background-position: 0% 50%; }
+ 100% { background-position: 200% 50%; }
+ }
+
+ .cta-sub {
+ margin-top: 12px;
+ font-size: 0.82rem;
+ color: #718096;
+ font-weight: 500;
+ }
+
+ /* ── AUDIO PREVIEW ── */
+ .audio-preview {
+ margin-top: 48px;
+ width: 100%;
+ max-width: 560px;
+ background: #F8F9FA;
+ border: 1px solid var(--border-color);
+ border-radius: 20px;
+ padding: 20px 24px;
+ }
+
+ .audio-preview-label {
+ font-size: 0.78rem;
+ font-weight: 700;
+ text-transform: uppercase;
+ letter-spacing: 1px;
+ color: #718096;
+ margin-bottom: 12px;
+ }
+
+ .audio-track {
+ display: flex;
+ align-items: center;
+ gap: 12px;
+ padding: 12px 0;
+ border-bottom: 1px solid var(--border-color);
+ cursor: pointer;
+ }
+
+ .audio-track:last-child { border-bottom: none; }
+
+ .play-btn {
+ width: 38px;
+ height: 38px;
+ border-radius: 50%;
+ background: var(--primary-orange);
+ border: none;
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ flex-shrink: 0;
+ transition: transform 0.2s, background 0.2s;
+ }
+
+ .play-btn:hover { transform: scale(1.1); background: #e55d00; }
+
+ .play-btn svg {
+ width: 14px;
+ height: 14px;
+ fill: #fff;
+ margin-left: 2px;
+ }
+
+ .track-info { flex: 1; }
+ .track-name { font-size: 0.9rem; font-weight: 700; color: #1A1A1A; }
+ .track-meta { font-size: 0.78rem; color: #718096; margin-top: 2px; }
+
+ .track-wave {
+ display: flex;
+ align-items: center;
+ gap: 2px;
+ height: 28px;
+ }
+
+ .track-wave span {
+ display: block;
+ width: 3px;
+ border-radius: 2px;
+ background: var(--border-color);
+ animation: none;
+ }
+
+ .audio-track.playing .track-wave span {
+ background: var(--primary-orange);
+ animation: wave 0.8s ease-in-out infinite;
+ }
+
+ .audio-track.playing .track-wave span:nth-child(2) { animation-delay: 0.1s; }
+ .audio-track.playing .track-wave span:nth-child(3) { animation-delay: 0.2s; }
+ .audio-track.playing .track-wave span:nth-child(4) { animation-delay: 0.15s; }
+ .audio-track.playing .track-wave span:nth-child(5) { animation-delay: 0.05s; }
+
+ @keyframes wave {
+ 0%, 100% { height: 6px; }
+ 50% { height: 22px; }
+ }
+
+ /* ── HOW IT WORKS ── */
+ .how-it-works {
+ display: flex;
+ flex-direction: column;
+ gap: 32px;
+ width: 100%;
+ max-width: 800px;
+ position: relative;
+ }
+ 
+ @media (min-width: 768px) {
+ .how-it-works {
+ flex-direction: row;
+ justify-content: space-between;
+ gap: 0;
+ }
+ .how-it-works::before {
+ content: '';
+ position: absolute;
+ top: 40px;
+ left: 10%;
+ right: 10%;
+ height: 1px;
+ background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+ z-index: 0;
+ }
+ }
+
+ .step {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ flex: 1;
+ z-index: 1;
+ }
+
+ .step-number {
+ font-size: 0.72rem;
+ font-weight: 800;
+ color: var(--primary-orange);
+ letter-spacing: 1px;
+ text-transform: uppercase;
+ margin-bottom: 8px;
+ }
+
+ .step-icon {
+ width: 72px;
+ height: 72px;
+ background-color: #fff;
+ border: 2px solid var(--border-color);
+ border-radius: 50%;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ margin-bottom: 16px;
+ box-shadow: var(--shadow-soft);
+ transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s;
+ }
+
+ .step:hover .step-icon {
+ transform: translateY(-6px);
+ border-color: var(--primary-orange);
+ box-shadow: 0 8px 20px rgba(255,106,0,0.15);
+ }
+
+ @media (min-width: 768px) {
+ .step-icon { width: 80px; height: 80px; border-width: 3px; }
+ .step-icon svg { width: 34px !important; height: 34px !important; }
+ }
+
+ .step-icon svg {
+ width: 28px;
+ height: 28px;
+ fill: none;
+ stroke: #4A5568;
+ stroke-width: 2;
+ stroke-linecap: round;
+ stroke-linejoin: round;
+ transition: stroke 0.3s;
+ }
+
+ .step:hover .step-icon svg { stroke: var(--primary-orange); }
+
+ .step-title {
+ font-size: 1rem;
+ font-weight: 700;
+ text-align: center;
+ color: #1A1A1A;
+ margin-bottom: 4px;
+ }
+
+ .step-desc {
+ font-size: 0.85rem;
+ font-weight: 500;
+ text-align: center;
+ color: #718096;
+ max-width: 150px;
+ line-height: 1.4;
+ }
+
+ /* ── CATEGORIES ── */
+ .categories-wrapper {
+ width: 100%;
+ max-width: 1000px;
+ padding: 10px 0 20px;
+ }
+
+ .categories {
+ display: grid;
+ grid-template-columns: repeat(2, 1fr);
+ gap: 16px;
+ width: 100%;
+ }
+
+ @media (min-width: 600px) {
+ .categories { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+ }
+
+ @media (min-width: 900px) {
+ .categories { grid-template-columns: repeat(6, 1fr); }
+ }
+
+ .card {
+ background-color: #fff;
+ border-radius: 16px;
+ box-shadow: var(--shadow-soft);
+ border: 2px solid transparent;
+ display: flex;
+ flex-direction: column;
+ position: relative;
+ transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+ cursor: pointer;
+ }
+
+ .card:hover {
+ transform: translateY(-8px);
+ box-shadow: 0 16px 32px rgba(0,0,0,0.1);
+ border-color: var(--primary-orange);
+ }
+
+ .card-img {
+ height: 100px;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ font-size: 3rem;
+ border-radius: 14px 14px 0 0;
+ transition: font-size 0.2s;
+ }
+
+ .card:hover .card-img { font-size: 3.4rem; }
+ 
+ @media (min-width: 768px) {
+ .card-img { height: 120px; font-size: 3.2rem; }
+ }
+
+ .card-img.urodziny { background: linear-gradient(135deg, #FF9A9E, #FECFEF); }
+ .card-img.slub { background: linear-gradient(135deg, #A1C4FD, #C2E9FB); }
+ .card-img.zart { background: linear-gradient(135deg, #FFECD2, #FCB69F); }
+ .card-img.szef { background: linear-gradient(135deg, #E0C3FC, #8EC5FC); }
+ .card-img.romantyczna { background: linear-gradient(135deg, #ff7eb3, #ff758c); }
+ .card-img.rap { background: linear-gradient(135deg, #2c3e50, #4a5568); }
+ .card-img.rap { color: #fff; }
+
+ .card-footer {
+ padding: 12px;
+ text-align: center;
+ border-radius: 0 0 14px 14px;
+ min-height: 48px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ }
+
+ .card-title {
+ font-size: 0.9rem;
+ font-weight: 700;
+ color: #2D3748;
+ line-height: 1.2;
+ }
+
+ @media (min-width: 768px) {
+ .card-title { font-size: 0.95rem; }
+ .card-footer { padding: 14px; min-height: 52px; }
+ }
+
+ /* ── FEATURES ── */
+ .features {
+ display: grid;
+ grid-template-columns: 1fr;
+ gap: 20px;
+ width: 100%;
+ max-width: 1000px;
+ }
+
+ @media (min-width: 768px) {
+ .features { grid-template-columns: repeat(3, 1fr); gap: 28px; }
+ }
+
+ .feature-box {
+ background-color: #F8F9FA;
+ border-radius: 20px;
+ padding: 32px 24px;
+ text-align: center;
+ border: 1px solid var(--border-color);
+ transition: transform 0.3s ease, box-shadow 0.3s, background 0.3s;
+ }
+
+ .feature-box:hover {
+ transform: translateY(-6px);
+ background-color: #fff;
+ box-shadow: 0 12px 28px rgba(0,0,0,0.07);
+ }
+
+ .feature-icon {
+ width: 56px;
+ height: 56px;
+ margin: 0 auto 20px;
+ background-color: rgba(255, 106, 0, 0.1);
+ color: var(--primary-orange);
+ border-radius: 14px;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ transition: background 0.3s, transform 0.3s;
+ }
+
+ .feature-box:hover .feature-icon {
+ background-color: var(--primary-orange);
+ color: #fff;
+ transform: scale(1.1);
+ }
+
+ .feature-box:hover .feature-icon svg { stroke: #fff; }
+
+ .feature-icon svg {
+ width: 28px;
+ height: 28px;
+ stroke-width: 2;
+ stroke: currentColor;
+ fill: none;
+ stroke-linecap: round;
+ stroke-linejoin: round;
+ transition: stroke 0.3s;
+ }
+
+ .feature-title {
+ font-size: 1.15rem;
+ font-weight: 700;
+ color: #1A1A1A;
+ margin-bottom: 10px;
+ }
+
+ .feature-desc {
+ font-size: 0.92rem;
+ color: #4A5568;
+ line-height: 1.55;
+ }
+
+ /* ── TESTIMONIALS ── */
+ .testimonials {
+ display: grid;
+ grid-template-columns: 1fr;
+ gap: 16px;
+ width: 100%;
+ max-width: 900px;
+ }
+
+ @media (min-width: 640px) {
+ .testimonials { grid-template-columns: repeat(3, 1fr); }
+ }
+
+ .testimonial-card {
+ background: #F8F9FA;
+ border: 1px solid var(--border-color);
+ border-radius: 16px;
+ padding: 24px 20px;
+ transition: transform 0.3s, box-shadow 0.3s;
+ }
+
+ .testimonial-card:hover {
+ transform: translateY(-4px);
+ box-shadow: var(--shadow-soft);
+ background: #fff;
+ }
+ 
+ .testimonial-stars {
+ color: #FFB800;
+ font-size: 0.9rem;
+ margin-bottom: 12px;
+ }
+
+ .testimonial-text {
+ font-size: 0.92rem;
+ color: #2D3748;
+ line-height: 1.6;
+ margin-bottom: 16px;
+ font-style: italic;
+ }
+
+ .testimonial-author {
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ }
+
+ .author-avatar {
+ width: 36px;
+ height: 36px;
+ border-radius: 50%;
+ font-size: 1.1rem;
+ background: #eee;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ }
+
+ .author-name {
+ font-size: 0.88rem;
+ font-weight: 700;
+ color: #1A1A1A;
+ }
+
+ .author-occasion {
+ font-size: 0.78rem;
+ color: #718096;
+ }
+
+ /* ── COUNTER STRIP ── */
+ .counter-strip {
+ width: 100%;
+ max-width: 900px;
+ background: linear-gradient(135deg, #1A1A1A, #2D3748);
+ border-radius: 20px;
+ padding: 32px 24px;
+ display: grid;
+ grid-template-columns: repeat(2, 1fr);
+ gap: 24px;
+ text-align: center;
+ margin-bottom: 60px;
+ }
+
+ @media (min-width: 640px) {
+ .counter-strip { grid-template-columns: repeat(4, 1fr); }
+ }
+
+ .counter-item {}
+
+ .counter-number {
+ font-size: 2rem;
+ font-weight: 800;
+ color: var(--secondary-orange);
+ line-height: 1;
+ margin-bottom: 4px;
+ }
+
+ .counter-label {
+ font-size: 0.8rem;
+ color: rgba(255,255,255,0.6);
+ font-weight: 500;
+ }
+
+ /* ── FAQ ── */
+ .faq-wrapper {
+ width: 100%;
+ max-width: 700px;
+ }
+
+ details {
+ width: 100%;
+ border-bottom: 1px solid var(--border-color);
+ padding: 20px 0;
+ }
+
+ details:first-of-type { border-top: 1px solid var(--border-color); }
+
+ summary {
+ font-size: 1.05rem;
+ font-weight: 600;
+ color: #1A1A1A;
+ cursor: pointer;
+ list-style: none;
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ transition: color 0.2s ease;
+ }
+
+ summary::-webkit-details-marker { display: none; }
+ summary:hover { color: var(--primary-orange); }
+
+ summary::after {
+ content: '+';
+ font-size: 1.4rem;
+ font-weight: 300;
+ color: #718096;
+ margin-left: 16px;
+ flex-shrink: 0;
+ transition: transform 0.3s ease;
+ }
+
+ details[open] summary::after { content: '−'; }
+ details[open] summary { color: var(--primary-orange); margin-bottom: 14px; }
+
+ .faq-content {
+ font-size: 0.95rem;
+ color: #4A5568;
+ line-height: 1.65;
+ padding-right: 32px;
+ animation: fadeIn 0.25s ease;
+ }
+
+ @keyframes fadeIn {
+ from { opacity: 0; transform: translateY(-8px); }
+ to { opacity: 1; transform: translateY(0); }
+ }
+
+ /* ── FOOTER ── */
+ footer {
+ border-top: 1px solid var(--border-color);
+ padding: 32px 24px;
+ background-color: #F8F9FA;
+ }
+
+ .footer-content {
+ max-width: var(--app-max-width);
+ margin: 0 auto;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: 16px;
+ }
+
+ @media (min-width: 768px) {
+ .footer-content {
+ flex-direction: row;
+ justify-content: space-between;
+ padding: 0 16px;
+ }
+ }
+
+ .footer-copyright { font-size: 0.9rem; color: #718096; font-weight: 500; }
+ .footer-links { display: flex; gap: 24px; }
+
+ .footer-links a {
+ color: #4A5568;
+ text-decoration: none;
+ font-size: 0.9rem;
+ font-weight: 500;
+ transition: color 0.2s ease;
+ }
+
+ .footer-links a:hover { color: var(--primary-orange); }
+
+ .bottom-cta-wrapper {
+ text-align: center;
+ padding: 20px 0 0;
+ }
+
+ /* ── SCROLL ANIMATION ── */
+ .fade-in {
+ opacity: 0;
+ transform: translateY(24px);
+ transition: opacity 0.6s ease, transform 0.6s ease;
+ }
+
+ .fade-in.visible {
+ opacity: 1;
+ transform: translateY(0);
+ }
+ </style>
+</head>
+<body>
+<div class="app-container">
+
+ <!-- HEADER -->
+ <header>
+ <div class="logo">mojhit<span>.pl</span></div>
+ <div class="header-right">
+ <div class="badge">
+ Stworzone w Polsce
+ <span class="stars">⭐️⭐️⭐️⭐️⭐️</span>
+ </div>
+ <button class="header-cta" onclick="scrollToCta()">Stwórz Hit 🎵</button>
+ </div>
+ </header>
+
+ <main>
+
+ <!-- HERO -->
+ <section class="hero">
+ <div class="hero-tag">✨ Nowość — AI generuje piosenki w 3 minuty</div>
+ <h1>Twoja historia —<br><span class="highlight">Twój hit</span></h1>
+ <p class="subtitle">Stwórz profesjonalną piosenkę z&nbsp;pomocą AI. Idealny prezent urodzinowy, weselny lub po prostu dla zabawy.</p>
+
+ <div class="social-proof">
+ <div class="avatars">
+ <span>👩</span>
+ <span>👨</span>
+ <span>👩‍🦱</span>
+ <span>🧔</span>
+ <span>👩‍🦳</span>
+ </div>
+ <span class="social-text">Dołącz do <strong>3 710+</strong> osób, które już stworzyły swój hit</span>
+ </div>
+
+ <button class="cta-btn" id="mainCta" onclick="alert('Formularz generatora — wkrótce!')">
+ <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:10px">
+ <line x1="8" y1="10" x2="8" y2="14"></line>
+ <line x1="12" y1="6" x2="12" y2="18"></line>
+ <line x1="16" y1="10" x2="16" y2="14"></line>
+ </svg>
+ Stwórz Hit 🎵
+ </button>
+ <p class="cta-sub">✅ Pierwsze demo gratis &nbsp;·&nbsp; Bez rejestracji &nbsp;·&nbsp; WAV/MP3</p>
+
+ <!-- Audio Preview -->
+ <div class="audio-preview fade-in">
+ <div class="audio-preview-label">🎧 Przykładowe hity wygenerowane przez AI</div>
+ <div class="audio-track" onclick="togglePlay(this)">
+ <button class="play-btn">
+ <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+ </button>
+ <div class="track-info">
+ <div class="track-name">„Sto lat dla Kasi" 🎂</div>
+ <div class="track-meta">Pop · 2:34</div>
+ </div>
+ <div class="track-wave">
+ <span style="height:8px"></span>
+ <span style="height:16px"></span>
+ <span style="height:22px"></span>
+ <span style="height:12px"></span>
+ <span style="height:18px"></span>
+ <span style="height:8px"></span>
+ <span style="height:14px"></span>
+ </div>
+ </div>
+ <div class="audio-track" onclick="togglePlay(this)">
+ <button class="play-btn">
+ <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+ </button>
+ <div class="track-info">
+ <div class="track-name">„Szef roku" 👔</div>
+ <div class="track-meta">Funk · 1:58</div>
+ </div>
+ <div class="track-wave">
+ <span style="height:12px"></span>
+ <span style="height:20px"></span>
+ <span style="height:10px"></span>
+ <span style="height:18px"></span>
+ <span style="height:24px"></span>
+ <span style="height:10px"></span>
+ <span style="height:16px"></span>
+ </div>
+ </div>
+ <div class="audio-track" onclick="togglePlay(this)">
+ <button class="play-btn">
+ <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+ </button>
+ <div class="track-info">
+ <div class="track-name">„Rap dla Ziomka" 🧢</div>
+ <div class="track-meta">Hip-hop · 2:12</div>
+ </div>
+ <div class="track-wave">
+ <span style="height:10px"></span>
+ <span style="height:22px"></span>
+ <span style="height:14px"></span>
+ <span style="height:20px"></span>
+ <span style="height:8px"></span>
+ <span style="height:18px"></span>
+ <span style="height:12px"></span>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- COUNTER STRIP -->
+ <div class="counter-strip fade-in">
+ <div class="counter-item">
+ <div class="counter-number" data-target="3710">0</div>
+ <div class="counter-label">Wygenerowanych hitów</div>
+ </div>
+ <div class="counter-item">
+ <div class="counter-number" data-target="3">0</div>
+ <div class="counter-label">Minuty na utwór</div>
+ </div>
+ <div class="counter-item">
+ <div class="counter-number" data-target="6">0</div>
+ <div class="counter-label">Stylów muzycznych</div>
+ </div>
+ <div class="counter-item">
+ <div class="counter-number" data-target="100">0</div>
+ <div class="counter-label">% praw autorskich</div>
+ </div>
+ </div>
+
+ <!-- JAK TO DZIAŁA -->
+ <section class="fade-in">
+ <div class="section-header">
+ <h2>Jak to działa?</h2>
+ </div>
+ <div class="how-it-works">
+ <div class="step">
+ <div class="step-number">Krok 1</div>
+ <div class="step-icon">
+ <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+ </div>
+ <div class="step-title">Wybierz styl</div>
+ <div class="step-desc">Pop, rap, romantyczna, funk i inne</div>
+ </div>
+ <div class="step">
+ <div class="step-number">Krok 2</div>
+ <div class="step-icon">
+ <svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+ </div>
+ <div class="step-title">Opisz historię</div>
+ <div class="step-desc">Kilka zdań o osobie lub okazji</div>
+ </div>
+ <div class="step">
+ <div class="step-number">Krok 3</div>
+ <div class="step-icon">
+ <svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+ </div>
+ <div class="step-title">Odbierz hit</div>
+ <div class="step-desc">Gotowy utwór WAV/MP3 w 3 minuty</div>
+ </div>
+ </div>
+ </section>
+
+ <!-- KATEGORIE -->
+ <section class="fade-in">
+ <div class="section-header">
+ <h2>Na każdą okazję</h2>
+ </div>
+ <div class="categories-wrapper">
+ <div class="categories">
+ <div class="card">
+ <div class="card-img urodziny">🎂</div>
+ <div class="card-footer"><div class="card-title">Urodziny</div></div>
+ </div>
+ <div class="card">
+ <div class="card-img slub">💍</div>
+ <div class="card-footer"><div class="card-title">Ślub</div></div>
+ </div>
+ <div class="card">
+ <div class="card-img zart">🤹</div>
+ <div class="card-footer"><div class="card-title">Żart</div></div>
+ </div>
+ <div class="card">
+ <div class="card-img szef">👔</div>
+ <div class="card-footer"><div class="card-title">Dla Szefa</div></div>
+ </div>
+ <div class="card">
+ <div class="card-img romantyczna">❤️</div>
+ <div class="card-footer"><div class="card-title">Romantyczna</div></div>
+ </div>
+ <div class="card">
+ <div class="card-img rap">🧢</div>
+ <div class="card-footer"><div class="card-title">Rap dla Ziomka</div></div>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- DLACZEGO MOJHIT -->
+ <section class="fade-in">
+ <div class="section-header">
+ <h2>Dlaczego mojhit.pl?</h2>
+ </div>
+ <div class="features">
+ <div class="feature-box">
+ <div class="feature-icon">
+ <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+ </div>
+ <div class="feature-title">Szybka generacja</div>
+ <div class="feature-desc">Gotowy utwór z wokalem i instrumentami w zaledwie 2–3 minuty od opisu.</div>
+ </div>
+ <div class="feature-box">
+ <div class="feature-icon">
+ <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+ </div>
+ <div class="feature-title">Radiowa jakość</div>
+ <div class="feature-desc">Najnowocześniejsze modele Studio AI zapewniają brzmienie na poziomie profesjonalnego studia.</div>
+ </div>
+ <div class="feature-box">
+ <div class="feature-icon">
+ <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+ </div>
+ <div class="feature-title">100% Twoich praw</div>
+ <div class="feature-desc">Piosenka jest całkowicie Twoja — YouTube, TikTok, Instagram bez żadnych roszczeń.</div>
+ </div>
+ </div>
+ </section>
+
+ <!-- OPINIE -->
+ <section class="fade-in">
+ <div class="section-header">
+ <h2>Co mówią użytkownicy?</h2>
+ </div>
+ <div class="testimonials">
+ <div class="testimonial-card">
+ <div class="testimonial-stars">⭐️⭐️⭐️⭐️⭐️</div>
+ <div class="testimonial-text">„Zamawiałam piosenkę urodzinową dla mamy. Płakała ze wzruszenia! Jakość niesamowita."</div>
+ <div class="testimonial-author">
+ <div class="author-avatar">👩</div>
+ <div>
+ <div class="author-name">Kasia W.</div>
+ <div class="author-occasion">Piosenka urodzinowa</div>
+ </div>
+ </div>
+ </div>
+ <div class="testimonial-card">
+ <div class="testimonial-stars">⭐️⭐️⭐️⭐️⭐️</div>
+ <div class="testimonial-text">„Rap dla kolegi z pracy — wszyscy w biurze byli w szoku, że to AI. Polecam każdemu!"</div>
+ <div class="testimonial-author">
+ <div class="author-avatar">🧔</div>
+ <div>
+ <div class="author-name">Marek T.</div>
+ <div class="author-occasion">Rap dla ziomka</div>
+ </div>
+ </div>
+ </div>
+ <div class="testimonial-card">
+ <div class="testimonial-stars">⭐️⭐️⭐️⭐️⭐️</div>
+ <div class="testimonial-text">„Piosenka weselna zamiast tradycyjnego prezentu — goście byli zachwyceni. Super pomysł!"</div>
+ <div class="testimonial-author">
+ <div class="author-avatar">👩‍🦱</div>
+ <div>
+ <div class="author-name">Ania K.</div>
+ <div class="author-occasion">Piosenka ślubna</div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- FAQ -->
+ <section class="fade-in">
+ <div class="section-header">
+ <h2>Najczęstsze pytania</h2>
+ </div>
+ <div class="faq-wrapper">
+ <details>
+ <summary>Ile to kosztuje?</summary>
+ <div class="faq-content">
+ Testowanie systemu i podgląd demo jest bezpłatny. Aby pobrać pełną piosenkę w jakości studyjnej (WAV/MP3), płacisz za pojedynczy utwór lub wybierasz pakiet kilku piosenek w korzystnej cenie.
+ </div>
+ </details>
+ <details>
+ <summary>Jak szybko otrzymam piosenkę?</summary>
+ <div class="faq-content">
+ Po wpisaniu opisu historii nasza sztuczna inteligencja potrzebuje zazwyczaj 2–3 minut na skomponowanie muzyki, napisanie tekstu i wygenerowanie wokalu. Piosenka trafia od razu do Twojego konta.
+ </div>
+ </details>
+ <details>
+ <summary>Czy mogę użyć jej komercyjnie?</summary>
+ <div class="faq-content">
+ Tak. Przekazujemy Ci pełne prawa autorskie do wygenerowanego utworu. Możesz go publikować na YouTube, TikToku, Instagramie i wszędzie indziej bez obaw o roszczenia.
+ </div>
+ </details>
+ <details>
+ <summary>W jakich formatach otrzymam plik?</summary>
+ <div class="faq-content">
+ Piosenka dostępna jest do pobrania w formacie MP3 (do codziennego użytku) oraz WAV (jakość studyjna, bez kompresji). Oba formaty są dostępne w każdym pakiecie.
+ </div>
+ </details>
+ <details>
+ <summary>Czy mogę wybrać język piosenki?</summary>
+ <div class="faq-content">
+ Domyślnie generujemy piosenki po polsku. Obsługujemy również język angielski — wystarczy zaznaczyć preferencję podczas tworzenia.
+ </div>
+ </details>
+ </div>
+ </section>
+
+ <!-- BOTTOM CTA -->
+ <div class="bottom-cta-wrapper fade-in">
+ <p style="font-size:1.1rem;font-weight:700;margin-bottom:16px;color:#1A1A1A">
+ Gotowy na swój hit? 🎶
+ </p>
+ <button class="cta-btn" onclick="alert('Formularz generatora — wkrótce!')">
+ <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:10px">
+ <line x1="8" y1="10" x2="8" y2="14"></line>
+ <line x1="12" y1="6" x2="12" y2="18"></line>
+ <line x1="16" y1="10" x2="16" y2="14"></line>
+ </svg>
+ Stwórz Hit 🎵
+ </button>
+ <p class="cta-sub">✅ Pierwsze demo gratis &nbsp;·&nbsp; Bez rejestracji &nbsp;·&nbsp; WAV/MP3</p>
+ </div>
+
+ </main>
+
+ <!-- FOOTER -->
+ <footer>
+ <div class="footer-content">
+ <div class="footer-copyright">© 2026 mojhit.pl. Wszelkie prawa zastrzeżone.</div>
+ <div class="footer-links">
+ <a href="#">Regulamin</a>
+ <a href="#">Polityka Prywatności</a>
+ <a href="#">Kontakt</a>
+ </div>
+ </div>
+ </footer>
+
+</div>
+
+<script>
+ // ── Scroll to CTA
+ function scrollToCta() {
+ document.getElementById('mainCta').scrollIntoView({ behavior: 'smooth', block: 'center' });
+ }
+
+ // ── Fake audio toggle
+ function togglePlay(track) {
+ const isPlaying = track.classList.contains('playing');
+ document.querySelectorAll('.audio-track').forEach(t => t.classList.remove('playing'));
+ if (!isPlaying) track.classList.add('playing');
+ }
+ // ── Intersection Observer for fade-in
+ const observer = new IntersectionObserver((entries) => {
+ entries.forEach(entry => {
+ if (entry.isIntersecting) {
+ entry.target.classList.add('visible');
+ // Trigger counter if counter-strip
+ if (entry.target.classList.contains('counter-strip')) {
+ animateCounters();
+ }
+ }
+ });
+ }, { threshold: 0.15 });
+
+ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+ // ── Counter animation
+ function animateCounters() {
+ document.querySelectorAll('.counter-number').forEach(el => {
+ const target = parseInt(el.dataset.target);
+ const duration = 1800;
+ const step = target / (duration / 16);
+ let current = 0;
+ const timer = setInterval(() => {
+ current += step;
+ if (current >= target) {
+ current = target;
+ clearInterval(timer);
+ }
+ el.textContent = Math.floor(current).toLocaleString('pl-PL');
+ if (el.dataset.target === '100') el.textContent = '100%';
+ if (el.dataset.target === '3') el.textContent = '~3';
+ }, 16);
+ });
+ }
+</script>
+</body>
+</html>

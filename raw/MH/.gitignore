@@ -1,0 +1,15 @@
+﻿node_modules/
+.env
+*.log
+dist/
+.DS_Store
+*.sqlite
+*.db
+.vite/
+tsconfig.tsbuildinfo
+database.sqlite
+.clawhub/
+memory/.dreams/
+raw/MH/memory/
+server/.env
+*.py

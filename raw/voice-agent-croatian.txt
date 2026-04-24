@@ -1,0 +1,19 @@
+# Voice AI Agent (Croatian Outbound Call)
+
+**Goal:** Make an outbound phone call from the user's verified personal phone number, converse with a human in Croatian, and follow a pre-defined script of questions.
+
+**Tech Stack Architecture:**
+1. **Telephony (SIP/PSTN):** Twilio
+   - Feature: "Verified Caller ID" allows us to prove ownership of a personal mobile number and use it as the `From` parameter in the API without porting the number.
+2. **Voice AI Orchestrator:** Vapi.ai OR Retell AI OR Bland AI
+   - Why: Building WebRTC/Websockets + STT + LLM + TTS from scratch introduces massive latency and interruption (barge-in) handling issues. These platforms solve this out of the box.
+3. **Speech-to-Text (STT):** Deepgram (Nova-2) - Excellent multi-language support including Croatian (hr).
+4. **LLM (The Brain):** Claude 3.5 Sonnet or GPT-4o.
+   - Prompt dictates the flow: "You are a survey assistant. Speak ONLY in Croatian. Ask question 1. Wait for response. Ask question 2..."
+5. **Text-to-Speech (TTS):** ElevenLabs (Turbo v2.5 or Multilingual v2) or OpenAI (Alloy/Nova). Both have highly realistic Croatian pronunciation.
+
+**Implementation Steps:**
+1. Create Twilio account -> Verify personal phone number.
+2. Create Vapi.ai account -> Link Twilio account.
+3. Write a Node.js script using Vapi SDK to trigger the outbound call with the specific System Prompt and Croatian language settings.
+4. Log the transcript and extracted answers upon call completion via webhook.

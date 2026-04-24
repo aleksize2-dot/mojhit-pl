@@ -1,0 +1,1258 @@
+{
+  "version": 1,
+  "updatedAt": "2026-04-24T09:47:51.660Z",
+  "entries": {
+    "memory:memory/2026-04-10.md:1:21": {
+      "key": "memory:memory/2026-04-10.md:1:21",
+      "path": "memory/2026-04-10.md",
+      "startLine": 1,
+      "endLine": 21,
+      "source": "memory",
+      "snippet": "## [2026-04-10] ingest | mojhit.pl - Guest Checkout & Email Delivery - **Source:** Direct instruction from Master (Alex). - **Data:** Added feature requirement to allow generation and payment without mandatory registration, delivering final tracks directly via email. - **Actions Taken:** - Updated `memory/wiki/mojhit-economics.md` under the \"Guest Checkout & Lead Magnet\" section. - Clarified the pipeline: `guest_session_id` -> Stripe Checkout (collects email) -> Webhook -> Email MP3s via Resend. - Секретная фраза (Я все смогу!) ## [2026-04-10] ingest | Karpathy's LLM Knowledge Bases thread - **Source:** `raw/Thread by @karpathy.md` (clipped via Obsidian Web Clipper). - **Data:** And",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.0266104772686957,
+      "maxScore": 0.5301032230257987,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-20T11:06:45.478Z",
+      "queryHashes": [
+        "2b9c9b85c61b",
+        "50067ce263a6"
+      ],
+      "recallDays": [
+        "2026-04-15",
+        "2026-04-20"
+      ],
+      "conceptTags": [
+        "mojhit.pl",
+        "memory/wiki/mojhit-economics.md",
+        "guest-session-id",
+        "raw/thread",
+        "karpathy.md",
+        "ingest",
+        "guest",
+        "checkout"
+      ]
+    },
+    "memory:memory/2026-04-07.md:1:11": {
+      "key": "memory:memory/2026-04-07.md:1:11",
+      "path": "memory/2026-04-07.md",
+      "startLine": 1,
+      "endLine": 11,
+      "source": "memory",
+      "snippet": "# 2026-04-07 ## Morning - **09:11** Received test message from openclaw-control-ui: \"Привет Бро\". Responded with greeting. - **10:00** User asked to connect to LightRAG. Started setup of LightRAG in E:\\lightrag. Encountered Docker/WSL issues (WSL not installed, virtualization disabled in BIOS). Fixed WSL, installed Ubuntu, reinstalled Docker Desktop. Successfully got Docker running. - **12:00** Switched from LightRAG to OpenViking (more advanced agent-native memory system). Cloned OpenViking repo, created ov.conf with DeepSeek (LLM) and Gemini (embeddings) keys. - **12:35** Launched OpenViking via Docker Compose. Web UI works on http://localhost:8020. API on http://localhost:1933 appears he",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4830066531896591,
+      "maxScore": 0.4830066531896591,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-15T15:28:20.487Z",
+      "queryHashes": [
+        "2b9c9b85c61b"
+      ],
+      "recallDays": [
+        "2026-04-15"
+      ],
+      "conceptTags": [
+        "embedding",
+        "embeddings",
+        "openclaw-control-ui",
+        "docker/wsl",
+        "agent-native",
+        "ov.conf",
+        "morning",
+        "received"
+      ]
+    },
+    "memory:memory/2026-04-07.md:9:20": {
+      "key": "memory:memory/2026-04-07.md:9:20",
+      "path": "memory/2026-04-07.md",
+      "startLine": 9,
+      "endLine": 20,
+      "source": "memory",
+      "snippet": "- **13:30** Preparing to import entire E:\\mojhit project into OpenViking memory using `ov add-resource` CLI. Verified `ov` CLI is installed (version 0.3.3). - **13:48** OpenViking plugin errors (`fetch failed`, circuit‑breaker). API unresponsive. User requested fallback to LightRAG. - **14:08** Stopped OpenViking container, disabled plugin (`plugins.slots.contextEngine = legacy`), restarting LightRAG with stable config (DeepSeek LLM, NVIDIA NIM embeddings). - **15:10** OpenViking plugin continues to auto‑load from `C:\\Users\\Admin\\.openclaw\\extensions\\openviking\\`. User reports logs show plugin initializing despite config change. Plan: delete plugin folder, restart OpenClaw, then launch Light",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.48144203126430507,
+      "maxScore": 0.48144203126430507,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-15T15:28:20.487Z",
+      "queryHashes": [
+        "2b9c9b85c61b"
+      ],
+      "recallDays": [
+        "2026-04-15"
+      ],
+      "conceptTags": [
+        "embedding",
+        "embeddings",
+        "add-resource",
+        "0.3.3",
+        "plugins.slots.contextengine",
+        "preparing",
+        "import",
+        "entire"
+      ]
+    },
+    "memory:memory/2026-04-08.md:1:5": {
+      "key": "memory:memory/2026-04-08.md:1:5",
+      "path": "memory/2026-04-08.md",
+      "startLine": 1,
+      "endLine": 5,
+      "source": "memory",
+      "snippet": "- User returned after a gap. Showed directory listing: frontend HTML files (mojhit_allegro_final.html, mojhit_claude.html, etc.) are present. Offered next steps: upload project to LightRAG for memory, integrate frontend with backend (Node.js, Supabase, Clerk). - User tested dashboard connectivity. Unable to reply directly due to channel restrictions. - **18:07** User asked \"А ну-ка Бро, тест на то что мы сегодня делали? Чтооо???\" Checking memory of today's OpenViking setup. - **18:19** Async command completed (dir memory files). OpenViking plugin is enabled (remote mode, baseUrl: http://127.0.0.1:1933) but memory searches still use local Gemini embeddings, indicating plugin may not be connec",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.9779235422611237,
+      "maxScore": 0.5002309501171112,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-23T09:43:47.030Z",
+      "queryHashes": [
+        "2b9c9b85c61b",
+        "0c4b6996e6e6"
+      ],
+      "recallDays": [
+        "2026-04-15",
+        "2026-04-23"
+      ],
+      "conceptTags": [
+        "embedding",
+        "embeddings",
+        "mojhit-allegro-final.html",
+        "mojhit-claude.html",
+        "node.js",
+        "ну-ка",
+        "127.0.0.1",
+        "user"
+      ]
+    },
+    "memory:memory/2026-03-26.md:1:7": {
+      "key": "memory:memory/2026-03-26.md:1:7",
+      "path": "memory/2026-03-26.md",
+      "startLine": 1,
+      "endLine": 7,
+      "source": "memory",
+      "snippet": "- Explained OpenClaw memory architecture to the user: Short-term memory (transcripts) is isolated per session/channel (Telegram vs Dashboard) to save tokens, while long-term memory (MEMORY.md, workspace files) is global and bridges the context across all sessions. - **2026-03-26 (mojhit.pl Sprint):** - **DevOps:** Fixed the OpenClaw Windows Scheduled Task port conflict (18789 vs 18790). Re-installed the task correctly. Created `gemini helper.bat` script on the Desktop for emergency local boot-ups. - **Context Synced:** Read the massive `E:\\mojhit\\TZ_mojhit.md` document containing the full spec. - **Generation Engine Flow:** Mapped how user UI tiles (Occasion/Vibe) connect to hidden Su",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.47273730933666225,
+      "maxScore": 0.47273730933666225,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-15T15:28:20.487Z",
+      "queryHashes": [
+        "2b9c9b85c61b"
+      ],
+      "recallDays": [
+        "2026-04-15"
+      ],
+      "conceptTags": [
+        "short-term",
+        "session/channel",
+        "long-term",
+        "memory.md",
+        "mojhit.pl",
+        "re-installed",
+        "helper.bat",
+        "boot-ups"
+      ]
+    },
+    "memory:memory/2026-04-10.md:17:26": {
+      "key": "memory:memory/2026-04-10.md:17:26",
+      "path": "memory/2026-04-10.md",
+      "startLine": 17,
+      "endLine": 26,
+      "source": "memory",
+      "snippet": "## [2026-04-10] discussion | Memory resilience across model switches - **Topic:** Ensuring knowledge base works when switching between DeepSeek, Gemini, etc. - **Key conclusions:** 1. **Knowledge files (`memory/wiki/`) are model‑agnostic** — plain text readable by any LLM. 2. **Semantic search (`memory_search`)** currently uses Gemini embeddings; can be switched if needed. 3. **Nightly compiler (`daily‑memory‑compiler`)** uses the default agent model (configurable). 4. **Next step:** Add automatic flush (session capture) to complete Karpathy‑style pipeline. - **Action items:** - Write `flush‑memory.js` script to capture conversation summaries periodically. - Keep `MEMORY.md` as u",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.47077097594738004,
+      "maxScore": 0.47077097594738004,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-15T15:28:20.487Z",
+      "queryHashes": [
+        "2b9c9b85c61b"
+      ],
+      "recallDays": [
+        "2026-04-15"
+      ],
+      "conceptTags": [
+        "embedding",
+        "embeddings",
+        "memory/wiki",
+        "memory-search",
+        "memory.js",
+        "memory.md",
+        "discussion",
+        "resilience"
+      ]
+    },
+    "memory:memory/2026-04-09.md:176:205": {
+      "key": "memory:memory/2026-04-09.md:176:205",
+      "path": "memory/2026-04-09.md",
+      "startLine": 176,
+      "endLine": 205,
+      "source": "memory",
+      "snippet": "- **Key Vibe:** Collaborative, adaptive to author voice. ### Technical Considerations - **LLM Provider:** Kie.ai (noted for cost‑effectiveness for Claude models). - **Critical Investment:** Sophisticated system prompting to define persona, safety boundaries, and style constraints. --- **Tags:** #claude #ai-psychologist #ai-writing #llm-application #anthropic **Cross‑links:** See MEMORY.md for related topics: `claude-advantages`, `system-prompting`, `ai-companion-design`, `creative-ai-tools`. ## Raw import: concept-marketing.txt ```markdown --- tags: [marketing/tiktok, strategy/viral, cost-per-acquisition, influencer/nano-influencer] related: [[MEMORY.md#stripe-blik-integration]],",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4699389725923538,
+      "maxScore": 0.4699389725923538,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-15T15:28:20.487Z",
+      "queryHashes": [
+        "2b9c9b85c61b"
+      ],
+      "recallDays": [
+        "2026-04-15"
+      ],
+      "conceptTags": [
+        "kie.ai",
+        "ai-psychologist",
+        "ai-writing",
+        "llm-application",
+        "memory.md",
+        "claude-advantages",
+        "system-prompting",
+        "ai-companion-design"
+      ]
+    },
+    "memory:memory/2026-04-09.md:202:227": {
+      "key": "memory:memory/2026-04-09.md:202:227",
+      "path": "memory/2026-04-09.md",
+      "startLine": 202,
+      "endLine": 227,
+      "source": "memory",
+      "snippet": "- **Nano-influencer collaboration** → Authentic, low-cost reach. - **Lead magnet:** 50 free coins (enough for 100 tracks) at near-zero API cost to us. - **Content direction:** Humorous, weird, or highly **relatable Polish-themed songs** to drive shares. - **Hashtag strategy:** `#mojhitPL` for trackability and community building. - **Funnel endpoint:** Link in bio to a **guest-generation (Lead Magnet) page**. 2. **Economics:** - **Target CPA:** < 2 PLN per registered user. - **Value perception:** 50 coins presented as a ~15 PLN value, though our actual cost (API tokens) is minimal. 3. **Milestone & Dependency:** Campaign launch is **dependent on verificat",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4698191434144973,
+      "maxScore": 0.4698191434144973,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-15T15:28:20.487Z",
+      "queryHashes": [
+        "2b9c9b85c61b"
+      ],
+      "recallDays": [
+        "2026-04-15"
+      ],
+      "conceptTags": [
+        "nano-influencer",
+        "low-cost",
+        "near-zero",
+        "polish-themed",
+        "guest-generation",
+        "nano",
+        "influencer",
+        "collaboration"
+      ]
+    },
+    "memory:memory/2026-04-07.md:19:28": {
+      "key": "memory:memory/2026-04-07.md:19:28",
+      "path": "memory/2026-04-07.md",
+      "startLine": 19,
+      "endLine": 28,
+      "source": "memory",
+      "snippet": "- **12:00** Switched from LightRAG to OpenViking (more advanced agent-native memory system). Cloned OpenViking repo, created ov.conf with DeepSeek (LLM) and Gemini (embeddings) keys. - **12:35** Launched OpenViking via Docker Compose. Web UI works on http://localhost:8020. API on http://localhost:1933 appears healthy. - **13:00** Reviewed project mojhit.pl structure (React frontend, Node backend, Python Suno-API bridge, double-currency economy). Discussed past token overflows (110% context used) that caused session resets. - **13:30** Preparing to import entire E:\\mojhit project into OpenViking memory using `ov add-resource` CLI. Verified `ov` CLI is installed (version 0.3.3). - **13:48** Op",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4692935973405838,
+      "maxScore": 0.4692935973405838,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-15T15:28:20.487Z",
+      "queryHashes": [
+        "2b9c9b85c61b"
+      ],
+      "recallDays": [
+        "2026-04-15"
+      ],
+      "conceptTags": [
+        "embedding",
+        "embeddings",
+        "agent-native",
+        "ov.conf",
+        "mojhit.pl",
+        "suno-api",
+        "double-currency",
+        "add-resource"
+      ]
+    },
+    "memory:memory/2026-03-24.md:12:19": {
+      "key": "memory:memory/2026-03-24.md:12:19",
+      "path": "memory/2026-03-24.md",
+      "startLine": 12,
+      "endLine": 19,
+      "source": "memory",
+      "snippet": "- Analyzed OpenClaw logs: confirmed stable gateway operation, resolved bonjour name conflicts, and verified image resizing behavior. ## Project mojhit.pl (AntiGravity / React) - **Technical Specification (ТЗ):** Began drafting a detailed, step-by-step feature specification based on 3 provided Google Docs and UX/UI references from competitor \"Bitlo\". - **Onboarding:** Hero section with a 3-step guide and an option for unauthenticated \"Demo generation\" (15-30 seconds) vs direct registration. - **Auth/Registration:** Unified modal with Social Login (Google, Apple, FB), Email + Password, and \"Guest Mode\". Implemented Bonus Credits upon signup with strict IP/Device anti-fraud limits to prevent a",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.5251026943325994,
+      "maxScore": 0.5312303245067596,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-20T11:06:45.478Z",
+      "queryHashes": [
+        "2b9c9b85c61b",
+        "31b56c137787",
+        "50067ce263a6"
+      ],
+      "recallDays": [
+        "2026-04-15",
+        "2026-04-20"
+      ],
+      "conceptTags": [
+        "gateway",
+        "mojhit.pl",
+        "step-by-step",
+        "ux/ui",
+        "3-step",
+        "15-30",
+        "auth/registration",
+        "ip/device"
+      ]
+    },
+    "memory:memory/2026-03-23.md:1:7": {
+      "key": "memory:memory/2026-03-23.md:1:7",
+      "path": "memory/2026-03-23.md",
+      "startLine": 1,
+      "endLine": 7,
+      "source": "memory",
+      "snippet": "- 19:00: Investigated Control UI missing assets issue for OpenClaw 2026.3.22. Found that the published npm package is missing the compiled \\dist/control-ui\\ directory and the \\scripts/ui.js\\ file required to build it locally. Offered to pull the repository and build the UI manually. - Project pivot: Dropping Bubble.io completely. The project (mojhit.pl) will be built entirely using Google AntiGravity. - Discussed project architecture for mojhit.pl (Vibe Coding era). Defined Frontend (Vanilla/React + Tailwind), Backend (Node.js/Express), DB (Supabase/PostgreSQL), APIs (Gemini 2.5, Kie.ai/Suno V5), and Payments (Stripe/P24).",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.467670938372612,
+      "maxScore": 0.467670938372612,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-15T15:28:20.487Z",
+      "queryHashes": [
+        "2b9c9b85c61b"
+      ],
+      "recallDays": [
+        "2026-04-15"
+      ],
+      "conceptTags": [
+        "2026.3.22",
+        "dist/control-ui",
+        "scripts/ui.js",
+        "bubble.io",
+        "mojhit.pl",
+        "vanilla/react",
+        "node.js/express",
+        "supabase/postgresql"
+      ]
+    },
+    "memory:memory/2026-04-09.md:78:105": {
+      "key": "memory:memory/2026-04-09.md:78:105",
+      "path": "memory/2026-04-09.md",
+      "startLine": 78,
+      "endLine": 105,
+      "source": "memory",
+      "snippet": "* **Recommended Model:** Claude Opus for high-stakes, structural planning and premium prose; Sonnet for faster, iterative brainstorming. * **Key Vibe:** Collaborative and adaptable to an author's unique voice. * Cross-link: `MEMORY.md#llm-application-patterns` (for patterns in creative AI collaboration). ## Technical Stack Considerations * **LLM Provider:** Kie.ai is noted as a current cost-effective option for accessing Claude models. * **System Prompting:** Identified as critically important, especially for defining persona, style, and safety rules for the psychologist application. * Cross-link: `MEMORY.md#prompt-engineering` (for techniques on crafting effective syste",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4672127336263656,
+      "maxScore": 0.4672127336263656,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-15T15:28:20.487Z",
+      "queryHashes": [
+        "2b9c9b85c61b"
+      ],
+      "recallDays": [
+        "2026-04-15"
+      ],
+      "conceptTags": [
+        "high-stakes",
+        "cross-link",
+        "memory.md",
+        "llm-application-patterns",
+        "kie.ai",
+        "cost-effective",
+        "prompt-engineering",
+        "recommended"
+      ]
+    },
+    "memory:memory/2026-03-13.md:1:12": {
+      "key": "memory:memory/2026-03-13.md:1:12",
+      "path": "memory/2026-03-13.md",
+      "startLine": 1,
+      "endLine": 12,
+      "source": "memory",
+      "snippet": "# 2026-03-13 ## System & Tools - Fixed `EACCES` issue on ThinkPad T430 (restored `openclaw.json` ownership via `sudo chown -R moltbot:moltbot ~/.openclaw`). - Re-installed and started the OpenClaw gateway as a Scheduled Task on Windows (now starts automatically). ## Bubble.io Project: mojhit.pl - **Domain Acquired:** `mojhit.pl` - **Frontend Direction:** Shifted from dark/neon cyberpunk to a clean, high-conversion \"e-commerce\" UI style (white backgrounds, dark grey typography, vibrant orange `#FF6A00` CTAs). - **Core Elements:** Trust badges (\"Stworzone w Polsce ⭐️⭐️⭐️⭐️⭐️\"), sticky footer with changing CTA text, animated buttons (gradient shimmer + GIF icons). - **Progress:** Generated UI",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.9928873673081398,
+      "maxScore": 0.5284433260560035,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-20T11:06:45.478Z",
+      "queryHashes": [
+        "2b9c9b85c61b",
+        "50067ce263a6"
+      ],
+      "recallDays": [
+        "2026-04-15",
+        "2026-04-20"
+      ],
+      "conceptTags": [
+        "gateway",
+        "openclaw.json",
+        "re-installed",
+        "bubble.io",
+        "mojhit.pl",
+        "dark/neon",
+        "high-conversion",
+        "e-commerce"
+      ]
+    },
+    "memory:memory/2026-04-13.md:1:11": {
+      "key": "memory:memory/2026-04-13.md:1:11",
+      "path": "memory/2026-04-13.md",
+      "startLine": 1,
+      "endLine": 11,
+      "source": "memory",
+      "snippet": "# 2026-04-13 ## [2026-04-13] ingest | Nightly Memory Compiler - Processed daily log from 2026-04-12. - Updated contacts.md (already current). - Updated lighting-design.md (already current). - Created new wiki file: [[telegram-bot-guidelines]] with lessons on Telegram message length limits and interactive button patterns. - Updated MEMORY.md index with link to new wiki file. --- *Compiled by Nightly Memory Compiler cron job.*",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.46330735385417937,
+      "maxScore": 0.46330735385417937,
+      "firstRecalledAt": "2026-04-15T15:28:20.487Z",
+      "lastRecalledAt": "2026-04-15T15:28:20.487Z",
+      "queryHashes": [
+        "2b9c9b85c61b"
+      ],
+      "recallDays": [
+        "2026-04-15"
+      ],
+      "conceptTags": [
+        "contacts.md",
+        "lighting-design.md",
+        "telegram-bot-guidelines",
+        "memory.md",
+        "ingest",
+        "nightly",
+        "compiler",
+        "processed"
+      ]
+    },
+    "memory:memory/2026-04-15.md:1:30": {
+      "key": "memory:memory/2026-04-15.md:1:30",
+      "path": "memory/2026-04-15.md",
+      "startLine": 1,
+      "endLine": 30,
+      "source": "memory",
+      "snippet": "# 2026-04-15 — Daily Log ## [2026-04-15 15:13] infra | Qwen provider switched to OpenRouter - Alex asked to switch `qwen` provider from DashScope to OpenRouter for better pricing - OpenRouter endpoint: `https://openrouter.ai/api/v1` - OpenRouter API key stored in `openclaw.json` config (models.providers.qwen) - Model on OpenRouter requires full path: `qwen/qwen3.6-plus` - First patch attempt failed (validation error: array vs object, unrecognized keys) - Second patch succeeded — qwen provider now points to OpenRouter - DeepSeek key also stored in same patch: `sk-or-v1-47b2...` - **IMPORTANT:** API keys are in openclaw.json — sensitive data, don't leak ## [2026-04-15 15:17] infra | Gateway",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.227602255388645,
+      "maxScore": 0.746403804465679,
+      "firstRecalledAt": "2026-04-16T10:54:24.177Z",
+      "lastRecalledAt": "2026-04-24T09:47:51.660Z",
+      "queryHashes": [
+        "0c6b9f070787",
+        "2604a18db9eb"
+      ],
+      "recallDays": [
+        "2026-04-16",
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "gateway",
+        "router",
+        "openrouter.ai/api/v1",
+        "openclaw.json",
+        "models.providers.qwen",
+        "qwen/qwen3.6-plus",
+        "sk-or-v1-47b2",
+        "log"
+      ]
+    },
+    "memory:memory/2026-04-15.md:167:192": {
+      "key": "memory:memory/2026-04-15.md:167:192",
+      "path": "memory/2026-04-15.md",
+      "startLine": 167,
+      "endLine": 192,
+      "source": "memory",
+      "snippet": "- Second patch succeeded — qwen provider now points to OpenRouter - DeepSeek key also stored in same patch: `sk-or-v1-47b2...` - **IMPORTANT:** API keys are in openclaw.json — sensitive data, don't leak ## [2026-04-15 15:17] infra | Gateway restarted after config change - Gateway restarted at 15:17 after `openclaw.json` change - Startup time: ~22.8s - Webchat and Telegram plugin (`@architect_gemini_bot`) loaded successfully - Gateway probe: healthy ## [2026-04-15 15:20] infra | DeepSeek API health check - Tested DeepSeek API directly via curl (`api.deepseek.com/v1/chat/completions`) - Result: 200 OK, model `deepseek-chat` responded correctly - API key is valid, DeepSeek endpoint is working",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.2051070150708194,
+      "maxScore": 0.7293350067709918,
+      "firstRecalledAt": "2026-04-16T10:54:24.177Z",
+      "lastRecalledAt": "2026-04-24T09:47:51.660Z",
+      "queryHashes": [
+        "0c6b9f070787",
+        "2604a18db9eb"
+      ],
+      "recallDays": [
+        "2026-04-16",
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "gateway",
+        "router",
+        "sk-or-v1-47b2",
+        "openclaw.json",
+        "22.8s",
+        "architect-gemini-bot",
+        "deepseek-chat",
+        "second"
+      ]
+    },
+    "memory:memory/2026-04-15.md:151:173": {
+      "key": "memory:memory/2026-04-15.md:151:173",
+      "path": "memory/2026-04-15.md",
+      "startLine": 151,
+      "endLine": 173,
+      "source": "memory",
+      "snippet": "- Сервер запускается, но может падать из‑за отсутствия таблиц в Supabase. - Папка `suno-api` и файл `server/suno.js` удалены — Python‑зависимостей больше нет. - **Следующие шаги:** 1. **Создать таблицы в Supabase:** `users` (если нет) и `kie_tasks` (по схеме из инструкции). 2. **Настроить ngrok** для публичного колбэк‑URL, обновить `KIE_CALLBACK_BASE_URL`. 3. **Поправить фронтенд:** адаптировать под новый формат ответа (`{ taskId, dbId }`), увеличить лимит промпта до 500 символов, добавить выбор модели. 4. **Протестировать:** авторизацию, генерацию через kie.ai, получение колбэка. - **Преимущества новой архитектуры:** Нет Python‑зависимостей, готовый колбэк‑механизм, лучше для пр",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.7189055714334636,
+      "maxScore": 0.7449678930963664,
+      "firstRecalledAt": "2026-04-16T10:54:24.177Z",
+      "lastRecalledAt": "2026-04-24T09:47:51.660Z",
+      "queryHashes": [
+        "0c6b9f070787",
+        "f187836f896e",
+        "2604a18db9eb"
+      ],
+      "recallDays": [
+        "2026-04-16",
+        "2026-04-22",
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "suno-api",
+        "server/suno.js",
+        "kie-tasks",
+        "kie-callback-base-url",
+        "kie.ai",
+        "сервер",
+        "запускается",
+        "может"
+      ]
+    },
+    "memory:memory/2026-04-16.md:44:71": {
+      "key": "memory:memory/2026-04-16.md:44:71",
+      "path": "memory/2026-04-16.md",
+      "startLine": 44,
+      "endLine": 71,
+      "source": "memory",
+      "snippet": "r API (sk-or-v1-...) - **Новый:** Alibaba DashScope (sk-8888cdb5587248dc8771db9594f7616b)",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.48545088469982145,
+      "maxScore": 0.48545088469982145,
+      "firstRecalledAt": "2026-04-16T10:54:34.979Z",
+      "lastRecalledAt": "2026-04-16T10:54:34.979Z",
+      "queryHashes": [
+        "ca4956042d37"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "sk-or-v1",
+        "api",
+        "новый",
+        "alibaba",
+        "dashscope",
+        "8888cdb5587248dc8771db9594f7616b"
+      ]
+    },
+    "memory:memory/2026-03-25.md:1:3": {
+      "key": "memory:memory/2026-03-25.md:1:3",
+      "path": "memory/2026-03-25.md",
+      "startLine": 1,
+      "endLine": 3,
+      "source": "memory",
+      "snippet": "- **?? Update (Support Chatbot):** Added a floating AI-powered support widget. The bot (via Gemini/Claude API) handles FAQs and basic troubleshooting. Escalation logic: If unable to help, the bot collects user info and sends an alert to the admin via Telegram/Email. - **?? Update (Bot Name & Mobile Nav):** Support AI is officially named \" Hit-Assistant\\. Mobile UI requires a Sticky Bottom Navigation Bar (always visible on scroll) with 5 items: Home, Explore, Create (prominent central FAB overlapping the bar), Likes, Profile. - **?? Update (Admin Panel Architecture & Features):** Admin Panel should be a separate SPA on a subdomain (admin.mojhit.pl) for security and development speed. Expanded",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.4279559969902038,
+      "maxScore": 0.4802857547998428,
+      "firstRecalledAt": "2026-04-16T12:23:52.142Z",
+      "lastRecalledAt": "2026-04-20T11:08:00.957Z",
+      "queryHashes": [
+        "501cfa9d1bda",
+        "9c14da05cbf2",
+        "e4f4414bfd44"
+      ],
+      "recallDays": [
+        "2026-04-16",
+        "2026-04-20"
+      ],
+      "conceptTags": [
+        "ai-powered",
+        "gemini/claude",
+        "telegram/email",
+        "hit-assistant",
+        "admin.mojhit.pl",
+        "update",
+        "support",
+        "chatbot"
+      ]
+    },
+    "memory:memory/2026-03-18.md:1:12": {
+      "key": "memory:memory/2026-03-18.md:1:12",
+      "path": "memory/2026-03-18.md",
+      "startLine": 1,
+      "endLine": 12,
+      "source": "memory",
+      "snippet": "- **2026-03-18 (Project mojhit.pl - Checkpoint):** - **Status:** Core MVP functionality is complete and running locally (`E:\\mojhit\\mudbord`). The user interacts with a 3-step modal wizard. - **Backend (Node.js/Express):** - `/api/generate` successfully calls Google Gemini API (model `gemini-2.5-flash`) using a professional producer prompt (enforcing tags like `[Verse]`, `[Chorus]`) to generate Polish song lyrics based on user input (occasion, genre, details). - `/api/create-music` successfully submits the generated lyrics to the Kie.ai API (Suno V5 engine) and receives a `taskId`. - `/api/check-music/:taskId` implements polling against the updated Kie.ai endpoint (`/api/v1/",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4768627792596817,
+      "maxScore": 0.4768627792596817,
+      "firstRecalledAt": "2026-04-16T12:23:52.142Z",
+      "lastRecalledAt": "2026-04-16T12:23:52.142Z",
+      "queryHashes": [
+        "501cfa9d1bda"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "mojhit.pl",
+        "3-step",
+        "node.js/express",
+        "api/generate",
+        "gemini-2.5-flash",
+        "api/create-music",
+        "kie.ai",
+        "api/check-music"
+      ]
+    },
+    "memory:memory/2026-04-15.md:290:308": {
+      "key": "memory:memory/2026-04-15.md:290:308",
+      "path": "memory/2026-04-15.md",
+      "startLine": 290,
+      "endLine": 308,
+      "source": "memory",
+      "snippet": "- **Фронтенд обновлён кодером:** Добавлен нативный `<audio controls />`, отображение вариантов, политика хранения 14 дней, увеличен таймаут генерации до 5 минут. - **Осталось починить:** Кнопки действий, сохранение двух вариантов треков, добавление поля `expired` в БД. - **Следующие действия пользователя:** - Выполнить SQL для добавления поля `expired`. - Проверить консоль браузера на ошибки кнопок. - Выполнить fetch статуса трека для проверки массива `variants`. - **Статус:** Сервер работает, фронтенд почти готов, остались мелкие баги. ## [2026-04-15 22:30] project | mojhit.pl: исправление ошибок и добавление кнопок - **Исправлена ошибка \"statusData is not defined\" в Generator.tsx**:",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.5742052137851714,
+      "maxScore": 0.5473911061882972,
+      "firstRecalledAt": "2026-04-20T09:05:40.237Z",
+      "lastRecalledAt": "2026-04-22T12:12:59.954Z",
+      "queryHashes": [
+        "31b56c137787",
+        "50067ce263a6",
+        "f187836f896e"
+      ],
+      "recallDays": [
+        "2026-04-20",
+        "2026-04-22"
+      ],
+      "conceptTags": [
+        "mojhit.pl",
+        "generator.tsx",
+        "фронтенд",
+        "обновлён",
+        "кодером",
+        "добавлен",
+        "нативный",
+        "audio"
+      ]
+    },
+    "memory:memory/2026-04-15.md:260:277": {
+      "key": "memory:memory/2026-04-15.md:260:277",
+      "path": "memory/2026-04-15.md",
+      "startLine": 260,
+      "endLine": 277,
+      "source": "memory",
+      "snippet": "3. **Поправить фронтенд:** адаптировать под новый формат ответа (`{ taskId, dbId }`), увеличить лимит промпта до 500 символов, добавить выбор модели. 4. **Протестировать:** авторизацию, генерацию через kie.ai, получение колбэка. - **Преимущества новой архитектуры:** Нет Python‑зависимостей, готовый колбэк‑механизм, лучше для продакшена, проще масштабировать. ## [2026-04-15 19:30] project | mojhit.pl: SQL ограничения и polling механизм - **SQL ограничения** — `task_id` больше не UNIQUE, убрано `NOT NULL` (для pending задач). Исправлено через Supabase SQL Editor. - **Polling‑механизм** — сервер сам опрашивает kie.ai каждые 30 секунд, если статус `pending`. Обновляет БД автоматически. - **",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.5380184367299079,
+      "maxScore": 0.5380184367299079,
+      "firstRecalledAt": "2026-04-20T09:05:40.237Z",
+      "lastRecalledAt": "2026-04-20T09:05:40.237Z",
+      "queryHashes": [
+        "31b56c137787"
+      ],
+      "recallDays": [
+        "2026-04-20"
+      ],
+      "conceptTags": [
+        "kie.ai",
+        "mojhit.pl",
+        "task-id",
+        "поправить",
+        "фронтенд",
+        "адаптировать",
+        "под",
+        "новый"
+      ]
+    },
+    "memory:memory/2026-04-15.md:273:293": {
+      "key": "memory:memory/2026-04-15.md:273:293",
+      "path": "memory/2026-04-15.md",
+      "startLine": 273,
+      "endLine": 293,
+      "source": "memory",
+      "snippet": "- **Воспроизведение:** Возможно, фронтенд использует неверное поле `audio_url` или блокировка CORS. - **Кнопки:** Отсутствуют соответствующие эндпоинты бекенда. - **Варианты:** Таблица `kie_track_variants` пуста (возможно, внешний ключ не создан или колбэк не сохраняет варианты). - **Действия:** - Создана таблица `kie_track_variants` (уже существует, внешний ключ `fk_kie_track_variants_task_id` уже есть). - Обновлён код `index.js` для сохранения всех вариантов треков в колбэке и polling. - **Сервер перезапущен** (процесс `glow-crest` на порту 3000). - **Следующие шаги:** - Добавить поле `expired` в таблицу `tracks` для логического удаления старых треков. - Создать эндпоинты д",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.0282853528857232,
+      "maxScore": 0.5299437567591667,
+      "firstRecalledAt": "2026-04-20T09:05:40.237Z",
+      "lastRecalledAt": "2026-04-22T12:12:59.954Z",
+      "queryHashes": [
+        "31b56c137787",
+        "f187836f896e"
+      ],
+      "recallDays": [
+        "2026-04-20",
+        "2026-04-22"
+      ],
+      "conceptTags": [
+        "audio-url",
+        "kie-track-variants",
+        "fk-kie-track-variants-task-id",
+        "index.js",
+        "glow-crest",
+        "воспроизведение",
+        "возможно",
+        "фронтенд"
+      ]
+    },
+    "memory:memory/2026-04-16.md:49:76": {
+      "key": "memory:memory/2026-04-16.md:49:76",
+      "path": "memory/2026-04-16.md",
+      "startLine": 49,
+      "endLine": 76,
+      "source": "memory",
+      "snippet": "│ │ ├── components/ │ │ │ ├── Generator.tsx # 🆕 Все 6 улучшений │ │ │ └── ChatMessage.tsx # 🆕 Создан (markdown-рендер) │ │ └── pages/ │ │ └── PolitykaPrywatnosci.tsx # 🆙 RODO готово │ └── package.json ├── server/ │ └── index.js # 🆙 Admin middleware, улучшения └── .env.example # 📝 Добавить ADMIN_USER_IDS ``` ### 🔄 Что осталось для завтра: 1. **Тестирование** всех 6 улучшений DJ Marek 2. **Валидация** RODO compliance (проверить загрузку GA4/Clarity только после согласия) 3. **Настройка** `ADMIN_USER_IDS` в `.env` для production 4. **Деплой** обновлений на staging/production 5. **Продолжение** других задач mojhi",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.5242859274148941,
+      "maxScore": 0.5242859274148941,
+      "firstRecalledAt": "2026-04-20T09:05:40.237Z",
+      "lastRecalledAt": "2026-04-20T09:05:40.237Z",
+      "queryHashes": [
+        "31b56c137787"
+      ],
+      "recallDays": [
+        "2026-04-20"
+      ],
+      "conceptTags": [
+        "generator.tsx",
+        "chatmessage.tsx",
+        "markdown-рендер",
+        "politykaprywatnosci.tsx",
+        "package.json",
+        "index.js",
+        "env.example",
+        "admin-user-ids"
+      ]
+    },
+    "memory:memory/2026-03-31.md:9:14": {
+      "key": "memory:memory/2026-03-31.md:9:14",
+      "path": "memory/2026-03-31.md",
+      "startLine": 9,
+      "endLine": 14,
+      "source": "memory",
+      "snippet": "- **Monorepo Creation**: Successfully transformed project into monorepo structure at `E:\\mojhit\\MH` with `client/` (React + Vite frontend) and `server/` (Node.js/Express backend). Fixed dependency issues and got both servers running (`localhost:5173` frontend, `localhost:3000` backend). - **Supabase Setup**: Created Supabase project with tables `users`, `tracks`, `transactions`. SQL schema applied successfully. - **Clerk Authentication**: Integrated Clerk for user authentication. Frontend uses `@clerk/clerk-react`, backend uses `@clerk/express`. Successfully tested user registration/login flow. - **Current Status**: User can log in via Clerk, sees static balance (12 coins, 150 notes). Backen",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.9912563323974608,
+      "maxScore": 0.5067701518535613,
+      "firstRecalledAt": "2026-04-20T11:02:45.753Z",
+      "lastRecalledAt": "2026-04-21T10:16:15.097Z",
+      "queryHashes": [
+        "ddd70defab15",
+        "b155bd9c9833"
+      ],
+      "recallDays": [
+        "2026-04-20",
+        "2026-04-21"
+      ],
+      "conceptTags": [
+        "node.js/express",
+        "clerk/clerk-react",
+        "clerk/express",
+        "registration/login",
+        "monorepo",
+        "creation",
+        "successfully",
+        "transformed"
+      ]
+    },
+    "memory:memory/2026-04-15.md:138:155": {
+      "key": "memory:memory/2026-04-15.md:138:155",
+      "path": "memory/2026-04-15.md",
+      "startLine": 138,
+      "endLine": 155,
+      "source": "memory",
+      "snippet": "1. Python version mismatch for suno‑api (needs >=3.12) 2. Server instability (possible missing Supabase tables or invalid Clerk keys) 3. Suno‑API dependency on local Python service at `http://127.0.0.1:8000` - **Next:** Decide on path — fix Python environment + server issues, or proceed with mock implementation for UI testing ## [2026-04-15 19:10] project | mojhit.pl переходит на kie.ai API вместо локального suno‑api - **Причина:** Избавление от Python‑зависимостей (не нужен Python 3.12+), использование коммерческого сервиса с SLA, вебхуками, лимитами. - **Сделанные изменения (кодером):** 1. В `server/.env` добавлены `KIE_API_KEY`, `KIE_API_BASE_URL`, `KIE_CALLBACK_BASE_URL`. 2. С",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.4698029369115828,
+      "maxScore": 0.512474763393402,
+      "firstRecalledAt": "2026-04-20T11:02:45.753Z",
+      "lastRecalledAt": "2026-04-23T08:44:38.992Z",
+      "queryHashes": [
+        "ddd70defab15",
+        "b155bd9c9833",
+        "720309e3a93d"
+      ],
+      "recallDays": [
+        "2026-04-20",
+        "2026-04-21",
+        "2026-04-23"
+      ],
+      "conceptTags": [
+        "3.12",
+        "127.0.0.1",
+        "mojhit.pl",
+        "kie.ai",
+        "kie-api-key",
+        "kie-api-base-url",
+        "kie-callback-base-url",
+        "python"
+      ]
+    },
+    "memory:memory/2026-04-18.md:1:8": {
+      "key": "memory:memory/2026-04-18.md:1:8",
+      "path": "memory/2026-04-18.md",
+      "startLine": 1,
+      "endLine": 8,
+      "source": "memory",
+      "snippet": "## [2026-04-18] ingest | Server Maintenance & Ngrok Tunnel - Восстановлена работа локальных серверов mojhit.pl: - Frontend (Vite) запущен на порту 5173. - Backend (Node.js) перезапущен на порту 3000 (убит зависший процесс, запущен новый). - Поднят ngrok-туннель для бэкенда на порту 3000. - Использован статический домен (`fetal-hydroxide-wobbly.ngrok-free.dev`), чтобы не ломать привязку вебхуков (Clerk, KIE). - Конфиги `.env` не потребовали изменений. - Работа приостановлена, шеф ушел праздновать день рождения подруги.",
+      "recallCount": 5,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 2.5091093927621837,
+      "maxScore": 0.5425051361322403,
+      "firstRecalledAt": "2026-04-20T11:02:45.753Z",
+      "lastRecalledAt": "2026-04-24T09:28:51.481Z",
+      "queryHashes": [
+        "ddd70defab15",
+        "b155bd9c9833",
+        "720309e3a93d",
+        "42092894eb47",
+        "fa6b10c336c9"
+      ],
+      "recallDays": [
+        "2026-04-20",
+        "2026-04-21",
+        "2026-04-23",
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "mojhit.pl",
+        "node.js",
+        "ngrok-туннель",
+        "ingest",
+        "server",
+        "maintenance",
+        "ngrok",
+        "tunnel"
+      ]
+    },
+    "memory:memory/2026-03-24.md:1:15": {
+      "key": "memory:memory/2026-03-24.md:1:15",
+      "path": "memory/2026-03-24.md",
+      "startLine": 1,
+      "endLine": 15,
+      "source": "memory",
+      "snippet": "- Architecture Locked: Frontend (React/Vanilla + Tailwind), Backend (Node.js/Express), Auth (Clerk - chosen for modern UI), Database (Supabase - Postgres), Audio Storage (Cloudflare R2 - zero egress fees). - Discussed security & anti-fraud measures: Cloudflare (DDoS), Node.js Rate Limiting (API budget protection), Stripe Radar (card fraud), Supabase RLS (database row-level security). - Discussed Admin Panel requirements: API key management (Stripe, BLIK, Kie.ai, Gemini), ad/link management, user statistics/management (balance edits, block/unblock), and an affiliate/referral program with payout tracking. - Discussed Vibe Coding UI/UX design philosophy: AI-first generation (v0.dev, Bolt, Lo",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4736288100481033,
+      "maxScore": 0.4736288100481033,
+      "firstRecalledAt": "2026-04-20T11:02:45.753Z",
+      "lastRecalledAt": "2026-04-20T11:02:45.753Z",
+      "queryHashes": [
+        "ddd70defab15"
+      ],
+      "recallDays": [
+        "2026-04-20"
+      ],
+      "conceptTags": [
+        "react/vanilla",
+        "node.js/express",
+        "anti-fraud",
+        "node.js",
+        "row-level",
+        "kie.ai",
+        "ad/link",
+        "statistics/management"
+      ]
+    },
+    "memory:memory/2026-03-16.md:1:15": {
+      "key": "memory:memory/2026-03-16.md:1:15",
+      "path": "memory/2026-03-16.md",
+      "startLine": 1,
+      "endLine": 15,
+      "source": "memory",
+      "snippet": "# 2026-03-16 ## System & Tools - Continued development using Bubble.io in tandem with Google AntiGravity (and Claude/Gemini AI agents) to generate UI/UX code. - Encountered session visibility issues across interfaces: The Telegram session context (where code generations occurred) was not synced/flushed to the active `localhost:18789` webchat session. ## Bubble.io Project: mojhit.pl - **Design Iteration:** Moved away from dark/neon themes to a soft, modern e-commerce look (inspired by Allegro/Bitlo) with pure white backgrounds (`#FFFFFF`), dark slate text (`#1A1A1A`), and warm orange CTA accents (`#FF5A00`). - **Generated UI Code (`mojhit_allegro_final.html`, `mojhit_claude.html`):** - Gl",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.47522760331630703,
+      "maxScore": 0.47522760331630703,
+      "firstRecalledAt": "2026-04-20T11:06:40.652Z",
+      "lastRecalledAt": "2026-04-20T11:06:40.652Z",
+      "queryHashes": [
+        "9c14da05cbf2"
+      ],
+      "recallDays": [
+        "2026-04-20"
+      ],
+      "conceptTags": [
+        "bubble.io",
+        "claude/gemini",
+        "ui/ux",
+        "synced/flushed",
+        "mojhit.pl",
+        "dark/neon",
+        "e-commerce",
+        "allegro/bitlo"
+      ]
+    },
+    "memory:memory/2026-04-02.md:1:12": {
+      "key": "memory:memory/2026-04-02.md:1:12",
+      "path": "memory/2026-04-02.md",
+      "startLine": 1,
+      "endLine": 12,
+      "source": "memory",
+      "snippet": "## 2026-04-02 13:46 - **System Maintenance:** Updated OpenClaw to `2026.4.1` via npm to resolve pnpm dynamic import issues with plugins (grammy, slack). Disabled pnpm auto-update to prevent future silent breakages. - **AI Model Strategy:** Confirmed pricing and strategy. Official DeepSeek API for primary text tasks (highly cost-effective), Kimi-k2.5 for image/multimodal, and Qwen3.6-Plus available for massive 1M context needs. - **Project mojhit.pl Progress:** - Analyzed codebase at `E:\\mojhit\\MH`. It's a working monorepo. - Clerk webhooks (auth + initial balance) and Supabase DB logic are active. - Frontend has UI built out (Generator, TrackDetail, CookieBanner) but uses mock data/U",
+      "recallCount": 2,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.0113393396139145,
+      "maxScore": 0.5430572181940079,
+      "firstRecalledAt": "2026-04-20T11:06:40.652Z",
+      "lastRecalledAt": "2026-04-20T11:06:45.478Z",
+      "queryHashes": [
+        "9c14da05cbf2",
+        "50067ce263a6"
+      ],
+      "recallDays": [
+        "2026-04-20"
+      ],
+      "conceptTags": [
+        "2026.4.1",
+        "auto-update",
+        "cost-effective",
+        "kimi-k2.5",
+        "image/multimodal",
+        "qwen3.6-plus",
+        "mojhit.pl",
+        "data/u"
+      ]
+    },
+    "memory:memory/2026-04-15.md:233:251": {
+      "key": "memory:memory/2026-04-15.md:233:251",
+      "path": "memory/2026-04-15.md",
+      "startLine": 233,
+      "endLine": 251,
+      "source": "memory",
+      "snippet": "- Extracted new facts from today's log: Qwen provider switch, OpenRouter integration, web‑search disabled, vision model added, Nemotron 3 Super added, mojhit.pl location update - Updated `memory/wiki/system-resilience.md` with current provider landscape - No new wiki files created; existing index remains valid ## [2026-04-15 18:28] project | Attempted local launch of mojhit.pl - Client (React/Vite) started successfully on `http://localhost:5173` after reinstalling dependencies - Server (Node.js/Express) starts on port 3000 but exits immediately with code 0 — requires investigation - Suno‑API Python microservice requires Python 3.12+ (current: 3.10.11) — installation blocked - **Issues ident",
+      "recallCount": 4,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 2.037214767932892,
+      "maxScore": 0.5456665694713592,
+      "firstRecalledAt": "2026-04-20T11:06:45.478Z",
+      "lastRecalledAt": "2026-04-23T08:44:38.992Z",
+      "queryHashes": [
+        "50067ce263a6",
+        "b155bd9c9833",
+        "f187836f896e",
+        "720309e3a93d"
+      ],
+      "recallDays": [
+        "2026-04-20",
+        "2026-04-21",
+        "2026-04-22",
+        "2026-04-23"
+      ],
+      "conceptTags": [
+        "router",
+        "mojhit.pl",
+        "memory/wiki/system-resilience.md",
+        "react/vite",
+        "node.js/express",
+        "3.12",
+        "3.10.11",
+        "extracted"
+      ]
+    },
+    "memory:memory/2026-04-20.md:109:127": {
+      "key": "memory:memory/2026-04-20.md:109:127",
+      "path": "memory/2026-04-20.md",
+      "startLine": 109,
+      "endLine": 127,
+      "source": "memory",
+      "snippet": "- Key technical decisions: Used Suno customMode handling with prompt length limits (5000 chars for custom, 500 for normal), added Polish error messages - Testing: Confirmed Supabase table exists, API key is valid, server running on port 3000, fallback logic operational - Next steps: Verify exact status endpoint format from Suno documentation, test full generation cycle, configure webhook callbacks ## [2026-04-20] ingest | System Architecture - Implemented API settings management system with Supabase table `api_settings` and row ID `00000000-0000-0000-0000-000000000000` - Added `getMusicProviders()` function that returns enabled music providers sorted by priority - Fallback logic automatical",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4984299451112747,
+      "maxScore": 0.4984299451112747,
+      "firstRecalledAt": "2026-04-20T21:55:53.864Z",
+      "lastRecalledAt": "2026-04-20T21:55:53.864Z",
+      "queryHashes": [
+        "df3676db75e9"
+      ],
+      "recallDays": [
+        "2026-04-20"
+      ],
+      "conceptTags": [
+        "api-settings",
+        "key",
+        "technical",
+        "decisions",
+        "used",
+        "suno",
+        "custommode",
+        "handling"
+      ]
+    },
+    "memory:memory/2026-04-20.md:123:131": {
+      "key": "memory:memory/2026-04-20.md:123:131",
+      "path": "memory/2026-04-20.md",
+      "startLine": 123,
+      "endLine": 131,
+      "source": "memory",
+      "snippet": "- Extracted API parameters from Suno documentation in `E:\\sunoapi\\Generate Suno AI Music - Suno API.html` - Used ngrok tunnel URL `https://fetal-hydroxide-wobbly.ngrok-free.dev` for callback testing - Server PID: 17600 (earlier), 20604 (current) – indicates restart after modifications ## [2026-04-20] ingest | Memory System Setup - Established LLM Wiki / Karpathy-style memory architecture as per MEMORY.md schema - Created this daily memory file following AGENTS.md guidelines for session continuity - Index file MEMORY.md contains references to mojhit.pl project documentation in `memory/wiki/` - Plan to maintain daily logs and periodically distill into curated long-term memory",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4970992863178253,
+      "maxScore": 0.4970992863178253,
+      "firstRecalledAt": "2026-04-20T21:55:53.864Z",
+      "lastRecalledAt": "2026-04-20T21:55:53.864Z",
+      "queryHashes": [
+        "df3676db75e9"
+      ],
+      "recallDays": [
+        "2026-04-20"
+      ],
+      "conceptTags": [
+        "api.html",
+        "karpathy-style",
+        "memory.md",
+        "agents.md",
+        "mojhit.pl",
+        "memory/wiki",
+        "long-term",
+        "extracted"
+      ]
+    },
+    "memory:memory/2026-04-16.md:1:29": {
+      "key": "memory:memory/2026-04-16.md:1:29",
+      "path": "memory/2026-04-16.md",
+      "startLine": 1,
+      "endLine": 29,
+      "source": "memory",
+      "snippet": "## [2026-04-16 14:41] 📋 Итог дня: Все изменения (проверка рабочей папки) ### ✅ Решено сегодня: #### 1. **Проблема Qwen API (RODO/cookie-задачи)** - **Файл:** `C:\\Users\\Admin\\.openclaw\\openclaw.json` - **Изменение:** `baseUrl` → `https://dashscope-intl.aliyuncs.com/compatible-mode/v1` (международная версия) - **Результат:** Qwen (`qwen3.6-plus`) работает через Alibaba DashScope, fallback на DeepSeek #### 2. **Polityka Prywatności (RODO compliance)** - **Файл:** `raw/MH/client/src/pages/PolitykaPrywatnosci.tsx` - **Правки:** - Нумерация: 5→6→7 (исправлен порядок) - Раздел 7: полные детали GA4 (cookies, хранение 26 мес., opt-out), Clarity (cookies, хранение 13 мес., ограничения), Meta",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.5034959614276886,
+      "maxScore": 0.5034959614276886,
+      "firstRecalledAt": "2026-04-22T12:12:59.954Z",
+      "lastRecalledAt": "2026-04-22T12:12:59.954Z",
+      "queryHashes": [
+        "f187836f896e"
+      ],
+      "recallDays": [
+        "2026-04-22"
+      ],
+      "conceptTags": [
+        "rodo/cookie-задачи",
+        "openclaw.json",
+        "qwen3.6-plus",
+        "opt-out",
+        "итог",
+        "дня",
+        "все",
+        "изменения"
+      ]
+    },
+    "memory:memory/2026-04-21.md:132:160": {
+      "key": "memory:memory/2026-04-21.md:132:160",
+      "path": "memory/2026-04-21.md",
+      "startLine": 132,
+      "endLine": 160,
+      "source": "memory",
+      "snippet": "- Updates via existing `handleUserUpdate` function - **Added track playback functionality** in Tracks moderation table: - New column \"Odtwarzaj\" between Okładka and Tytuł - Play button (play_arrow) opens audio URL in new window - If no audio_url, shows \"no_sound\" icon - Allows admins to listen to tracks directly from admin panel - **Implementation**: Modified `AdminDashboard.tsx` with proper React/TypeScript - **Time**: 17:30 GMT+2 ## [2026-04-21] fix | Audio generation error & architecture improvements ### Ошибка getApiSettings is not a function **Причина**: В обработчике `/api/suno/generate` использовался прямой вызов `require('./config/apiSettings')`, который возвращал новый эк",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.5001677393913269,
+      "maxScore": 0.5001677393913269,
+      "firstRecalledAt": "2026-04-22T12:12:59.954Z",
+      "lastRecalledAt": "2026-04-22T12:12:59.954Z",
+      "queryHashes": [
+        "f187836f896e"
+      ],
+      "recallDays": [
+        "2026-04-22"
+      ],
+      "conceptTags": [
+        "play-arrow",
+        "audio-url",
+        "no-sound",
+        "admindashboard.tsx",
+        "react/typescript",
+        "api/suno/generate",
+        "config/apisettings",
+        "updates"
+      ]
+    },
+    "memory:memory/2026-04-22.md:1:28": {
+      "key": "memory:memory/2026-04-22.md:1:28",
+      "path": "memory/2026-04-22.md",
+      "startLine": 1,
+      "endLine": 28,
+      "source": "memory",
+      "snippet": "## [2026-04-22] начало | Приветствие и загрузка контекста - Восстановлен контекст из MEMORY.md и memory/2026-04-21.md - Вчерашние итоги: полный цикл генерации аудио работает, бейджи продюсеров, админ-панель улучшена, вебхуки KIE решены через Tailscale, тексты песен добавлены. - Серверы остановлены, готовы к продолжению. - Задачи на сегодня: тестирование текстов песен, запуск видео-генерации для PRO, настройка монетизации, финальное тестирование. **Время**: 14:15 GMT+2 **Статус**: Ожидание указаний от пользователя. ## [2026-04-22 14:20] запуск | Серверы подняты - **Бекенд** запущен на порту 3000 (PID 29184, сессия faint-coral) - **Фронтенд** запущен на порту 5173 (PID 33680, сессия crisp-",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.49513412117958067,
+      "maxScore": 0.49513412117958067,
+      "firstRecalledAt": "2026-04-23T09:43:47.030Z",
+      "lastRecalledAt": "2026-04-23T09:43:47.030Z",
+      "queryHashes": [
+        "0c4b6996e6e6"
+      ],
+      "recallDays": [
+        "2026-04-23"
+      ],
+      "conceptTags": [
+        "memory.md",
+        "memory/2026-04-21.md",
+        "админ-панель",
+        "видео-генерации",
+        "faint-coral",
+        "начало",
+        "приветствие",
+        "загрузка"
+      ]
+    },
+    "memory:memory/2026-04-15.md:121:141": {
+      "key": "memory:memory/2026-04-15.md:121:141",
+      "path": "memory/2026-04-15.md",
+      "startLine": 121,
+      "endLine": 141,
+      "source": "memory",
+      "snippet": "- Launched subagent to test the free model via OpenRouter - Subagent completed in 3 seconds, used 17K tokens - **Result:** Model `qwen/nvidia/nemotron-3-super-120b-a12b:free` responded correctly - **Confirmation:** Integration works, model is available for use in OpenClaw - **Next steps:** Can be used as reasoning model for complex tasks, potentially as fallback or primary ## [2026-04-15 18:00] nightly | Memory compilation completed - Nightly Memory Compiler cron job executed - Extracted new facts from today's log: Qwen provider switch, OpenRouter integration, web‑search disabled, vision model added, Nemotron 3 Super added, mojhit.pl location update - Updated `memory/wiki/system-resilience.",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4908144921064376,
+      "maxScore": 0.4908144921064376,
+      "firstRecalledAt": "2026-04-23T09:43:47.030Z",
+      "lastRecalledAt": "2026-04-23T09:43:47.030Z",
+      "queryHashes": [
+        "0c4b6996e6e6"
+      ],
+      "recallDays": [
+        "2026-04-23"
+      ],
+      "conceptTags": [
+        "router",
+        "mojhit.pl",
+        "memory/wiki/system-resilience",
+        "launched",
+        "subagent",
+        "test",
+        "the",
+        "free"
+      ]
+    },
+    "memory:memory/2026-04-15.md:52:79": {
+      "key": "memory:memory/2026-04-15.md:52:79",
+      "path": "memory/2026-04-15.md",
+      "startLine": 52,
+      "endLine": 79,
+      "source": "memory",
+      "snippet": "- Verified monorepo structure: client (React/Vite/Tailwind/Clerk), server (Express/Supabase/Clerk/Svix), suno-api (Python bridge) - Updated `memory/wiki/mojhit-architecture.md` with new location details - **Next:** Await instructions — run dev, audit code, deploy? # 2026-04-15 — Daily Log ## [2026-04-15 15:13] infra | Qwen provider switched to OpenRouter - Alex asked to switch `qwen` provider from DashScope to OpenRouter for better pricing - OpenRouter endpoint: `https://openrouter.ai/api/v1` - OpenRouter API key stored in `openclaw.json` config (models.providers.qwen) - Model on OpenRouter requires full path: `qwen/qwen3.6-plus` - First patch attempt failed (validation error: array vs obje",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.7335754132293025,
+      "maxScore": 0.7335754132293025,
+      "firstRecalledAt": "2026-04-24T09:47:51.660Z",
+      "lastRecalledAt": "2026-04-24T09:47:51.660Z",
+      "queryHashes": [
+        "2604a18db9eb"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "router",
+        "react/vite/tailwind/clerk",
+        "express/supabase/clerk/svix",
+        "suno-api",
+        "openrouter.ai/api/v1",
+        "openclaw.json",
+        "models.providers.qwen",
+        "qwen/qwen3.6-plus"
+      ]
+    },
+    "memory:memory/2026-04-15.md:74:93": {
+      "key": "memory:memory/2026-04-15.md:74:93",
+      "path": "memory/2026-04-15.md",
+      "startLine": 74,
+      "endLine": 93,
+      "source": "memory",
+      "snippet": "- Tested DeepSeek API directly via curl (`api.deepseek.com/v1/chat/completions`) - Result: 200 OK, model `deepseek-chat` responded correctly - API key is valid, DeepSeek endpoint is working - Gateway is healthy — no crash detected - Alex asked to \"check what crashes with Qwen\" — needs more context on what actually broke ## [2026-04-15 15:54] session | Alex asked to switch to deepseek - Already running on deepseek/deepseek-reasoner as primary - No action needed — confirmed status ## [2026-04-15 16:13] infra | Web-search provider changed from Gemini to DeepSeek, added image support for DeepSeek and Qwen - User reported persistent 503 errors from Gemini web-search provider (\"The AI service is",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.7269978338914869,
+      "maxScore": 0.7269978338914869,
+      "firstRecalledAt": "2026-04-24T09:47:51.660Z",
+      "lastRecalledAt": "2026-04-24T09:47:51.660Z",
+      "queryHashes": [
+        "2604a18db9eb"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "gateway",
+        "deepseek-chat",
+        "deepseek/deepseek-reasoner",
+        "web-search",
+        "tested",
+        "deepseek",
+        "api",
+        "directly"
+      ]
+    }
+  }
+}

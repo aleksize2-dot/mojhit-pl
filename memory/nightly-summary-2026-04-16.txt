@@ -1,0 +1,10 @@
+Nightly Memory Compilation Summary (2026-04-16)
+
+- Read daily log: memory/2026-04-16.md (5 entries)
+- Updated system-resilience.md with DashScope international API fix (Qwen provider)
+- Created new wiki file: dj-marek-ai-composer.md (architecture of AI composer chat and backend)
+- Created new wiki file: meta-pixel.md (planned Facebook marketing pixel integration)
+- Updated cookie-rodo.md to link Meta Pixel under marketing tools
+- Updated MEMORY.md index with new entries for dj-marek-ai-composer and meta-pixel
+
+All changes committed to the knowledge base.

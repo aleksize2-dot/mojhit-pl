@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>mojhit.pl - Twoja historia, Twój hit</title>
+ <style>
+ @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+ :root {
+ --bg-color: #FFFFFF;
+ --text-color: #1A1A1A;
+ --primary-orange: #FF5A00;
+ --secondary-orange: #FF8C42;
+ --border-color: #EBEBEB;
+ --bg-soft: #F5F5F5;
+ --bg-warm: #FFF8F5;
+ --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.06);
+ --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.08);
+ --shadow-orange: 0 6px 20px rgba(255, 90, 0, 0.28);
+ --app-max-width: 1200px;
+ }
+
+ * { box-sizing: border-box; margin: 0; padding: 0; }
+
+ body {
+ font-family: 'Inter', sans-serif;
+ background-color: var(--bg-color);
+ color: var(--text-color);
+ min-height: 100vh;
+ line-height: 1.6;
+ }
+
+ .app-container {
+ width: 100%;
+ max-width: var(--app-max-width);
+ margin: 0 auto;
+ display: flex;
+ flex-direction: column;
+ min-height: 100vh;
+ }
+
+ /* ── HEADER ── */
+ header {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ padding: 16px 24px;
+ position: sticky;
+ top: 0;
+ background: rgba(255,255,255,0.95);
+ backdrop-filter: blur(16px);
+ -webkit-backdrop-filter: blur(16px);
+ border-bottom: 1px solid var(--border-color);
+ z-index: 100;
+ }
+
+ .logo {
+ font-size: 1.4rem;
+ font-weight: 800;
+ letter-spacing: -0.5px;
+ color: var(--text-color);
+ }
+
+ .logo span { color: var(--primary-orange); }
+
+ .header-right {
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ }
+
+ .badge {
+ background-color: var(--bg-soft);
+ border: 1px solid var(--border-color);
+ padding: 6px 12px;
+ border-radius: 8px;
+ font-size: 0.75rem;
+ display: flex;
+ align-items: center;
+ gap: 6px;
+ font-weight: 600;
+ color: #555;
+ }
+
+ .badge .stars { color: #F5A623; font-size: 0.78rem; }
+
+ .header-cta {
+ display: none;
+ background: var(--primary-orange);
+ color: #fff;
+ border: none;
+ padding: 10px 20px;
+ border-radius: 10px;
+ font-weight: 700;
+ font-size: 0.88rem;
+ cursor: pointer;
+ transition: background 0.2s, transform 0.15s;
+ }
+
+ .header-cta:hover {
+ background: #e64e00;
+ transform: translateY(-1px);
+ }
+
+ @media (min-width: 768px) {
+ header { padding: 18px 40px; }
+ .logo { font-size: 1.75rem; }
+ .badge { font-size: 0.82rem; padding: 8px 14px; }
+ .header-cta { display: block; }
+ }
+
+ /* ── MAIN ── */
+ main {
+ flex: 1;
+ padding: 0 24px 60px;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ }
+
+ @media (min-width: 768px) {
+ main { padding: 0 40px 80px; }
+ }
+
+ section {
+ width: 100%;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ margin-bottom: 56px;
+ }
+
+ @media (min-width: 768px) {
+ section { margin-bottom: 88px; }
+ }
+
+ .section-header {
+ display: flex;
+ align-items: center;
+ width: 100%;
+ max-width: 800px;
+ margin-bottom: 32px;
+ }
+
+ .section-header::before,
+ .section-header::after {
+ content: "";
+ flex: 1;
+ height: 1px;
+ background-color: var(--border-color);
+ }
+
+ .section-header h2 {
+ font-size: 1.4rem;
+ font-weight: 800;
+ padding: 0 20px;
+ color: #2D3748;
+ white-space: nowrap;
+ }
+
+ @media (min-width: 768px) {
+ .section-header h2 { font-size: 1.9rem; padding: 0 28px; }
+ .section-header { margin-bottom: 44px; }
+ }
+
+ /* ── HERO ── */
+ .hero {
+ max-width: 800px;
+ text-align: center;
+ padding: 52px 0 16px;
+ }
+
+ .hero-tag {
+ display: inline-flex;
+ align-items: center;
+ gap: 6px;
+ background: var(--bg-warm);
+ border: 1px solid #FFD4BB;
+ color: var(--primary-orange);
+ font-size: 0.82rem;
+ font-weight: 700;
+ padding: 6px 14px;
+ border-radius: 100px;
+ margin-bottom: 22px;
+ letter-spacing: 0.2px;
+ }
+
+ h1 {
+ font-size: 2.3rem;
+ font-weight: 800;
+ line-height: 1.2;
+ margin-bottom: 18px;
+ color: #1A1A1A;
+ letter-spacing: -1px;
+ }
+
+ h1 .highlight {
+ background: linear-gradient(90deg, var(--primary-orange), var(--secondary-orange));
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ background-clip: text;
+ }
+
+ .subtitle {
+ font-size: 1.05rem;
+ color: #5A6478;
+ margin-bottom: 32px;
+ font-weight: 500;
+ max-width: 540px;
+ margin-left: auto;
+ margin-right: auto;
+ }
+
+ @media (min-width: 768px) {
+ h1 { font-size: 3.6rem; margin-bottom: 22px; }
+ .subtitle { font-size: 1.2rem; margin-bottom: 40px; }
+ }
+
+ /* Social proof */
+ .social-proof {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 10px;
+ margin-bottom: 28px;
+ flex-wrap: wrap;
+ }
+
+ .avatars { display: flex; }
+
+ .avatars span {
+ width: 32px;
+ height: 32px;
+ border-radius: 50%;
+ border: 2px solid #fff;
+ margin-left: -7px;
+ font-size: 1.1rem;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background: #F0EDE8;
+ box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+ }
+
+ .avatars span:first-child { margin-left: 0; }
+
+ .social-text {
+ font-size: 0.88rem;
+ color: #5A6478;
+ font-weight: 600;
+ }
+
+ .social-text strong { color: var(--primary-orange); }
+
+ /* Online indicator */
+ .online-indicator {
+ display: inline-flex;
+ align-items: center;
+ gap: 6px;
+ background: #F0FDF4;
+ border: 1px solid #BBF7D0;
+ color: #16A34A;
+ font-size: 0.8rem;
+ font-weight: 700;
+ padding: 4px 10px;
+ border-radius: 100px;
+ margin-bottom: 24px;
+ }
+
+ .online-dot {
+ width: 7px;
+ height: 7px;
+ background: #22C55E;
+ border-radius: 50%;
+ animation: pulse-green 2s ease infinite;
+ }
+
+ @keyframes pulse-green {
+ 0%, 100% { opacity: 1; transform: scale(1); }
+ 50% { opacity: 0.6; transform: scale(1.3); }
+ }
+
+ /* CTA Button */
+ .cta-btn {
+ display: inline-flex;
+ justify-content: center;
+ align-items: center;
+ width: 100%;
+ max-width: 360px;
+ background: linear-gradient(90deg, var(--primary-orange), var(--secondary-orange), var(--primary-orange));
+ background-size: 200% auto;
+ color: #fff;
+ text-decoration: none;
+ font-size: 1.15rem;
+ font-weight: 700;
+ padding: 17px 28px;
+ border-radius: 14px;
+ border: none;
+ cursor: pointer;
+ box-shadow: var(--shadow-orange);
+ transition: transform 0.2s ease, box-shadow 0.2s ease;
+ animation: gradientShimmer 3s linear infinite;
+ position: relative;
+ overflow: hidden;
+ }
+
+ .cta-btn::after {
+ content: '';
+ position: absolute;
+ top: -50%;
+ left: -60%;
+ width: 40%;
+ height: 200%;
+ background: rgba(255,255,255,0.12);
+ transform: skewX(-20deg);
+ animation: shine 4s ease infinite;
+ }
+
+ @keyframes shine {
+ 0% { left: -60%; }
+ 30% { left: 120%; }
+ 100% { left: 120%; }
+ }
+
+ @media (min-width: 768px) {
+ .cta-btn {
+ font-size: 1.35rem;
+ padding: 20px 44px;
+ max-width: 400px;
+ border-radius: 16px;
+ }
+ }
+
+ .cta-btn:hover {
+ transform: translateY(-2px);
+ box-shadow: 0 10px 28px rgba(255, 90, 0, 0.38);
+ }
+
+ .cta-btn:active { transform: scale(0.98); }
+
+ @keyframes gradientShimmer {
+ 0% { background-position: 0% 50%; }
+ 100% { background-position: 200% 50%; }
+ }
+
+ .cta-sub {
+ margin-top: 11px;
+ font-size: 0.8rem;
+ color: #8A96A8;
+ font-weight: 500;
+ }
+
+ /* ── AUDIO PREVIEW ── */
+ .audio-preview {
+ margin-top: 44px;
+ width: 100%;
+ max-width: 540px;
+ background: var(--bg-soft);
+ border: 1px solid var(--border-color);
+ border-radius: 18px;
+ padding: 18px 20px;
+ }
+
+ .audio-preview-label {
+ font-size: 0.72rem;
+ font-weight: 700;
+ text-transform: uppercase;
+ letter-spacing: 1.2px;
+ color: #8A96A8;
+ margin-bottom: 10px;
+ }
+
+ .audio-track {
+ display: flex;
+ align-items: center;
+ gap: 12px;
+ padding: 10px 0;
+ border-bottom: 1px solid var(--border-color);
+ cursor: pointer;
+ border-radius: 8px;
+ transition: background 0.15s;
+ }
+
+ .audio-track:hover { background: rgba(255,90,0,0.03); }
+ .audio-track:last-child { border-bottom: none; }
+
+ .play-btn {
+ width: 36px;
+ height: 36px;
+ border-radius: 50%;
+ background: var(--primary-orange);
+ border: none;
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ flex-shrink: 0;
+ transition: transform 0.2s, background 0.2s;
+ box-shadow: 0 2px 8px rgba(255,90,0,0.3);
+ }
+
+ .play-btn:hover { transform: scale(1.08); background: #e64e00; }
+
+ .play-btn svg {
+ width: 13px;
+ height: 13px;
+ fill: #fff;
+ margin-left: 2px;
+ }
+
+ .track-info { flex: 1; min-width: 0; }
+ .track-name { font-size: 0.88rem; font-weight: 700; color: #1A1A1A; }
+ .track-meta { font-size: 0.75rem; color: #8A96A8; margin-top: 1px; }
+
+ .track-wave {
+ display: flex;
+ align-items: center;
+ gap: 2px;
+ height: 26px;
+ flex-shrink: 0;
+ }
+
+ .track-wave span {
+ display: block;
+ width: 3px;
+ border-radius: 2px;
+ background: #D8DCE4;
+ transition: background 0.3s;
+ }
+
+ .audio-track.playing .track-wave span {
+ background: var(--primary-orange);
+ animation: wave 0.8s ease-in-out infinite;
+ }
+
+ .audio-track.playing .track-wave span:nth-child(2) { animation-delay: 0.1s; }
+ .audio-track.playing .track-wave span:nth-child(3) { animation-delay: 0.2s; }
+ .audio-track.playing .track-wave span:nth-child(4) { animation-delay: 0.15s; }
+ .audio-track.playing .track-wave span:nth-child(5) { animation-delay: 0.05s; }
+ .audio-track.playing .track-wave span:nth-child(6) { animation-delay: 0.12s; }
+ .audio-track.playing .track-wave span:nth-child(7) { animation-delay: 0.18s; }
+
+ @keyframes wave {
+ 0%, 100% { height: 5px; }
+ 50% { height: 20px; }
+ }
+
+ /* ── COUNTER STRIP ── */
+ .counter-strip {
+ width: 100%;
+ max-width: 880px;
+ background: var(--bg-soft);
+ border: 1px solid var(--border-color);
+ border-radius: 20px;
+ padding: 28px 24px;
+ display: grid;
+ grid-template-columns: repeat(2, 1fr);
+ gap: 20px;
+ text-align: center;
+ margin-bottom: 56px;
+ }
+
+ @media (min-width: 640px) {
+ .counter-strip { grid-template-columns: repeat(4, 1fr); padding: 32px 40px; }
+ }
+
+ .counter-number {
+ font-size: 1.9rem;
+ font-weight: 800;
+ color: var(--primary-orange);
+ line-height: 1;
+ margin-bottom: 5px;
+ font-variant-numeric: tabular-nums;
+ }
+
+ .counter-label {
+ font-size: 0.78rem;
+ color: #8A96A8;
+ font-weight: 600;
+ line-height: 1.3;
+ }
+
+ /* ── HOW IT WORKS ── */
+ .how-it-works {
+ display: flex;
+ flex-direction: column;
+ gap: 28px;
+ width: 100%;
+ max-width: 780px;
+ position: relative;
+ }
+
+ @media (min-width: 768px) {
+ .how-it-works {
+ flex-direction: row;
+ justify-content: space-between;
+ gap: 0;
+ }
+ .how-it-works::before {
+ content: '';
+ position: absolute;
+ top: 36px;
+ left: 12%;
+ right: 12%;
+ height: 1px;
+ background: linear-gradient(90deg, transparent, var(--border-color) 20%, var(--border-color) 80%, transparent);
+ z-index: 0;
+ }
+ }
+
+ .step {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ flex: 1;
+ z-index: 1;
+ }
+
+ .step-number {
+ font-size: 0.68rem;
+ font-weight: 800;
+ color: var(--primary-orange);
+ letter-spacing: 1px;
+ text-transform: uppercase;
+ margin-bottom: 7px;
+ }
+
+ .step-icon {
+ width: 72px;
+ height: 72px;
+ background-color: #fff;
+ border: 1.5px solid var(--border-color);
+ border-radius: 50%;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ margin-bottom: 14px;
+ box-shadow: var(--shadow-soft);
+ transition: transform 0.3s ease, border-color 0.3s, box-shadow 0.3s;
+ }
+
+ .step:hover .step-icon {
+ transform: translateY(-5px);
+ border-color: var(--primary-orange);
+ box-shadow: 0 8px 18px rgba(255,90,0,0.12);
+ }
+
+ @media (min-width: 768px) {
+ .step-icon { width: 76px; height: 76px; }
+ .step-icon svg { width: 32px !important; height: 32px !important; }
+ }
+
+ .step-icon svg {
+ width: 26px;
+ height: 26px;
+ fill: none;
+ stroke: #7A8496;
+ stroke-width: 2;
+ stroke-linecap: round;
+ stroke-linejoin: round;
+ transition: stroke 0.3s;
+ }
+
+ .step:hover .step-icon svg { stroke: var(--primary-orange); }
+
+ .step-title {
+ font-size: 0.95rem;
+ font-weight: 700;
+ text-align: center;
+ color: #1A1A1A;
+ margin-bottom: 3px;
+ }
+
+ .step-desc {
+ font-size: 0.8rem;
+ font-weight: 500;
+ text-align: center;
+ color: #8A96A8;
+ max-width: 140px;
+ line-height: 1.4;
+ }
+
+ /* ── CATEGORIES CAROUSEL ── */
+ .carousel-outer {
+ width: 100%;
+ max-width: 1000px;
+ position: relative;
+ }
+
+ .categories-carousel {
+ display: flex;
+ gap: 14px;
+ overflow-x: auto;
+ scroll-snap-type: x mandatory;
+ -webkit-overflow-scrolling: touch;
+ scrollbar-width: none;
+ -ms-overflow-style: none;
+ padding: 8px 24px 16px;
+ cursor: grab;
+ }
+
+ .categories-carousel:active { cursor: grabbing; }
+ .categories-carousel::-webkit-scrollbar { display: none; }
+
+ @media (min-width: 768px) {
+ .categories-carousel { padding: 8px 40px 16px; gap: 18px; }
+ }
+
+ .card {
+ background-color: #fff;
+ border-radius: 16px;
+ box-shadow: var(--shadow-soft);
+ border: 1.5px solid var(--border-color);
+ display: flex;
+ flex-direction: column;
+ position: relative;
+ transition: transform 0.3s ease, box-shadow 0.3s, border-color 0.3s;
+ cursor: pointer;
+ scroll-snap-align: start;
+ flex: 0 0 calc(42vw);
+ min-width: 0;
+ }
+
+ @media (min-width: 480px) {
+ .card { flex: 0 0 160px; }
+ }
+
+ @media (min-width: 768px) {
+ .card { flex: 0 0 148px; }
+ }
+
+ .card:hover {
+ transform: translateY(-6px);
+ box-shadow: var(--shadow-medium);
+ border-color: var(--primary-orange);
+ }
+
+ .card-img {
+ height: 100px;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ font-size: 2.8rem;
+ border-radius: 14px 14px 0 0;
+ transition: font-size 0.2s;
+ }
+
+ .card:hover .card-img { font-size: 3.1rem; }
+
+ @media (min-width: 768px) {
+ .card-img { height: 112px; font-size: 3rem; }
+ }
+
+ .card-img.urodziny { background: linear-gradient(135deg, #FFDDE1, #FFC3CB); }
+ .card-img.slub { background: linear-gradient(135deg, #D6EAFF, #BDD8F7); }
+ .card-img.zart { background: linear-gradient(135deg, #FFF0D6, #FFD9A8); }
+ .card-img.szef { background: linear-gradient(135deg, #EDE0FF, #D4BCFF); }
+ .card-img.romantyczna { background: linear-gradient(135deg, #FFD6E4, #FFB3CA); }
+ .card-img.rap { background: linear-gradient(135deg, #E8E8EC, #D0D0D8); }
+
+ .card-footer {
+ padding: 11px 10px;
+ text-align: center;
+ border-radius: 0 0 14px 14px;
+ min-height: 44px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ }
+
+ .card-title {
+ font-size: 0.85rem;
+ font-weight: 700;
+ color: #2D3748;
+ line-height: 1.2;
+ }
+
+ /* Scroll hint fade */
+ .carousel-outer::after {
+ content: '';
+ position: absolute;
+ top: 0;
+ right: 0;
+ bottom: 16px;
+ width: 48px;
+ background: linear-gradient(to left, rgba(255,255,255,0.9), transparent);
+ pointer-events: none;
+ border-radius: 0 16px 16px 0;
+ }
+
+ /* ── FEATURES ── */
+ .features {
+ display: grid;
+ grid-template-columns: 1fr;
+ gap: 16px;
+ width: 100%;
+ max-width: 960px;
+ }
+
+ @media (min-width: 768px) {
+ .features { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+ }
+
+ .feature-box {
+ background-color: var(--bg-soft);
+ border-radius: 18px;
+ padding: 28px 22px;
+ text-align: center;
+ border: 1px solid var(--border-color);
+ transition: transform 0.3s ease, box-shadow 0.3s, background 0.3s;
+ }
+
+ .feature-box:hover {
+ transform: translateY(-5px);
+ background-color: #fff;
+ box-shadow: var(--shadow-medium);
+ }
+
+ .feature-icon {
+ width: 52px;
+ height: 52px;
+ margin: 0 auto 18px;
+ background-color: var(--bg-warm);
+ color: var(--primary-orange);
+ border: 1px solid #FFD4BB;
+ border-radius: 13px;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ transition: background 0.3s, transform 0.3s, border-color 0.3s;
+ }
+
+ .feature-box:hover .feature-icon {
+ background-color: var(--primary-orange);
+ border-color: var(--primary-orange);
+ transform: scale(1.08);
+ }
+
+ .feature-box:hover .feature-icon svg { stroke: #fff; }
+
+ .feature-icon svg {
+ width: 24px;
+ height: 24px;
+ stroke-width: 2;
+ stroke: var(--primary-orange);
+ fill: none;
+ stroke-linecap: round;
+ stroke-linejoin: round;
+ transition: stroke 0.3s;
+ }
+
+ .feature-title {
+ font-size: 1.05rem;
+ font-weight: 700;
+ color: #1A1A1A;
+ margin-bottom: 8px;
+ }
+
+ .feature-desc {
+ font-size: 0.88rem;
+ color: #5A6478;
+ line-height: 1.55;
+ }
+
+ /* ── TESTIMONIALS ── */
+ .testimonials {
+ display: grid;
+ grid-template-columns: 1fr;
+ gap: 14px;
+ width: 100%;
+ max-width: 880px;
+ }
+
+ @media (min-width: 640px) {
+ .testimonials { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+ }
+
+ .testimonial-card {
+ background: var(--bg-soft);
+ border: 1px solid var(--border-color);
+ border-radius: 16px;
+ padding: 22px 18px;
+ transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+ }
+
+ .testimonial-card:hover {
+ transform: translateY(-4px);
+ box-shadow: var(--shadow-medium);
+ background: #fff;
+ }
+
+ .testimonial-stars {
+ color: #F5A623;
+ font-size: 0.85rem;
+ margin-bottom: 10px;
+ letter-spacing: 1px;
+ }
+
+ .testimonial-text {
+ font-size: 0.88rem;
+ color: #3D4A5C;
+ line-height: 1.6;
+ margin-bottom: 14px;
+ font-style: italic;
+ }
+
+ .testimonial-author {
+ display: flex;
+ align-items: center;
+ gap: 9px;
+ }
+
+ .author-avatar {
+ width: 34px;
+ height: 34px;
+ border-radius: 50%;
+ font-size: 1rem;
+ background: #EDE8E3;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ }
+
+ .author-name {
+ font-size: 0.85rem;
+ font-weight: 700;
+ color: #1A1A1A;
+ }
+
+ .author-occasion {
+ font-size: 0.75rem;
+ color: #8A96A8;
+ }
+
+ /* ── FAQ ── */
+ .faq-wrapper {
+ width: 100%;
+ max-width: 680px;
+ }
+
+ details {
+ width: 100%;
+ border-bottom: 1px solid var(--border-color);
+ padding: 18px 0;
+ }
+
+ details:first-of-type { border-top: 1px solid var(--border-color); }
+
+ summary {
+ font-size: 1rem;
+ font-weight: 600;
+ color: #1A1A1A;
+ cursor: pointer;
+ list-style: none;
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ transition: color 0.2s ease;
+ }
+
+ summary::-webkit-details-marker { display: none; }
+ summary:hover { color: var(--primary-orange); }
+
+ summary::after {
+ content: '+';
+ font-size: 1.3rem;
+ font-weight: 300;
+ color: #B0B8C4;
+ margin-left: 16px;
+ flex-shrink: 0;
+ }
+
+ details[open] summary::after { content: '−'; color: var(--primary-orange); }
+ details[open] summary { color: var(--primary-orange); margin-bottom: 12px; }
+
+ .faq-content {
+ font-size: 0.92rem;
+ color: #5A6478;
+ line-height: 1.65;
+ padding-right: 28px;
+ animation: fadeIn 0.22s ease;
+ }
+
+ @keyframes fadeIn {
+ from { opacity: 0; transform: translateY(-6px); }
+ to { opacity: 1; transform: translateY(0); }
+ }
+
+ /* ── FOOTER ── */
+ footer {
+ border-top: 1px solid var(--border-color);
+ padding: 28px 24px;
+ background-color: var(--bg-soft);
+ }
+
+ .footer-content {
+ max-width: var(--app-max-width);
+ margin: 0 auto;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: 14px;
+ }
+
+ @media (min-width: 768px) {
+ .footer-content {
+ flex-direction: row;
+ justify-content: space-between;
+ padding: 0 16px;
+ }
+ }
+
+ .footer-copyright { font-size: 0.85rem; color: #8A96A8; font-weight: 500; }
+
+ .footer-links { display: flex; gap: 20px; }
+
+ .footer-links a {
+ color: #5A6478;
+ text-decoration: none;
+ font-size: 0.85rem;
+ font-weight: 500;
+ transition: color 0.2s ease;
+ }
+
+ .footer-links a:hover { color: var(--primary-orange); }
+
+ .bottom-cta-wrapper { text-align: center; padding: 16px 0 0; }
+
+ /* ── SCROLL ANIMATION ── */
+ .fade-in {
+ opacity: 0;
+ transform: translateY(20px);
+ transition: opacity 0.55s ease, transform 0.55s ease;
+ }
+
+ .fade-in.visible { opacity: 1; transform: translateY(0); }
+ </style>
+</head>
+<body>
+<div class="app-container">
+
+ <!-- HEADER -->
+ <header>
+ <div class="logo">mojhit<span>.pl</span></div>
+ <div class="header-right">
+ <div class="badge">
+ Stworzone w Polsce
+ <span class="stars">⭐⭐⭐⭐⭐</span>
+ </div>
+ <button class="header-cta" onclick="scrollToCta()">Stwórz Hit 🎵</button>
+ </div>
+ </header>
+
+ <main>
+
+ <!-- HERO -->
+ <section class="hero">
+ <div class="hero-tag">✨ AI generuje piosenki w 3 minuty</div>
+ <h1>Twoja historia —<br><span class="highlight">Twój hit</span></h1>
+ <p class="subtitle">Stwórz profesjonalną piosenkę z&nbsp;pomocą AI. Idealny prezent urodzinowy, weselny lub po prostu dla zabawy.</p>
+
+ <div class="online-indicator">
+ <span class="online-dot"></span>
+ <span id="onlineCount">—</span> osób tworzy teraz swój hit
+ </div>
+
+ <div class="social-proof">
+ <div class="avatars">
+ <span>👩</span><span>👨</span><span>👩‍🦱</span><span>🧔</span><span>👩‍🦳</span>
+ </div>
+ <span class="social-text">Dołącz do <strong id="heroCount">—</strong> osób, które już stworzyły swój hit</span>
+ </div>
+
+ <button class="cta-btn" id="mainCta" onclick="alert('Formularz generatora — wkrótce!')">
+ <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:9px">
+ <line x1="8" y1="10" x2="8" y2="14"></line>
+ <line x1="12" y1="6" x2="12" y2="18"></line>
+ <line x1="16" y1="10" x2="16" y2="14"></line>
+ </svg>
+ Stwórz Hit 🎵
+ </button>
+ <p class="cta-sub">✅ Pierwsze demo gratis &nbsp;·&nbsp; Bez rejestracji &nbsp;·&nbsp; WAV / MP3</p>
+
+ <!-- Audio Preview -->
+ <div class="audio-preview fade-in">
+ <div class="audio-preview-label">🎧 Przykładowe hity wygenerowane przez AI</div>
+ <div class="audio-track" onclick="togglePlay(this)">
+ <button class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></button>
+ <div class="track-info">
+ <div class="track-name">„Sto lat dla Kasi" 🎂</div>
+ <div class="track-meta">Pop · 2:34</div>
+ </div>
+ <div class="track-wave">
+ <span style="height:7px"></span><span style="height:15px"></span>
+ <span style="height:21px"></span><span style="height:11px"></span>
+ <span style="height:17px"></span><span style="height:8px"></span>
+ <span style="height:13px"></span>
+ </div>
+ </div>
+ <div class="audio-track" onclick="togglePlay(this)">
+ <button class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></button>
+ <div class="track-info">
+ <div class="track-name">„Szef roku" 👔</div>
+ <div class="track-meta">Funk · 1:58</div>
+ </div>
+ <div class="track-wave">
+ <span style="height:11px"></span><span style="height:19px"></span>
+ <span style="height:9px"></span><span style="height:17px"></span>
+ <span style="height:23px"></span><span style="height:9px"></span>
+ <span style="height:15px"></span>
+ </div>
+ </div>
+ <div class="audio-track" onclick="togglePlay(this)">
+ <button class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></button>
+ <div class="track-info">
+ <div class="track-name">„Rap dla Ziomka" 🧢</div>
+ <div class="track-meta">Hip-hop · 2:12</div>
+ </div>
+ <div class="track-wave">
+ <span style="height:9px"></span><span style="height:20px"></span>
+ <span style="height:13px"></span><span style="height:19px"></span>
+ <span style="height:7px"></span><span style="height:17px"></span>
+ <span style="height:11px"></span>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- COUNTER STRIP -->
+ <div class="counter-strip fade-in">
+ <div class="counter-item">
+ <div class="counter-number" id="counterHits">—</div>
+ <div class="counter-label">Wygenerowanych hitów</div>
+ </div>
+ <div class="counter-item">
+ <div class="counter-number" id="counterOnline">—</div>
+ <div class="counter-label">Osób online</div>
+ </div>
+ <div class="counter-item">
+ <div class="counter-number">~3 min</div>
+ <div class="counter-label">Czas na utwór</div>
+ </div>
+ <div class="counter-item">
+ <div class="counter-number">100%</div>
+ <div class="counter-label">Twoich praw autorskich</div>
+ </div>
+ </div>
+
+ <!-- JAK TO DZIAŁA -->
+ <section class="fade-in">
+ <div class="section-header"><h2>Jak to działa?</h2></div>
+ <div class="how-it-works">
+ <div class="step">
+ <div class="step-number">Krok 1</div>
+ <div class="step-icon">
+ <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+ </div>
+ <div class="step-title">Wybierz styl</div>
+ <div class="step-desc">Pop, rap, funk, romantyczna i inne</div>
+ </div>
+ <div class="step">
+ <div class="step-number">Krok 2</div>
+ <div class="step-icon">
+ <svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+ </div>
+ <div class="step-title">Opisz historię</div>
+ <div class="step-desc">Kilka zdań o osobie lub okazji</div>
+ </div>
+ <div class="step">
+ <div class="step-number">Krok 3</div>
+ <div class="step-icon">
+ <svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+ </div>
+ <div class="step-title">Odbierz hit</div>
+ <div class="step-desc">Gotowy utwór WAV/MP3 w 3 minuty</div>
+ </div>
+ </div>
+ </section>
+
+ <!-- KATEGORIE — CAROUSEL -->
+ <section class="fade-in">
+ <div class="section-header"><h2>Na każdą okazję</h2></div>
+ <div class="carousel-outer">
+ <div class="categories-carousel" id="carousel">
+ <div class="card">
+ <div class="card-img urodziny">🎂</div>
+ <div class="card-footer"><div class="card-title">Urodziny</div></div>
+ </div>
+ <div class="card">
+ <div class="card-img slub">💍</div>
+ <div class="card-footer"><div class="card-title">Ślub</div></div>
+ </div>
+ <div class="card">
+ <div class="card-img zart">🤹</div>
+ <div class="card-footer"><div class="card-title">Żart</div></div>
+ </div>
+ <div class="card">
+ <div class="card-img szef">👔</div>
+ <div class="card-footer"><div class="card-title">Dla Szefa</div></div>
+ </div>
+ <div class="card">
+ <div class="card-img romantyczna">❤️</div>
+ <div class="card-footer"><div class="card-title">Romantyczna</div></div>
+ </div>
+ <div class="card">
+ <div class="card-img rap">🧢</div>
+ <div class="card-footer"><div class="card-title">Rap dla Ziomka</div></div>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- DLACZEGO MOJHIT -->
+ <section class="fade-in">
+ <div class="section-header"><h2>Dlaczego mojhit.pl?</h2></div>
+ <div class="features">
+ <div class="feature-box">
+ <div class="feature-icon">
+ <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+ </div>
+ <div class="feature-title">Szybka generacja</div>
+ <div class="feature-desc">Gotowy utwór z wokalem i instrumentami w zaledwie 2–3 minuty od opisu.</div>
+ </div>
+ <div class="feature-box">
+ <div class="feature-icon">
+ <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+ </div>
+ <div class="feature-title">Radiowa jakość</div>
+ <div class="feature-desc">Najnowocześniejsze modele Studio AI zapewniają brzmienie na poziomie profesjonalnego studia.</div>
+ </div>
+ <div class="feature-box">
+ <div class="feature-icon">
+ <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+ </div>
+ <div class="feature-title">100% Twoich praw</div>
+ <div class="feature-desc">Piosenka jest całkowicie Twoja — YouTube, TikTok, Instagram bez żadnych roszczeń.</div>
+ </div>
+ </div>
+ </section>
+
+ <!-- OPINIE -->
+ <section class="fade-in">
+ <div class="section-header"><h2>Co mówią użytkownicy?</h2></div>
+ <div class="testimonials">
+ <div class="testimonial-card">
+ <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+ <div class="testimonial-text">„Zamawiałam piosenkę urodzinową dla mamy. Płakała ze wzruszenia! Jakość niesamowita."</div>
+ <div class="testimonial-author">
+ <div class="author-avatar">👩</div>
+ <div>
+ <div class="author-name">Kasia W.</div>
+ <div class="author-occasion">Piosenka urodzinowa</div>
+ </div>
+ </div>
+ </div>
+ <div class="testimonial-card">
+ <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+ <div class="testimonial-text">„Rap dla kolegi z pracy — wszyscy w biurze byli w szoku, że to AI. Polecam każdemu!"</div>
+ <div class="testimonial-author">
+ <div class="author-avatar">🧔</div>
+ <div>
+ <div class="author-name">Marek T.</div>
+ <div class="author-occasion">Rap dla ziomka</div>
+ </div>
+ </div>
+ </div>
+ <div class="testimonial-card">
+ <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+ <div class="testimonial-text">„Piosenka weselna zamiast tradycyjnego prezentu — goście byli zachwyceni. Super pomysł!"</div>
+ <div class="testimonial-author">
+ <div class="author-avatar">👩‍🦱</div>
+ <div>
+ <div class="author-name">Ania K.</div>
+ <div class="author-occasion">Piosenka ślubna</div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- FAQ -->
+ <section class="fade-in">
+ <div class="section-header"><h2>Najczęstsze pytania</h2></div>
+ <div class="faq-wrapper">
+ <details>
+ <summary>Ile to kosztuje?</summary>
+ <div class="faq-content">Testowanie systemu i podgląd demo jest bezpłatny. Aby pobrać pełną piosenkę w jakości studyjnej (WAV/MP3), płacisz za pojedynczy utwór lub wybierasz pakiet kilku piosenek w korzystnej cenie.</div>
+ </details>
+ <details>
+ <summary>Jak szybko otrzymam piosenkę?</summary>
+ <div class="faq-content">Po wpisaniu opisu historii nasza sztuczna inteligencja potrzebuje zazwyczaj 2–3 minut na skomponowanie muzyki, napisanie tekstu i wygenerowanie wokalu. Piosenka trafia od razu do Twojego konta.</div>
+ </details>
+ <details>
+ <summary>Czy mogę użyć jej komercyjnie?</summary>
+ <div class="faq-content">Tak. Przekazujemy Ci pełne prawa autorskie do wygenerowanego utworu. Możesz go publikować na YouTube, TikToku, Instagramie i wszędzie indziej bez obaw o roszczenia.</div>
+ </details>
+ <details>
+ <summary>W jakich formatach otrzymam plik?</summary>
+ <div class="faq-content">Piosenka dostępna jest do pobrania w formacie MP3 (do codziennego użytku) oraz WAV (jakość studyjna, bez kompresji). Oba formaty są dostępne w każdym pakiecie.</div>
+ </details>
+ <details>
+ <summary>Czy mogę wybrać język piosenki?</summary>
+ <div class="faq-content">Domyślnie generujemy piosenki po polsku. Obsługujemy również język angielski — wystarczy zaznaczyć preferencję podczas tworzenia.</div>
+ </details>
+ </div>
+ </section>
+
+ <!-- BOTTOM CTA -->
+ <div class="bottom-cta-wrapper fade-in">
+ <p style="font-size:1.05rem;font-weight:700;margin-bottom:14px;color:#1A1A1A">Gotowy na swój hit? 🎶</p>
+ <button class="cta-btn" onclick="alert('Formularz generatora — wkrótce!')">
+ <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:9px">
+ <line x1="8" y1="10" x2="8" y2="14"></line>
+ <line x1="12" y1="6" x2="12" y2="18"></line>
+ <line x1="16" y1="10" x2="16" y2="14"></line>
+ </svg>
+ Stwórz Hit 🎵
+ </button>
+ <p class="cta-sub">✅ Pierwsze demo gratis &nbsp;·&nbsp; Bez rejestracji &nbsp;·&nbsp; WAV / MP3</p>
+ </div>
+
+ </main>
+
+ <!-- FOOTER -->
+ <footer>
+ <div class="footer-content">
+ <div class="footer-copyright">© 2026 mojhit.pl. Wszelkie prawa zastrzeżone.</div>
+ <div class="footer-links">
+ <a href="#">Regulamin</a>
+ <a href="#">Polityka Prywatności</a>
+ <a href="#">Kontakt</a>
+ </div>
+ </div>
+ </footer>
+
+</div>
+
+<script>
+ /* ── DYNAMIC HIT COUNTER
+ Base: 3700 hits on Jan 1, 2025
+ Growth: ~8 hits/day on average (realistic for small Polish startup)
+ + small hourly nudge so it feels live
+ ─────────────────────────────────── */
+ function calcHitCount() {
+ const base = 3700;
+ const baseDate = new Date('2025-01-01T00:00:00');
+ const now = new Date();
+ const msPerDay = 86400000;
+
+ const daysPassed = (now - baseDate) / msPerDay;
+ const dailyGrowth = 8; // avg hits per day
+ const hourlyNudge = Math.floor((now.getHours() * 60 + now.getMinutes()) / 20); // 0-71
+
+ return Math.floor(base + daysPassed * dailyGrowth + hourlyNudge);
+ }
+
+ /* ── ONLINE COUNTER: random 12–45, refreshes every ~40 s ── */
+ function randomOnline() {
+ return Math.floor(Math.random() * (45 - 12 + 1)) + 12;
+ }
+
+ /* ── COUNTER ANIMATION ── */
+ function animateValue(el, from, to, duration, suffix) {
+ const range = to - from;
+ const stepTime = 16;
+ const steps = duration / stepTime;
+ const inc = range / steps;
+ let current = from;
+
+ const timer = setInterval(() => {
+ current += inc;
+ if (current >= to) {
+ current = to;
+ clearInterval(timer);
+ }
+ el.textContent = Math.floor(current).toLocaleString('pl-PL') + (suffix || '');
+ }, stepTime);
+ }
+
+ let countersAnimated = false;
+
+ function runCounters() {
+ if (countersAnimated) return;
+ countersAnimated = true;
+
+ const hits = calcHitCount();
+ const online = randomOnline();
+
+ // Counter strip
+ animateValue(document.getElementById('counterHits'), 0, hits, 1800);
+ animateValue(document.getElementById('counterOnline'), 0, online, 900);
+
+ // Hero inline references
+ document.getElementById('heroCount').textContent = hits.toLocaleString('pl-PL') + '+';
+ document.getElementById('onlineCount').textContent = online;
+ }
+
+ // Refresh online count every 40 s (no animation — just update)
+ setInterval(() => {
+ const el = document.getElementById('counterOnline');
+ const onlineEl = document.getElementById('onlineCount');
+ const v = randomOnline();
+ if (el) el.textContent = v;
+ if (onlineEl) onlineEl.textContent = v;
+ }, 40000);
+
+ /* ── SCROLL FADE-IN + counter trigger ── */
+ const observer = new IntersectionObserver((entries) => {
+ entries.forEach(entry => {
+ if (entry.isIntersecting) {
+ entry.target.classList.add('visible');
+ if (entry.target.classList.contains('counter-strip')) {
+ runCounters();
+ }
+ }
+ });
+ }, { threshold: 0.12 });
+
+ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+ // Also run counters if strip already visible on load
+ window.addEventListener('load', () => {
+ const strip = document.querySelector('.counter-strip');
+ if (strip) {
+ const rect = strip.getBoundingClientRect();
+ if (rect.top < window.innerHeight) runCounters();
+ }
+ // Set hero count immediately (no animation needed before scroll)
+ const hits = calcHitCount();
+ const online = randomOnline();
+ const heroEl = document.getElementById('heroCount');
+ const onlineEl = document.getElementById('onlineCount');
+ if (heroEl) heroEl.textContent = hits.toLocaleString('pl-PL') + '+';
+ if (onlineEl) onlineEl.textContent = online;
+ });
+
+ /* ── SCROLL TO CTA ── */
+ function scrollToCta() {
+ document.getElementById('mainCta').scrollIntoView({ behavior: 'smooth', block: 'center' });
+ }
+
+ /* ── FAKE AUDIO TOGGLE ── */
+ function togglePlay(track) {
+ const isPlaying = track.classList.contains('playing');
+ document.querySelectorAll('.audio-track').forEach(t => t.classList.remove('playing'));
+ if (!isPlaying) track.classList.add('playing');
+ }
+
+ /* ── CAROUSEL DRAG-TO-SCROLL ── */
+ const carousel = document.getElementById('carousel');
+ let isDragging = false, startX, scrollLeft;
+
+ carousel.addEventListener('mousedown', e => {
+ isDragging = true;
+ startX = e.pageX - carousel.offsetLeft;
+ scrollLeft = carousel.scrollLeft;
+ carousel.style.cursor = 'grabbing';
+ });
+
+ carousel.addEventListener('mouseleave', () => {
+ isDragging = false;
+ carousel.style.cursor = 'grab';
+ });
+
+ carousel.addEventListener('mouseup', () => {
+ isDragging = false;
+ carousel.style.cursor = 'grab';
+ });
+
+ carousel.addEventListener('mousemove', e => {
+ if (!isDragging) return;
+ e.preventDefault();
+ const x = e.pageX - carousel.offsetLeft;
+ const walk = (x - startX) * 1.4;
+ carousel.scrollLeft = scrollLeft - walk;
+ });
+</script>
+</body>
+</html>

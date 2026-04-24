@@ -1,0 +1,22 @@
+{
+  "code": 200,
+  "msg": "All generated successfully.",
+  "data": {
+    "callbackType": "complete",
+    "task_id": "81385225d59ff5bc838faa1bd8c1e0e6",
+    "data": [
+      {
+        "id": "e231xxxx-xxxx-xxxx-xxxx-xxxx8cadc7dc",
+        "audio_url": "https://example.com/track.mp3",
+        "stream_audio_url": "https://example.com/stream",
+        "image_url": "https://example.com/cover.jpeg",
+        "prompt": "[Verse] Night city lights shining bright",
+        "model_name": "chirp-v3-5",
+        "title": "Iron Man",
+        "tags": "electrifying, rock",
+        "createTime": "2025-01-01 00:00:00",
+        "duration": 198.44
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "code": 200,
+  "msg": "All generated successfully.",
+  "data": {
+    "callbackType": "complete",
+    "task_id": "6308b68dd97809c569bfb9d1682b831b",
+    "data": [
+      {
+        "id": "a4f0db3b-5752-4512-937f-322c3f52bda1",
+        "audio_url": "https://tempfile.aiquickdraw.com/r/eeb6251fd96f45eab8dd98038afebd19.mp3",
+        "stream_audio_url": "https://musicfile.kie.ai/YTRmMGRiM2ItNTc1Mi00NTEyLTkzN2YtMzIyYzNmNTJiZGEx",
+        "image_url": "https://musicfile.kie.ai/YTRmMGRiM2ItNTc1Mi00NTEyLTkzN2YtMzIyYzNmNTJiZGEx.jpeg",
+        "prompt": "[Verse 1]\nTrzydzieści lat pod wspólnym niebem\nTwój uśmiech zawsze jak pierwszy dzień\nGdy patrzę na Ciebie, Oksano\nCzas zatrzymuje się, wiem\n\n[Chorus]\nTwój uśmiech rozświetla moje cienie\nJak włoskie słońce nad morzem lśni\nPrzez tysiąc jutrzejszych wschodów\nChcę budzić się tam, gdzie Ty\n\n[Verse 2]\nPrzemierzaliśmy razem tę drogę\nPrzez radość i przez łzy\nA Twój uśmiech był moją kotwicą\nGdy sztorm nadchodził i gdy cichł\n\n[Chorus]\nTwój uśmiech rozświetla moje cienie\nJak włoskie słońce nad morzem lśni\nPrzez tysiąc jutrzejszych wschodów\nChcę budzić się tam, gdzie Ty\n\n[Bridge]\nOd Neapolu po krańce świata\nOd wczoraj aż po wieczność\nMoja miłość wciąż rośnie, Oksano\nJak pieśń, co nie zna końca\n\n[Chorus]\nTwój uśmiech rozświetla moje cienie\nJak włoskie słońce nad morzem lśni\nPrzez tysiąc jutrzejszych wschodów\nChcę budzić się tam, где Ty",
+        "model_name": "chirp-fenix",
+        "title": "Uśmiech Na Zawsze",
+        "tags": "",
+        "createTime": "2026-04-21 19:42:16",
+        "duration": 188.36
+      },
+      {
+        "id": "ae17e097-ca0a-4438-b0ec-4a089532abb2",
+        "audio_url": "https://tempfile.aiquickdraw.com/r/eaaa7d041cad4a29802687e74ed8e74e.mp3",
+        "stream_audio_url": "https://musicfile.kie.ai/YWUxN2UwOTctY2EwYS00NDM4LWIwZWMtNGEwODk1MzJhYmIy",
+        "image_url": "https://musicfile.kie.ai/YWUxN2UwOTctY2EwYS00NDM4LWIwZWMtNGEwODk1MzJhYmIy.jpeg",
+        "prompt": "[Verse 1]\nTrzydzieści lat pod wspólnym niebem\nTwój uśmiech zawsze jak pierwszy dzień\nGdy patrzę na Ciebie, Oksano\nCzas zatrzymuje się, wiem\n\n[Chorus]\nTwój uśmiech rozświetla moje cienie\nJak włoskie słońce nad morzem lśni\nPrzez tysiąc jutrzejszych wschodów\nChcę budzić się tam, gdzie Ty\n\n[Verse 2]\nPrzemierzaliśmy razem tę drogę\nPrzez radość i przez łzy\nA Twój uśmiech był moją kotwicą\nGdy sztorm nadchodził i gdy cichł\n\n[Chorus]\nTwój uśmiech rozświetla moje cienie\nJak włoskie słońce nad morzem lśni\nPrzez tysiąc jutrzejszych wschodów\nChcę budzić się tam, где Ty\n\n[Bridge]\nOd Neapolu po krańce świata\nOd wczoraj aż po wieczność\nMoja miłość wciąż rośnie, Oksano\nJak pieśń, co nie zna końca\n\n[Chorus]\nTwój uśmiech rozświetla moje cienie\nJak włoskie słońce nad morzem lśni\nPrzez tysiąc jutrzejszych wschodów\nChcę budzić się tam, где Ty",
+        "model_name": "chirp-fenix",
+        "title": "Uśmiech Na Zawsze",
+        "tags": "",
+        "createTime": "2026-04-21 19:42:16",
+        "duration": 194.4
+      }
+    ]
+  }
+}

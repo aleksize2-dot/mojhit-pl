@@ -1,0 +1,24 @@
+# Architecture: Retell AI + Twilio Outbound Call (Croatian)
+
+**How the integration works:**
+1. **Twilio (The Pipe/Telecom):** 
+   - We use Twilio strictly as a SIP trunk / carrier. 
+   - The user verifies their personal mobile number in Twilio under "Verified Caller IDs".
+   - This allows Twilio to initiate a call but spoof the `From` header so the recipient sees the user's personal number, not a random rented Twilio number.
+
+2. **Retell AI (The Operator/Brain):**
+   - In Retell, we set up a "Custom Twilio" connection using the user's Twilio Account SID and Auth Token.
+   - We create an Agent in Retell.
+   - **Voice:** Choose a multilingual voice (e.g., ElevenLabs or OpenAI) configured for Croatian.
+   - **System Prompt:** "You are calling on behalf of Alex. Speak only Croatian. Your goal is to ask the following 3 questions: [Q1, Q2, Q3]. Wait for the user to answer each. Be polite. Say 'Doviđenja' and hang up when done."
+
+3. **Node.js Script (The Trigger):**
+   - We write a local script (`call.js`).
+   - It sends a POST request to Retell's API: `https://api.retellai.com/v2/create-phone-call`
+   - Payload includes:
+     - `from_number`: The user's verified personal number.
+     - `to_number`: The Croatian recipient's number.
+     - `agent_id`: The ID of the Retell Agent we configured.
+
+**Flow of the Call:**
+Script runs -> Retell connects to Twilio -> Twilio calls the recipient -> Recipient picks up -> Retell's WebRTC handles the ultra-low-latency STT/LLM/TTS loop -> Call ends -> Retell webhook saves the transcript.

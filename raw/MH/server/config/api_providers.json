@@ -1,0 +1,30 @@
+{
+  "music": {
+    "active": "kie",
+    "fallback": "suno_direct",
+    "providers": {
+      "kie": {
+        "name": "Kie AI (Suno V5)",
+        "enabled": true
+      },
+      "suno_direct": {
+        "name": "Suno API (Lokalny Python)",
+        "enabled": true
+      }
+    }
+  },
+  "llm": {
+    "active": "openrouter",
+    "fallback": "openai",
+    "providers": {
+      "openrouter": {
+        "name": "OpenRouter",
+        "enabled": true
+      },
+      "openai": {
+        "name": "OpenAI (Fallback)",
+        "enabled": true
+      }
+    }
+  }
+}

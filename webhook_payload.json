@@ -1,0 +1,43 @@
+{
+  "code": 200,
+  "msg": "success",
+  "data": {
+    "task_id": "5db3a5ce60c5d3c2d51c50ee585aef6f",
+    "response": {
+      "sunoData": [
+        {
+          "id": "11de74ce-61e6-4e9f-8fa0-e1981ab99112",
+          "audioUrl": "https://tempfile.aiquickdraw.com/r/fb8d4772c5da482a8f509111de1922e6.mp3",
+          "sourceAudioUrl": "https://tempfile.aiquickdraw.com/r/fb8d4772c5da482a8f509111de1922e6.mp3",
+          "streamAudioUrl": "https://musicfile.kie.ai/MTFkZTc0Y2UtNjFlNi00ZTlmLThmYTAtZTE5ODFhYjk5MTEy",
+          "sourceStreamAudioUrl": "https://cdn1.suno.ai/11de74ce-61e6-4e9f-8fa0-e1981ab99112.mp3",
+          "imageUrl": "https://tempfile.aiquickdraw.com/r/b7cacf6c8a7d45ce955c111d4c0f8ceb.jpeg",
+          "sourceImageUrl": "https://tempfile.aiquickdraw.com/r/b7cacf6c8a7d45ce955c111d4c0f8ceb.jpeg",
+          "prompt": "Test audio generation for mojhit.pl",
+          "modelName": "chirp-v4",
+          "title": "Test Track",
+          "tags": "",
+          "createTime": 1776767336245,
+          "duration": 8.4
+        },
+        {
+          "id": "93472804-dc08-447f-be82-497f91354527",
+          "audioUrl": "https://tempfile.aiquickdraw.com/r/90d377e08cce41768ec836af660531ed.mp3",
+          "sourceAudioUrl": "https://tempfile.aiquickdraw.com/r/90d377e08cce41768ec836af660531ed.mp3",
+          "streamAudioUrl": "https://musicfile.kie.ai/OTM0NzI4MDQtZGMwOC00NDdmLWJlODItNDk3ZjkxMzU0NTI3",
+          "sourceStreamAudioUrl": "https://cdn1.suno.ai/93472804-dc08-447f-be82-497f91354527.mp3",
+          "imageUrl": "https://tempfile.aiquickdraw.com/r/f6616ff23e0a42caac31317ee83b0773.jpeg",
+          "sourceImageUrl": "https://tempfile.aiquickdraw.com/r/f6616ff23e0a42caac31317ee83b0773.jpeg",
+          "prompt": "Test audio generation for mojhit.pl",
+          "modelName": "chirp-v4",
+          "title": "Test Track",
+          "tags": "",
+          "createTime": 1776767336245,
+          "duration": 55.52
+        }
+      ]
+    },
+    "status": "SUCCESS",
+    "callbackType": "complete"
+  }
+}

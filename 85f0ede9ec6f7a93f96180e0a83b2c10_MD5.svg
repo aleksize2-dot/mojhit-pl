@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="en" class="h-full scroll-smooth bg-white antialiased [font-feature-settings:&#x27;ss01&#x27;] light"><head><meta charSet="utf-8"/><title>Login - Qlty</title><meta name="commit" content="bd7b383ae1cba6955cf35e6680a8a27bef718e9b"/><link rel="icon" href="/favicon.png"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap"/><link rel="stylesheet" href="/assets/styles-CcfccEm9.css"/><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/></head><body class="flex h-full flex-col"><div class="pointer-events-none fixed left-0 right-0 top-0 z-50 opacity-0" style="transition:opacity 200ms linear"><div class="h-[3px] bg-aqua-500 shadow-sm" style="margin-left:-100%;transition:margin-left 200ms linear;width:100%"></div></div><div class="relative flex min-h-full justify-center md:px-12 lg:px-0"><div class="relative z-10 flex flex-1 flex-col bg-white py-10 px-4 shadow-2xl sm:justify-center md:flex-none md:px-28"><div class="mx-auto w-full max-w-md sm:px-4 md:w-96 md:max-w-sm md:px-0"><div class="flex flex-col"><img class="h-32 w-auto align-center" src="/logo_black.svg" alt="Qlty"/><div class="mt-20"><div class="mb-4 rounded-sm bg-red-100 px-4 py-2 text-sm text-slate-700">Please login and we&#x27;ll send you right along.</div><h2 class="text-lg font-semibold text-slate-900">Sign in to your account</h2><form method="post" action="/auth/github" data-discover="true"><p class="mt-2 text-sm text-slate-700">Don’t have an account?<!-- --> <button type="submit" class="font-medium text-aqua-600 hover:cursor-pointer hover:underline">Sign up</button> <!-- -->for a free trial.</p></form></div></div><div class="mt-8"><p class="text-sm font-medium text-slate-700">Sign in with</p><div class="mt-1 grid gap-3"><form method="post" action="/auth/github?redirect_uri=https%3A%2F%2Fqlty.sh%2Fgh%2Fjs-cookie%2Fprojects%2Fjs-cookie.svg" data-discover="true"><button type="submit" class="inline-flex w-full justify-center rounded-md border border-slate-300 bg-white py-2 px-4 text-sm font-medium text-slate-500 shadow-xs hover:bg-slate-50 hover:cursor-pointer"><span class="sr-only">Sign in with GitHub</span><svg class="h-5 w-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"></path></svg></button></form></div></div></div></div><div class="hidden sm:contents lg:relative lg:block lg:flex-1"><img class="absolute inset-0 h-full w-full object-cover" src="/assets/background-auth-n0Vi6Pp9.jpg" alt=""/></div></div><link rel="modulepreload" href="/assets/entry.client-DUcIE3gl.js"/><link rel="modulepreload" href="/assets/jsx-runtime-BgjmLhhW.js"/><link rel="modulepreload" href="/assets/index-BGiquoiA.js"/><link rel="modulepreload" href="/assets/index-BVix4esh.js"/><link rel="modulepreload" href="/assets/index-fufHeKEY.js"/><link rel="modulepreload" href="/assets/components-B1Wdf9Ga.js"/><link rel="modulepreload" href="/assets/_commonjsHelpers-CE1G-McA.js"/><link rel="modulepreload" href="/assets/button-E24UIbFN.js"/><link rel="modulepreload" href="/assets/ProductionErrorMessage-BXB-shV8.js"/><link rel="modulepreload" href="/assets/tooltip-B0ytb4zS.js"/><link rel="modulepreload" href="/assets/toast-C8ajZVLM.js"/><link rel="modulepreload" href="/assets/extends-CF3RwP-h.js"/><link rel="modulepreload" href="/assets/index-BTJGJ5Pt.js"/><link rel="modulepreload" href="/assets/cn-BxszTHFO.js"/><link rel="modulepreload" href="/assets/clsx-B-dksMZM.js"/><link rel="modulepreload" href="/assets/index-C9Eswibz.js"/><link rel="modulepreload" href="/assets/index-CZ3j0KEm.js"/><link rel="modulepreload" href="/assets/floating-ui.react-dom-EDON3g8h.js"/><link rel="modulepreload" href="/assets/index-Bb-geTpd.js"/><link rel="modulepreload" href="/assets/XCircleIcon-Bg8hr6Zp.js"/><link rel="modulepreload" href="/assets/root-DaNaVjbm.js"/><link rel="modulepreload" href="/assets/route-YnHecN4t.js"/><link rel="modulepreload" href="/assets/Logo-BCS1QEi3.js"/><link rel="modulepreload" href="/assets/route-G98z0FPO.js"/><script>window.__remixContext = {"basename":"/","future":{"v3_fetcherPersist":true,"v3_relativeSplatPath":true,"v3_throwAbortReason":true,"v3_routeConfig":true,"v3_singleFetch":true,"v3_lazyRouteDiscovery":true,"unstable_optimizeDeps":false},"isSpaMode":false};window.__remixContext.stream = new ReadableStream({start(controller){window.__remixContext.streamController = controller;}}).pipeThrough(new TextEncoderStream());</script><script type="module" async="">;
+import * as route0 from "/assets/root-DaNaVjbm.js";
+import * as route1 from "/assets/route-YnHecN4t.js";
+import * as route2 from "/assets/route-G98z0FPO.js";
+window.__remixManifest = {
+  "entry": {
+    "module": "/assets/entry.client-DUcIE3gl.js",
+    "imports": [
+      "/assets/jsx-runtime-BgjmLhhW.js",
+      "/assets/index-BGiquoiA.js",
+      "/assets/index-BVix4esh.js",
+      "/assets/index-fufHeKEY.js",
+      "/assets/components-B1Wdf9Ga.js",
+      "/assets/_commonjsHelpers-CE1G-McA.js"
+    ],
+    "css": []
+  },
+  "routes": {
+    "root": {
+      "id": "root",
+      "path": "",
+      "hasAction": false,
+      "hasLoader": true,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasErrorBoundary": true,
+      "module": "/assets/root-DaNaVjbm.js",
+      "imports": [
+        "/assets/jsx-runtime-BgjmLhhW.js",
+        "/assets/index-BGiquoiA.js",
+        "/assets/index-BVix4esh.js",
+        "/assets/index-fufHeKEY.js",
+        "/assets/components-B1Wdf9Ga.js",
+        "/assets/_commonjsHelpers-CE1G-McA.js",
+        "/assets/button-E24UIbFN.js",
+        "/assets/ProductionErrorMessage-BXB-shV8.js",
+        "/assets/tooltip-B0ytb4zS.js",
+        "/assets/toast-C8ajZVLM.js",
+        "/assets/extends-CF3RwP-h.js",
+        "/assets/index-BTJGJ5Pt.js",
+        "/assets/cn-BxszTHFO.js",
+        "/assets/clsx-B-dksMZM.js",
+        "/assets/index-C9Eswibz.js",
+        "/assets/index-CZ3j0KEm.js",
+        "/assets/floating-ui.react-dom-EDON3g8h.js",
+        "/assets/index-Bb-geTpd.js",
+        "/assets/XCircleIcon-Bg8hr6Zp.js"
+      ],
+      "css": []
+    },
+    "routes/_interstitial": {
+      "id": "routes/_interstitial",
+      "parentId": "root",
+      "hasAction": false,
+      "hasLoader": false,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasErrorBoundary": false,
+      "module": "/assets/route-YnHecN4t.js",
+      "imports": [
+        "/assets/jsx-runtime-BgjmLhhW.js",
+        "/assets/index-fufHeKEY.js",
+        "/assets/index-BGiquoiA.js",
+        "/assets/_commonjsHelpers-CE1G-McA.js"
+      ],
+      "css": []
+    },
+    "routes/_interstitial.login": {
+      "id": "routes/_interstitial.login",
+      "parentId": "routes/_interstitial",
+      "path": "login",
+      "hasAction": false,
+      "hasLoader": true,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasErrorBoundary": false,
+      "module": "/assets/route-G98z0FPO.js",
+      "imports": [
+        "/assets/jsx-runtime-BgjmLhhW.js",
+        "/assets/Logo-BCS1QEi3.js",
+        "/assets/components-B1Wdf9Ga.js",
+        "/assets/index-BGiquoiA.js",
+        "/assets/_commonjsHelpers-CE1G-McA.js",
+        "/assets/index-BVix4esh.js",
+        "/assets/index-fufHeKEY.js"
+      ],
+      "css": []
+    },
+    "routes/_index": {
+      "id": "routes/_index",
+      "parentId": "root",
+      "index": true,
+      "hasAction": false,
+      "hasLoader": true,
+      "hasClientAction": false,
+      "hasClientLoader": false,
+      "hasErrorBoundary": false,
+      "module": "/assets/route-BqyR-Tlu.js",
+      "imports": [],
+      "css": []
+    }
+  },
+  "url": "/assets/manifest-57f8cbed.js",
+  "version": "57f8cbed"
+};
+window.__remixRouteModules = {"root":route0,"routes/_interstitial":route1,"routes/_interstitial.login":route2};
+
+import("/assets/entry.client-DUcIE3gl.js");</script><script>((STORAGE_KEY, restoreKey) => {
+    if (!window.history.state || !window.history.state.key) {
+      let key = Math.random().toString(32).slice(2);
+      window.history.replaceState({
+        key
+      }, "");
+    }
+    try {
+      let positions = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "{}");
+      let storedY = positions[restoreKey || window.history.state.key];
+      if (typeof storedY === "number") {
+        window.scrollTo(0, storedY);
+      }
+    } catch (error) {
+      console.error(error);
+      sessionStorage.removeItem(STORAGE_KEY);
+    }
+  })("positions", null)</script><div id="_rht_toaster" style="position:fixed;z-index:9999;top:32px;left:32px;right:32px;bottom:32px;pointer-events:none"></div></body></html><!--$?--><template id="B:0"></template><!--/$--><div hidden id="S:0"><script>window.__remixContext.streamController.enqueue("[{\"_1\":2,\"_33\":-5,\"_34\":-5},\"loaderData\",{\"_3\":4,\"_28\":29,\"_32\":-5},\"root\",{\"_5\":6,\"_7\":8,\"_13\":14,\"_19\":20,\"_26\":27},\"sentryDSN\",\"https://17991b4beaa183e0b94a451c7a12018f@o4506826106929152.ingest.us.sentry.io/4506826123247616\",\"ENV\",{\"_9\":10,\"_11\":12},\"NODE_ENV\",\"production\",\"QLTY_COMMIT_SHA\",\"bd7b383ae1cba6955cf35e6680a8a27bef718e9b\",\"USER\",{\"_15\":-7,\"_16\":-7,\"_17\":-7,\"_18\":-7},\"id\",\"name\",\"email\",\"created_at\",\"WORKSPACE\",{\"_15\":-7,\"_21\":-7,\"_22\":-7,\"_23\":-7,\"_18\":-7,\"_24\":25},\"installation_provider\",\"installation_provider_url\",\"login\",\"is_paid\",false,\"toasts\",[],\"routes/_interstitial.login\",{\"_30\":31},\"returnTo\",\"https://qlty.sh/gh/js-cookie/projects/js-cookie.svg\",\"routes/_interstitial\",\"actionData\",\"errors\"]\n");</script><!--$?--><template id="B:1"></template><!--/$--></div><script>function $RC(a,b){a=document.getElementById(a);b=document.getElementById(b);b.parentNode.removeChild(b);if(a){a=a.previousSibling;var f=a.parentNode,c=a.nextSibling,e=0;do{if(c&&8===c.nodeType){var d=c.data;if("/$"===d)if(0===e)break;else e--;else"$"!==d&&"$?"!==d&&"$!"!==d||e++}d=c.nextSibling;f.removeChild(c);c=d}while(c);for(;b.firstChild;)f.insertBefore(b.firstChild,c);a.data="$";a._reactRetry&&a._reactRetry()}};$RC("B:0","S:0")</script><div hidden id="S:1"><script>window.__remixContext.streamController.close();</script></div><script>$RC("B:1","S:1")</script>

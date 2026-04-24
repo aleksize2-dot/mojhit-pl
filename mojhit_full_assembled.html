@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>mojhit.pl - Twoja historia, Twój hit</title>
+ <style>
+ @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+ :root {
+ --bg-color: #FFFFFF;
+ --text-color: #1A1A1A;
+ --primary-orange: #FF6A00;
+ --secondary-orange: #FFA033;
+ --border-color: #E5E5E5;
+ --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.05);
+ --shadow-strong: 0 8px 24px rgba(255, 106, 0, 0.35);
+ --app-max-width: 1200px;
+ }
+
+ * {
+ box-sizing: border-box;
+ margin: 0;
+ padding: 0;
+ }
+
+ body {
+ font-family: 'Inter', sans-serif;
+ background-color: var(--bg-color);
+ color: var(--text-color);
+ min-height: 100vh;
+ line-height: 1.6;
+ }
+
+ /* App Container */
+ .app-container {
+ width: 100%;
+ max-width: var(--app-max-width);
+ margin: 0 auto;
+ display: flex;
+ flex-direction: column;
+ min-height: 100vh;
+ }
+
+ /* Header */
+ header {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ padding: 24px;
+ }
+
+ .logo {
+ font-size: 1.4rem;
+ font-weight: 800;
+ letter-spacing: -0.5px;
+ color: var(--text-color);
+ }
+
+ .badge {
+ background-color: #F8F9FA;
+ border: 1px solid var(--border-color);
+ padding: 6px 12px;
+ border-radius: 8px;
+ font-size: 0.75rem;
+ text-align: center;
+ display: flex;
+ flex-direction: column;
+ gap: 2px;
+ font-weight: 600;
+ color: #4A4A4A;
+ }
+
+ .stars {
+ color: #FFB800;
+ font-size: 0.85rem;
+ letter-spacing: 1px;
+ }
+
+ @media (min-width: 768px) {
+ header {
+ padding: 32px 40px;
+ }
+ .logo { font-size: 1.8rem; }
+ .badge { font-size: 0.85rem; padding: 8px 16px; flex-direction: row; align-items: center; gap: 8px; }
+ }
+
+ /* Main Content */
+ main {
+ flex: 1;
+ padding: 20px 24px 60px;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ }
+
+ @media (min-width: 768px) {
+ main {
+ padding: 40px 40px 80px;
+ }
+ }
+
+ /* Sections common */
+ section {
+ width: 100%;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ margin-bottom: 60px;
+ }
+
+ @media (min-width: 768px) {
+ section {
+ margin-bottom: 100px;
+ }
+ }
+
+ .section-header {
+ display: flex;
+ align-items: center;
+ width: 100%;
+ max-width: 800px;
+ margin-bottom: 32px;
+ }
+
+ .section-header::before,
+ .section-header::after {
+ content: "";
+ flex: 1;
+ height: 1px;
+ background-color: var(--border-color);
+ }
+
+ .section-header h2 {
+ font-size: 1.5rem;
+ font-weight: 800;
+ padding: 0 20px;
+ color: #2D3748;
+ white-space: nowrap;
+ }
+
+ @media (min-width: 768px) {
+ .section-header h2 {
+ font-size: 2rem;
+ padding: 0 32px;
+ }
+ .section-header { margin-bottom: 48px; }
+ }
+
+ /* Hero */
+ .hero {
+ max-width: 800px;
+ text-align: center;
+ }
+
+ h1 {
+ font-size: 2.2rem;
+ font-weight: 800;
+ line-height: 1.25;
+ margin-bottom: 20px;
+ color: #1A1A1A;
+ letter-spacing: -0.5px;
+ }
+
+ .subtitle {
+ font-size: 1.1rem;
+ color: #4A5568;
+ margin-bottom: 40px;
+ font-weight: 500;
+ max-width: 600px;
+ margin-left: auto;
+ margin-right: auto;
+ }
+
+ @media (min-width: 768px) {
+ h1 {
+ font-size: 3.5rem;
+ margin-bottom: 24px;
+ }
+ .subtitle {
+ font-size: 1.3rem;
+ margin-bottom: 48px;
+ }
+ }
+
+ /* Primary CTA Button */
+ .cta-btn {
+ display: inline-flex;
+ justify-content: center;
+ align-items: center;
+ width: 100%;
+ max-width: 360px;
+ background: linear-gradient(90deg, var(--primary-orange), var(--secondary-orange), var(--primary-orange));
+ background-size: 200% auto;
+ color: #fff;
+ text-decoration: none;
+ font-size: 1.25rem;
+ font-weight: 700;
+ padding: 18px 24px;
+ border-radius: 16px;
+ border: none;
+ cursor: pointer;
+ box-shadow: var(--shadow-strong);
+ transition: transform 0.2s ease, box-shadow 0.2s ease;
+ animation: gradientShimmer 3s linear infinite;
+ }
+
+ @media (min-width: 768px) {
+ .cta-btn {
+ font-size: 1.5rem;
+ padding: 24px 40px;
+ max-width: 420px;
+ border-radius: 20px;
+ }
+ .cta-btn svg { width: 32px; height: 32px; margin-right: 12px !important; }
+ }
+
+ .cta-btn:hover {
+ transform: translateY(-2px);
+ box-shadow: 0 10px 30px rgba(255, 106, 0, 0.4);
+ }
+
+ .cta-btn:active {
+ transform: translateY(0) scale(0.98);
+ box-shadow: 0 4px 12px rgba(255, 106, 0, 0.4);
+ }
+
+ @keyframes gradientShimmer {
+ 0% { background-position: 0% 50%; }
+ 100% { background-position: 200% 50%; }
+ }
+
+ /* How it works */
+ .how-it-works {
+ display: flex;
+ flex-direction: column;
+ gap: 40px;
+ width: 100%;
+ max-width: 800px;
+ position: relative;
+ }
+
+ @media (min-width: 768px) {
+ .how-it-works {
+ flex-direction: row;
+ justify-content: space-between;
+ gap: 0;
+ }
+ .how-it-works::before {
+ content: '';
+ position: absolute;
+ top: 40px;
+ left: 10%;
+ right: 10%;
+ height: 1px;
+ background-color: var(--border-color);
+ z-index: 0;
+ }
+ }
+
+ .step {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ flex: 1;
+ z-index: 1;
+ }
+
+ .step-icon {
+ width: 64px;
+ height: 64px;
+ background-color: #fff;
+ border: 2px solid var(--border-color);
+ border-radius: 50%;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ margin-bottom: 16px;
+ box-shadow: var(--shadow-soft);
+ transition: transform 0.3s ease, border-color 0.3s ease;
+ }
+
+ .step:hover .step-icon {
+ transform: translateY(-4px);
+ border-color: var(--primary-orange);
+ }
+
+ @media (min-width: 768px) {
+ .step-icon {
+ width: 80px;
+ height: 80px;
+ border-width: 3px;
+ margin-bottom: 20px;
+ }
+ .step-icon svg { width: 36px !important; height: 36px !important; }
+ }
+
+ .step-icon svg {
+ width: 28px;
+ height: 28px;
+ fill: none;
+ stroke: #4A5568;
+ stroke-width: 2;
+ stroke-linecap: round;
+ stroke-linejoin: round;
+ }
+
+ .step p {
+ font-size: 1.05rem;
+ font-weight: 600;
+ text-align: center;
+ color: #4A5568;
+ max-width: 160px;
+ line-height: 1.3;
+ }
+
+ /* Categories / Cards */
+ .categories-wrapper {
+ width: 100%;
+ max-width: 1000px;
+ padding: 10px 0 20px;
+ }
+ 
+ .categories {
+ display: grid;
+ grid-template-columns: repeat(2, 1fr);
+ gap: 16px;
+ width: 100%;
+ }
+
+ @media (min-width: 600px) {
+ .categories {
+ grid-template-columns: repeat(3, 1fr);
+ gap: 24px;
+ }
+ }
+
+ @media (min-width: 900px) {
+ .categories {
+ grid-template-columns: repeat(6, 1fr);
+ }
+ }
+
+ .card {
+ background-color: #fff;
+ border-radius: 16px;
+ box-shadow: var(--shadow-soft);
+ border: 1px solid var(--border-color);
+ display: flex;
+ flex-direction: column;
+ position: relative;
+ transition: transform 0.3s ease, box-shadow 0.3s ease;
+ cursor: pointer;
+ }
+
+ .card:hover {
+ transform: translateY(-6px);
+ box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+ border-color: #CBD5E0;
+ }
+
+ .card-img {
+ height: 100px;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ font-size: 3rem;
+ border-radius: 15px 15px 0 0;
+ }
+
+ @media (min-width: 768px) {
+ .card-img { height: 120px; font-size: 3.5rem; }
+ }
+
+ /* Generated colors */
+ .card-img.urodziny { background: linear-gradient(135deg, #FF9A9E, #FECFEF); }
+ .card-img.slub { background: linear-gradient(135deg, #A1C4FD, #C2E9FB); }
+ .card-img.zart { background: linear-gradient(135deg, #FFECD2, #FCB69F); }
+ .card-img.szef { background: linear-gradient(135deg, #E0C3FC, #8EC5FC); }
+ .card-img.romantyczna { background: linear-gradient(135deg, #ff7eb3, #ff758c); }
+ .card-img.rap { background: linear-gradient(135deg, #FDFBFB, #EBEDEE); }
+
+ .card-footer {
+ padding: 12px;
+ text-align: center;
+ border-radius: 0 0 15px 15px;
+ min-height: 48px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ }
+
+ .card-title {
+ font-size: 0.95rem;
+ font-weight: 600;
+ color: #2D3748;
+ line-height: 1.2;
+ }
+
+ @media (min-width: 768px) {
+ .card-title { font-size: 1rem; }
+ .card-footer { padding: 14px; min-height: 54px; }
+ }
+
+ /* Dlaczego mojhit.pl? (Features) */
+ .features {
+ display: grid;
+ grid-template-columns: 1fr;
+ gap: 24px;
+ width: 100%;
+ max-width: 1000px;
+ }
+
+ @media (min-width: 768px) {
+ .features {
+ grid-template-columns: repeat(3, 1fr);
+ gap: 32px;
+ }
+ }
+
+ .feature-box {
+ background-color: #F8F9FA;
+ border-radius: 20px;
+ padding: 32px 24px;
+ text-align: center;
+ border: 1px solid var(--border-color);
+ transition: transform 0.3s ease;
+ }
+
+ .feature-box:hover {
+ transform: translateY(-4px);
+ background-color: #fff;
+ box-shadow: var(--shadow-soft);
+ }
+
+ .feature-icon {
+ width: 56px;
+ height: 56px;
+ margin: 0 auto 20px;
+ background-color: rgba(255, 106, 0, 0.1);
+ color: var(--primary-orange);
+ border-radius: 14px;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ }
+
+ .feature-icon svg {
+ width: 28px;
+ height: 28px;
+ stroke-width: 2;
+ stroke: currentColor;
+ fill: none;
+ stroke-linecap: round;
+ stroke-linejoin: round;
+ }
+
+ .feature-title {
+ font-size: 1.2rem;
+ font-weight: 700;
+ color: #1A1A1A;
+ margin-bottom: 12px;
+ }
+
+ .feature-desc {
+ font-size: 0.95rem;
+ color: #4A5568;
+ line-height: 1.5;
+ }
+
+ /* FAQ */
+ .faq-wrapper {
+ width: 100%;
+ max-width: 700px;
+ }
+
+ details {
+ width: 100%;
+ border-bottom: 1px solid var(--border-color);
+ padding: 20px 0;
+ }
+ 
+ details:first-of-type {
+ border-top: 1px solid var(--border-color);
+ }
+
+ summary {
+ font-size: 1.15rem;
+ font-weight: 600;
+ color: #1A1A1A;
+ cursor: pointer;
+ list-style: none; /* Hide default triangle */
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ transition: color 0.2s ease;
+ }
+ 
+ summary::-webkit-details-marker {
+ display: none; /* Hide defauly triangle in Webkit */
+ }
+
+ summary:hover {
+ color: var(--primary-orange);
+ }
+
+ summary::after {
+ content: '+';
+ font-size: 1.5rem;
+ font-weight: 400;
+ color: #718096;
+ margin-left: 16px;
+ transition: transform 0.3s ease;
+ }
+
+ details[open] summary::after {
+ content: '−'; /* Minus sign */
+ transform: rotate(180deg);
+ }
+ 
+ details[open] summary {
+ color: var(--primary-orange);
+ margin-bottom: 16px;
+ }
+
+ .faq-content {
+ font-size: 1rem;
+ color: #4A5568;
+ line-height: 1.6;
+ padding-right: 24px;
+ animation: fadeIn 0.3s ease;
+ }
+
+ @keyframes fadeIn {
+ from { opacity: 0; transform: translateY(-10px); }
+ to { opacity: 1; transform: translateY(0); }
+ }
+
+ /* Footer */
+ footer {
+ border-top: 1px solid var(--border-color);
+ padding: 32px 24px;
+ background-color: #F8F9FA;
+ }
+
+ .footer-content {
+ max-width: var(--app-max-width);
+ margin: 0 auto;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: 16px;
+ }
+
+ @media (min-width: 768px) {
+ .footer-content {
+ flex-direction: row;
+ justify-content: space-between;
+ padding: 0 16px;
+ }
+ }
+
+ .footer-copyright {
+ font-size: 0.95rem;
+ color: #718096;
+ font-weight: 500;
+ }
+
+ .footer-links {
+ display: flex;
+ gap: 24px;
+ }
+
+ .footer-links a {
+ color: #4A5568;
+ text-decoration: none;
+ font-size: 0.95rem;
+ font-weight: 500;
+ transition: color 0.2s ease;
+ }
+
+ .footer-links a:hover {
+ color: var(--primary-orange);
+ }
+
+ /* Bottom CTA specific wrapper */
+ .bottom-cta-wrapper {
+ margin-top: 40px;
+ text-align: center;
+ }
+ </style>
+</head>
+<body>
+ <div class="app-container">
+ <!-- 1. Header -->
+ <header>
+ <div class="logo">mojhit.pl</div>
+ <div class="badge">
+ Stworzone w Polsce
+ <div class="stars">⭐️⭐️⭐️⭐️⭐️</div>
+ </div>
+ </header>
+
+ <!-- Main Content -->
+ <main>
+ <!-- 2. Hero Section -->
+ <section class="hero">
+ <h1>Twoja historia &mdash; Twój hit w&nbsp;3 minuty</h1>
+ <p class="subtitle">Stwórz profesjonalną piosenkę z pomocą AI. Idealny prezent na każdą okazję.</p>
+ <button class="cta-btn">
+ <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+ <line x1="8" y1="10" x2="8" y2="14"></line>
+ <line x1="12" y1="6" x2="12" y2="18"></line>
+ <line x1="16" y1="10" x2="16" y2="14"></line>
+ </svg>
+ Stwórz Hit 🎵
+ </button>
+ </section>
+
+ <!-- 3. Jak to działa -->
+ <section>
+ <div class="section-header">
+ <h2>Jak to działa?</h2>
+ </div>
+ <div class="how-it-works">
+ <div class="step">
+ <div class="step-icon">
+ <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+ </div>
+ <p>1. Wybierz styl</p>
+ </div>
+ <div class="step">
+ <div class="step-icon">
+ <svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+ </div>
+ <p>2. Opisz historię</p>
+ </div>
+ <div class="step">
+ <div class="step-icon">
+ <svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+ </div>
+ <p>3. Odbierz hit</p>
+ </div>
+ </div>
+ </section>
+
+ <!-- 4. Kategorie -->
+ <section>
+ <div class="section-header">
+ <h2>Na każdą okazję</h2>
+ </div>
+ <div class="categories-wrapper">
+ <div class="categories">
+ <div class="card">
+ <div class="card-img urodziny">🎂</div>
+ <div class="card-footer">
+ <div class="card-title">Urodziny</div>
+ </div>
+ <div class="card-check">
+ <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-img slub">💍</div>
+ <div class="card-footer">
+ <div class="card-title">Ślub</div>
+ </div>
+ <div class="card-check">
+ <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-img zart">🤹</div>
+ <div class="card-footer">
+ <div class="card-title">Żart</div>
+ </div>
+ <div class="card-check">
+ <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-img szef">👔</div>
+ <div class="card-footer">
+ <div class="card-title">Dla Szefa</div>
+ </div>
+ <div class="card-check">
+ <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-img romantyczna">❤️</div>
+ <div class="card-footer">
+ <div class="card-title">Romantyczna</div>
+ </div>
+ <div class="card-check">
+ <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-img rap">🧢</div>
+ <div class="card-footer">
+ <div class="card-title">Rap dla Ziomka</div>
+ </div>
+ <div class="card-check">
+ <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- 5. Dlaczego mojhit.pl? -->
+ <section>
+ <div class="section-header">
+ <h2>Dlaczego mojhit.pl?</h2>
+ </div>
+ <div class="features">
+ <div class="feature-box">
+ <div class="feature-icon">
+ <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+ </div>
+ <div class="feature-title">Szybka generacja</div>
+ <div class="feature-desc">Odbierz gotowy utwór, wokal i instrumenty w zaledwie 2 do 3 minut.</div>
+ </div>
+ <div class="feature-box">
+ <div class="feature-icon">
+ <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+ </div>
+ <div class="feature-title">Wysoka jakość</div>
+ <div class="feature-desc">Korzystamy z najnowocześniejszych modeli Studio AI zapewniających radiową jakość brzmienia.</div>
+ </div>
+ <div class="feature-box">
+ <div class="feature-icon">
+ <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+ </div>
+ <div class="feature-title">Pełne prawa</div>
+ <div class="feature-desc">Piosenka jest całkowicie Twoja. Możesz się nią dzielić i używać bez ograniczeń na swoich profilach.</div>
+ </div>
+ </div>
+ </section>
+
+ <!-- 6. FAQ -->
+ <section>
+ <div class="section-header">
+ <h2>FAQ - Najczęstsze pytania</h2>
+ </div>
+ <div class="faq-wrapper">
+ <details>
+ <summary>Ile to kosztuje?</summary>
+ <div class="faq-content">
+ Założenie konta i testowanie systemu jest całkowicie darmowe. Aby pobrać pełną piosenkę w jakości studyjnej (WAV/MP3), płacisz tylko za pojedynczy utwór lub wybierasz korzystny pakiet dla kilku piosenek.
+ </div>
+ </details>
+ <details>
+ <summary>Jak szybko otrzymam piosenkę?</summary>
+ <div class="faq-content">
+ Od momentu wpisania opisu historii lub podania wskazówek do piosenki, nasza sztuczna inteligencja potrzebuje zazwyczaj od 2 do 3 minut na skomponowanie muzyki, napisanie tekstu i wygenerowanie wokalu.
+ </div>
+ </details>
+ <details>
+ <summary>Czy mogę użyć jej komercyjnie?</summary>
+ <div class="faq-content">
+ Tak. Przekazujemy Ci pełne prawa do wygenerowanego utworu. Możesz go używać na portalach takich jak YouTube, TikTok, Instagram i innych bez obaw o roszczenia dotyczące praw autorskich.
+ </div>
+ </details>
+ </div>
+ </section>
+
+ <div class="bottom-cta-wrapper">
+ <button class="cta-btn">
+ <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+ <line x1="8" y1="10" x2="8" y2="14"></line>
+ <line x1="12" y1="6" x2="12" y2="18"></line>
+ <line x1="16" y1="10" x2="16" y2="14"></line>
+ </svg>
+ Stwórz Hit 🎵
+ </button>
+ </div>
+
+ </main>
+
+ <!-- 7. Footer -->
+ <footer>
+ <div class="footer-content">
+ <div class="footer-copyright">
+ &copy; 2026 mojhit.pl. Wszelkie prawa zastrzeżone.
+ </div>
+ <div class="footer-links">
+ <a href="#">Regulamin</a>
+ <a href="#">Polityka Prywatności</a>
+ <a href="#">Kontakt</a>
+ </div>
+ </div>
+ </footer>
+ </div>
+</body>
+</html>

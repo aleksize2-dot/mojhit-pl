@@ -1,0 +1,100 @@
+{
+  "models": {
+    "providers": {
+      "qwen": {
+        "models": [
+          {
+            "id": "qwen-plus",
+            "name": "Qwen Plus (via OpenRouter)",
+            "api": "openai-responses",
+            "reasoning": false,
+            "input": ["text", "image"],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 131072,
+            "maxTokens": 8192
+          },
+          {
+            "id": "qwen3.6-plus",
+            "name": "Qwen 3.6 Plus (via OpenRouter)",
+            "api": "openai-responses",
+            "reasoning": false,
+            "input": ["text", "image"],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 131072,
+            "maxTokens": 8192
+          },
+          {
+            "id": "ernie-4.5-vl-424b-a47b",
+            "name": "ERNIE 4.5 VL 424B A47B",
+            "api": "openai-completions",
+            "input": ["text", "image"],
+            "contextWindow": 123000,
+            "maxTokens": 16000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            }
+          },
+          {
+            "id": "nvidia/nemotron-3-super-120b-a12b:free",
+            "name": "NVIDIA Nemotron 3 Super (free)",
+            "api": "openai-responses",
+            "reasoning": true,
+            "input": ["text"],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 262144,
+            "maxTokens": 262144
+          },
+          {
+            "id": "nvidia/nemotron-3-super-120b-a12b",
+            "name": "NVIDIA Nemotron 3 Super",
+            "api": "openai-responses",
+            "reasoning": true,
+            "input": ["text"],
+            "cost": {
+              "input": 0.0000001,
+              "output": 0.0000005,
+              "cacheRead": 0.0000001,
+              "cacheWrite": 0
+            },
+            "contextWindow": 262144,
+            "maxTokens": 262144
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "models": {
+        "google/gemini-3.1-pro-preview": { "alias": "gemini" },
+        "qwen/qwen3.6-plus": { "alias": "qwen" },
+        "qwen/qwen-plus": { "alias": "qwen-lite" },
+        "deepseek/deepseek-reasoner": { "alias": "deepseek" },
+        "deepseek/deepseek-chat": { "alias": "deepseek-lite" },
+        "google/gemini-3.1-flash-lite-preview": { "alias": "gemini-lite" },
+        "qwen/ernie-4.5-vl-424b-a47b": { "alias": "ernie-vision" },
+        "qwen/nvidia/nemotron-3-super-120b-a12b:free": { "alias": "nemotron-free" },
+        "qwen/nvidia/nemotron-3-super-120b-a12b": { "alias": "nemotron" }
+      }
+    }
+  }
+}
