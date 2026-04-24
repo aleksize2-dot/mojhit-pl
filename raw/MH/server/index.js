@@ -2331,14 +2331,17 @@ app.get('/api/admin/users', async (req, res) => {
     
     let query = supabase
       .from('users')
-      .select('*, user_admin_roles(role_id)', { count: 'exact' });
+      .select('*, user_admin_roles!user_admin_roles_user_id_fkey(role_id)', { count: 'exact' });
     
     if (search) {
       query = query.or(`email.ilike.%${search}%,clerk_id.ilike.%${search}%`);
     }
     
+    const sort_by = req.query.sort_by || 'created_at';
+    const sort_dir = req.query.sort_dir === 'asc';
+
     const { data: users, error, count } = await query
-      .order('created_at', { ascending: false })
+      .order(sort_by, { ascending: sort_dir })
       .range(offset, offset + limit - 1);
     
     if (error) throw error;
@@ -2411,8 +2414,11 @@ app.get('/api/admin/tracks', async (req, res) => {
       query = query.eq('expired', expiredFilter === 'true');
     }
     
+    const sort_by = req.query.sort_by || 'created_at';
+    const sort_dir = req.query.sort_dir === 'asc';
+
     const { data: tracks, error, count } = await query
-      .order('created_at', { ascending: false })
+      .order(sort_by, { ascending: sort_dir })
       .range(offset, offset + limit - 1);
     
     if (error) throw error;
@@ -2501,8 +2507,8 @@ app.get('/api/admin/roles', async (req, res) => {
     
     if (rolesError) throw rolesError;
     
-    // For each role, fetch its permissions
-    const rolesWithPermissions = [];
+    // For each role, fetch its permissions and users
+    const rolesWithDetails = [];
     for (const role of roles || []) {
       const { data: permissions, error: permError } = await supabase
         .from('role_permissions')
@@ -2510,14 +2516,26 @@ app.get('/api/admin/roles', async (req, res) => {
         .eq('role_id', role.id);
       
       if (permError) throw permError;
+
+      const { data: assignments, error: assignError } = await supabase
+        .from('user_admin_roles')
+        .select('user_id, users!user_admin_roles_user_id_fkey(email, clerk_id)')
+        .eq('role_id', role.id);
+
+      if (assignError) throw assignError;
       
-      rolesWithPermissions.push({
+      rolesWithDetails.push({
         ...role,
-        permissions: permissions?.map(p => p.admin_permissions) || []
+        permissions: permissions?.map(p => p.admin_permissions) || [],
+        assigned_users: assignments?.map(a => ({
+          user_id: a.user_id,
+          email: a.users?.email || '',
+          clerk_id: a.users?.clerk_id || ''
+        })) || []
       });
     }
     
-    res.json({ roles: rolesWithPermissions });
+    res.json({ roles: rolesWithDetails });
   } catch (error) {
     console.error('Roles list error:', error);
     res.status(500).json({ error: error.message });
@@ -3880,6 +3898,106 @@ app.put('/api/admin/settings/site', requireAdmin, async (req, res) => {
     res.json({ success: true, settings: data });
   } catch (err) {
     console.error('Error updating site settings:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ----------------------------------------
+// Stripe Promo Codes Endpoints
+// ----------------------------------------
+
+app.get('/api/admin/promo-codes', async (req, res) => {
+  try {
+    const promotionCodes = await stripe.promotionCodes.list({ limit: 100, expand: ['data.coupon'] });
+    res.json({ promoCodes: promotionCodes.data });
+  } catch (err) {
+    console.error('Error fetching promo codes:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/admin/promo-codes', async (req, res) => {
+  try {
+    const { code, type, value, maxRedemptions, expiresAt } = req.body;
+    
+    // 1. Create a coupon
+    let couponParams = {
+      name: `Kupon dla ${code}`,
+      duration: 'once',
+    };
+    if (type === 'percent') {
+      couponParams.percent_off = value;
+    } else {
+      couponParams.amount_off = value * 100;
+      couponParams.currency = 'pln';
+    }
+    const coupon = await stripe.coupons.create(couponParams);
+
+    const promoParams = {
+      promotion: {
+        type: 'coupon',
+        coupon: coupon.id
+      },
+      code: code.toUpperCase(),
+      active: true,
+    };
+    
+    if (maxRedemptions) {
+      promoParams.max_redemptions = parseInt(maxRedemptions, 10);
+    }
+    
+    if (expiresAt) {
+      // expiresAt expected as Unix timestamp in seconds
+      promoParams.expires_at = Math.floor(new Date(expiresAt).getTime() / 1000);
+    }
+
+    const promoCode = await stripe.promotionCodes.create(promoParams);
+    
+    res.json({ success: true, promoCode });
+  } catch (err) {
+    console.error('Error creating promo code:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/admin/promo-codes/:id', async (req, res) => {
+  try {
+    const { active } = req.body;
+    const promoCode = await stripe.promotionCodes.update(req.params.id, { active });
+    res.json({ success: true, promoCode });
+  } catch (err) {
+    console.error('Error updating promo code:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/promo/validate', async (req, res) => {
+  try {
+    const { code } = req.body;
+    if (!code) return res.status(400).json({ error: 'Brak kodu' });
+    
+    const promotionCodes = await stripe.promotionCodes.list({
+      code: code.toUpperCase(),
+      active: true,
+      expand: ['data.coupon']
+    });
+    
+    if (promotionCodes.data.length === 0) {
+      return res.status(404).json({ error: 'Nieprawidłowy lub nieaktywny kod promocyjny.' });
+    }
+    
+    const promo = promotionCodes.data[0];
+    const coupon = promo.coupon;
+    
+    res.json({
+      valid: true,
+      id: promo.id,
+      code: promo.code,
+      type: coupon.percent_off ? 'percent' : 'amount',
+      value: coupon.percent_off ? coupon.percent_off : (coupon.amount_off / 100)
+    });
+  } catch (err) {
+    console.error('Error validating promo code:', err);
     res.status(500).json({ error: err.message });
   }
 });
