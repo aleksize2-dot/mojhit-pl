@@ -6,6 +6,8 @@ export function AffiliateManager() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'users' | 'payouts'>('payouts');
+  const [usersSort, setUsersSort] = useState<{ column: string; direction: 'asc' | 'desc' }>({ column: 'email', direction: 'asc' });
+  const [payoutsSort, setPayoutsSort] = useState<{ column: string; direction: 'asc' | 'desc' }>({ column: 'created_at', direction: 'desc' });
 
   useEffect(() => {
     fetchData();
@@ -63,8 +65,74 @@ export function AffiliateManager() {
     }
   };
 
+  const toggleUsersSort = (column: string) => {
+    const newDirection = usersSort.column === column && usersSort.direction === 'desc' ? 'asc' : 'desc';
+    setUsersSort({ column, direction: newDirection });
+  };
+
+  const togglePayoutsSort = (column: string) => {
+    const newDirection = payoutsSort.column === column && payoutsSort.direction === 'desc' ? 'asc' : 'desc';
+    setPayoutsSort({ column, direction: newDirection });
+  };
+
+  const sortedUsers = [...affiliates].sort((a, b) => {
+    let aVal = a[usersSort.column] || '';
+    let bVal = b[usersSort.column] || '';
+    if (aVal < bVal) return usersSort.direction === 'asc' ? -1 : 1;
+    if (aVal > bVal) return usersSort.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const sortedPayouts = [...earnings].sort((a, b) => {
+    let aVal = a[payoutsSort.column];
+    let bVal = b[payoutsSort.column];
+    
+    // Handle null values
+    if (aVal == null) aVal = '';
+    if (bVal == null) bVal = '';
+
+    if (aVal < bVal) return payoutsSort.direction === 'asc' ? -1 : 1;
+    if (aVal > bVal) return payoutsSort.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const SortHeader = ({ label, column, sortState, onSort }: { label: string, column: string, sortState: {column: string, direction: string}, onSort: (col: string) => void }) => (
+    <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant cursor-pointer hover:bg-surface-container transition-colors select-none group" onClick={() => onSort(column)}>
+      <div className="flex items-center gap-1">
+        {label}
+        <span className={`material-symbols-outlined text-[14px] transition-opacity ${sortState.column === column ? 'opacity-100 text-primary' : 'opacity-20 group-hover:opacity-50'}`}>
+          {sortState.column === column && sortState.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'}
+        </span>
+      </div>
+    </th>
+  );
+
+  const totalPendingPLN = sortedPayouts.filter(e => e.status === 'pending' || e.status === 'available').reduce((s, e) => s + Number(e.commission_amount), 0);
+  const totalPaidPLN = sortedPayouts.filter(e => e.status === 'paid').reduce((s, e) => s + Number(e.commission_amount), 0);
+  const affiliateCount = affiliates.filter(a => a.is_affiliate).length;
+
   return (
     <div className="space-y-6">
+      {/* Summary Dashboard */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-surface-container-low rounded-2xl p-5 border border-outline-variant/20">
+          <p className="text-xs text-on-surface-variant uppercase tracking-wider font-bold mb-1">Partnerzy VIP</p>
+          <p className="text-2xl font-black headline-font text-tertiary">{affiliateCount}</p>
+        </div>
+        <div className="bg-surface-container-low rounded-2xl p-5 border border-outline-variant/20">
+          <p className="text-xs text-on-surface-variant uppercase tracking-wider font-bold mb-1">Do Wypłaty</p>
+          <p className="text-2xl font-black headline-font text-green-500">{totalPendingPLN.toFixed(2)} PLN</p>
+        </div>
+        <div className="bg-surface-container-low rounded-2xl p-5 border border-outline-variant/20">
+          <p className="text-xs text-on-surface-variant uppercase tracking-wider font-bold mb-1">Wypłacono</p>
+          <p className="text-2xl font-black headline-font text-primary">{totalPaidPLN.toFixed(2)} PLN</p>
+        </div>
+        <div className="bg-surface-container-low rounded-2xl p-5 border border-outline-variant/20">
+          <p className="text-xs text-on-surface-variant uppercase tracking-wider font-bold mb-1">Transakcje</p>
+          <p className="text-2xl font-black headline-font text-on-surface">{earnings.length}</p>
+        </div>
+      </div>
+
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold headline-font text-on-surface">Zarządzanie Afiliacją</h2>
         <div className="flex bg-surface-container-high rounded-lg p-1">
@@ -93,19 +161,19 @@ export function AffiliateManager() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-surface-container-high border-b border-outline-variant/20">
-                  <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Data</th>
-                  <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Partner ID</th>
-                  <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Kupujący ID</th>
-                  <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Kwota Zakupu</th>
-                  <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Prowizja (PLN)</th>
-                  <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Status</th>
+                  <SortHeader label="Data" column="created_at" sortState={payoutsSort} onSort={togglePayoutsSort} />
+                  <SortHeader label="Partner ID" column="affiliate_id" sortState={payoutsSort} onSort={togglePayoutsSort} />
+                  <SortHeader label="Kupujący ID" column="buyer_id" sortState={payoutsSort} onSort={togglePayoutsSort} />
+                  <SortHeader label="Kwota Zakupu" column="purchase_amount" sortState={payoutsSort} onSort={togglePayoutsSort} />
+                  <SortHeader label="Prowizja (PLN)" column="commission_amount" sortState={payoutsSort} onSort={togglePayoutsSort} />
+                  <SortHeader label="Status" column="status" sortState={payoutsSort} onSort={togglePayoutsSort} />
                   <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant text-right">Akcja</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/10">
-                {earnings.length === 0 ? (
+                {sortedPayouts.length === 0 ? (
                   <tr><td colSpan={7} className="p-8 text-center text-on-surface-variant">Brak danych o prowizjach</td></tr>
-                ) : earnings.map(e => (
+                ) : sortedPayouts.map(e => (
                   <tr key={e.id} className="hover:bg-surface-container-high/50 transition-colors">
                     <td className="p-4 text-sm text-on-surface">{new Date(e.created_at).toLocaleDateString()}</td>
                     <td className="p-4 text-xs font-mono text-on-surface-variant">{e.affiliate_id?.substring(0,8)}...</td>
@@ -143,16 +211,16 @@ export function AffiliateManager() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-surface-container-high border-b border-outline-variant/20">
-                  <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Email</th>
-                  <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Kod Polecający</th>
-                  <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant">Status Partnera</th>
+                  <SortHeader label="Email" column="email" sortState={usersSort} onSort={toggleUsersSort} />
+                  <SortHeader label="Kod Polecający" column="referral_code" sortState={usersSort} onSort={toggleUsersSort} />
+                  <SortHeader label="Status Partnera" column="is_affiliate" sortState={usersSort} onSort={toggleUsersSort} />
                   <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant text-right">Zmień</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/10">
-                {affiliates.length === 0 ? (
+                {sortedUsers.length === 0 ? (
                   <tr><td colSpan={4} className="p-8 text-center text-on-surface-variant">Brak użytkowników</td></tr>
-                ) : affiliates.map(u => (
+                ) : sortedUsers.map(u => (
                   <tr key={u.id} className="hover:bg-surface-container-high/50 transition-colors">
                     <td className="p-4 text-sm text-on-surface font-medium">{u.email}</td>
                     <td className="p-4 text-sm text-on-surface font-mono">{u.referral_code || '-'}</td>
