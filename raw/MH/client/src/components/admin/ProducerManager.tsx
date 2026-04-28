@@ -320,9 +320,14 @@ export function ProducerManager() {
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold font-headline">Zarządzanie Wykonawcami</h2>
-        <button onClick={() => setEditing({ _isNew: true, is_active: true, is_on_main_page: false, tier: 'basic', price_coins: 0, model_name: 'google/gemini-2.5-flash', suno_version: 'V4', theme_config: '{\n  "colorText": "text-lime-500",\n  "colorBg": "bg-lime-500",\n  "colorBorder": "border-lime-500"\n}' })} className="bg-primary hover:bg-primary-dark text-on-primary px-4 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors shadow-lg shadow-primary/20">
-          <span className="material-symbols-outlined text-[18px]">add</span> Dodaj Wykonawcę
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => { setLoading(true); fetchProducers(); }} disabled={loading} className="bg-surface-container-high hover:bg-surface-variant text-on-surface px-3 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors border border-outline-variant/20 disabled:opacity-50">
+            <span className="material-symbols-outlined text-[18px]" style={loading ? { animation: 'spin 1s linear infinite' } : {}}>refresh</span> Aktualizuj
+          </button>
+          <button onClick={() => setEditing({ _isNew: true, is_active: true, is_on_main_page: false, tier: 'basic', price_coins: 0, model_name: 'google/gemini-2.5-flash', suno_version: 'V4', theme_config: '{\n  "colorText": "text-lime-500",\n  "colorBg": "bg-lime-500",\n  "colorBorder": "border-lime-500"\n}' })} className="bg-primary hover:bg-primary-dark text-on-primary px-4 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors shadow-lg shadow-primary/20">
+            <span className="material-symbols-outlined text-[18px]">add</span> Dodaj Wykonawcę
+          </button>
+        </div>
       </div>
       
       <div className="bg-surface rounded-2xl border border-outline-variant/10 overflow-hidden">
