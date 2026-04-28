@@ -258,7 +258,14 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                              {activeProducer.icon}
                           </div>
                         </div>
-                        <span className={`text-sm font-bold ${activeProducer.colorText}`}>{activeProducer.name}</span>
+                        <div className="flex flex-col">
+                          <span className={`text-sm font-bold leading-none ${activeProducer.colorText}`}>{activeProducer.name}</span>
+                          {(activeProducer.tier === 'vip' || activeProducer.tier === 'legend') && (
+                            <div className="mt-1 w-fit bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">
+                              {activeProducer.tier === 'vip' ? 'VIP' : 'LEGEND'}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                     
@@ -325,7 +332,14 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                         </div>
                         <div className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full animate-pulse z-20 ${activeProducer.colorBg}`}></div>
                       </div>
-                      <span className={`text-sm font-bold ${activeProducer.colorText}`}>{activeProducer.name}</span>
+                      <div className="flex flex-col">
+                        <span className={`text-sm font-bold leading-none ${activeProducer.colorText}`}>{activeProducer.name}</span>
+                        {(activeProducer.tier === 'vip' || activeProducer.tier === 'legend') && (
+                          <div className="mt-1 w-fit bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">
+                            {activeProducer.tier === 'vip' ? 'VIP' : 'LEGEND'}
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div className={`p-4 rounded-2xl rounded-tl-xl border flex items-center gap-2 shadow-sm ${activeProducer.colorBg5} ${activeProducer.colorBorder20}`}>
                       <span className="flex gap-1">
