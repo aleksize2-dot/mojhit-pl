@@ -249,7 +249,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
             <div className="flex-1 px-2 py-3 md:p-6 overflow-y-auto flex flex-col gap-5 bg-gradient-to-b from-surface-container-lowest to-surface-container-low/30 relative">
                
                {messages.map((m, idx) => (
-                 <div key={idx} className={`flex ${m.role === 'user' ? 'gap-3 max-w-[90%] md:max-w-[80%] self-end flex-row-reverse' : 'flex-col gap-2 w-full max-w-full'}`}>
+                 <div key={idx} className="flex flex-col gap-2 w-full max-w-full">
                     {m.role === 'assistant' && (
                       <div className="flex items-center gap-2">
                         <div className={`w-8 h-8 rounded-full overflow-hidden shadow-sm border relative flex items-center justify-center bg-surface-container-low ${activeProducer.colorBorder}`}>
@@ -263,7 +263,8 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                     )}
                     
                     {m.role === 'user' && (
-                      <div className="relative flex-shrink-0 mt-1">
+                      <div className="flex items-center gap-2 justify-end">
+                        <span className="text-sm font-bold text-on-surface-variant">{user?.firstName || 'Ty'}</span>
                         <div className="w-8 h-8 rounded-full overflow-hidden shadow-sm border border-outline-variant/20 bg-surface-container-high flex items-center justify-center">
                           {user?.imageUrl ? (
                             <img src={user.imageUrl} alt={user.fullName || 'User'} className="w-full h-full object-cover" />
@@ -273,7 +274,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                         </div>
                       </div>
                     )}
-                    <div className={`p-4 rounded-2xl text-sm md:text-base font-body shadow-sm leading-relaxed ${m.role === 'user' ? `${activeProducer.colorBg} text-white rounded-tr-sm` : 'bg-surface-container-high text-on-surface rounded-tl-xl border border-outline-variant/10'}`}>
+                    <div className={`p-4 rounded-2xl text-sm md:text-base font-body shadow-sm leading-relaxed w-full max-w-[90%] md:max-w-[85%] ${m.role === 'user' ? `${activeProducer.colorBg} text-white rounded-tr-xl self-end` : 'bg-surface-container-high text-on-surface rounded-tl-xl border border-outline-variant/10'}`}>
                        <ChatMessage content={m.content} isUser={m.role === 'user'} />
                        {m.role !== 'user' && (userPlan.toLowerCase() === 'vip' || userPlan.toLowerCase() === 'legend') && (
                          <div className="mt-3 flex justify-end">
