@@ -73,7 +73,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
         <p className="text-on-surface-variant max-w-lg mx-auto text-[10px] md:text-sm font-label hidden md:block">Kto dziś lepiej poczuje Twój klimat?</p>
       </div>
 
-      {/* Ă„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄ„Ä‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄ„Ä‚ËĂ˘â‚¬ĹˇĂ‚Â¬ Horizontal scroll strip (both mobile & desktop) Ă„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄ„Ä‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄ„Ä‚ËĂ˘â‚¬ĹˇĂ‚Â¬ */}
+      {/* -- Horizontal scroll strip (both mobile & desktop) -- */}
       <div className="w-full relative mask-image-fade -mt-10 md:-mt-14 z-0 overflow-hidden">
         <div className="flex items-start gap-3 md:gap-6 animate-marquee-slow pt-12 md:pt-16 pb-0 w-max hover:[animation-play-state:paused]">
           {[0, 1].flatMap((copyIndex) =>
@@ -340,7 +340,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                           </div>
                           <div>
                             <h4 className="font-bold headline-font text-on-surface uppercase tracking-wider text-sm">Struktura Utworu Gotowa</h4>
-                            <p className="text-xs text-on-surface-variant">Przejrzyj prompt i dokonaj pĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹Â˜Ä‚Ë˜Ă˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇatnoĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹Â˜Ä‚Ë˜Ă˘â‚¬ĹˇĂ‚Â¬Ă„Ä…ÄąĹźci</p>
+                  <p className="text-xs text-on-surface-variant">Przejrzyj prompt i dokonaj płatności</p>
                           </div>
                       </div>
 
@@ -419,11 +419,11 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                         value={title}
                         onChange={e => setTitle(e.target.value)}
                         className="w-full bg-surface-container-lowest border border-outline-variant/20 focus:border-primary p-4 pl-5 rounded-2xl text-base font-bold headline-font outline-none placeholder:text-on-surface-variant/40 mb-5 shadow-inner"
-                        placeholder="Opcjonalny tytuĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇ (np. Ostatni Lot)..."
+                        placeholder="Opcjonalny tytuł (np. Ostatni Lot)..."
                       />
                       
                       <div className="flex flex-col gap-3 relative">
-                         <span className="text-[10px] uppercase font-bold text-on-surface-variant font-label text-center tracking-widest">Wybierz MetodÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄľÄ‚â€ąĂ‚Â PĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇatnoĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…ÄąĹźci</span>
+                        <span className="text-[10px] uppercase font-bold text-on-surface-variant font-label text-center tracking-widest">Wybierz Metodę Płatności</span>
                          <div className="flex flex-col sm:flex-row gap-3">
                             <button 
                               onClick={() => setCurrencyType('coins')}
@@ -452,10 +452,10 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                                value={guestEmail}
                                onChange={e => setGuestEmail(e.target.value)}
                                className="w-full bg-surface-container-lowest border border-outline-variant/20 focus:border-primary p-3 rounded-xl text-sm font-body outline-none placeholder:text-on-surface-variant/50"
-                               placeholder="Podaj swĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬ÄąË‡Ä‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡j e-mail..."
+                      placeholder="Podaj swój e-mail..."
                                required
                              />
-                             <p className="text-[10px] text-on-surface-variant mt-1 ml-1">E-mail jest wymagany, abyĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…ÄąĹźmy wiedzieli do kogo naleĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ˘â‚¬ĹľÄ‚â€ąÄąÄ„y utwĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬ÄąË‡Ä‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡r, jeĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…ÄąĹźli siÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄľÄ‚â€ąĂ‚Â zarejestrujesz.</p>
+                      <p className="text-[10px] text-on-surface-variant mt-1 ml-1">E-mail jest wymagany, abyśmy wiedzieli do kogo należy utwór, jeśli się zarejestrujesz.</p>
                            </div>
                          )}
                          
@@ -478,7 +478,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                            ) : (
                              <>
                                <span className="material-symbols-outlined text-2xl" style={{fontVariationSettings: "'FILL' 1"}}>magic_button</span>
-                               <span>Wygeneruj za {currencyType === 'fiat' ? 'PLN (WkrĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬ÄąË‡Ä‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡tce)' : currencyType === 'coins' ? '1 monetÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄľÄ‚â€ąĂ‚Â' : '10 not'}</span>
+                        <span>Wygeneruj za {currencyType === "fiat" ? "PLN (Wkrótce)" : currencyType === "coins" ? "1 monetę" : "10 not"}</span>
                              </>
                            )}
                          </button>
@@ -621,17 +621,17 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
             </div>
             <h3 className="text-2xl font-black headline-font text-center text-on-surface mb-2">Limit Wykorzystany</h3>
             <p className="text-sm text-on-surface-variant text-center mb-6">
-              Jako goĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…ÄąĹźÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€ąĂ˘â‚¬Ë‡ moĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ˘â‚¬ĹľÄ‚â€ąÄąÄ„esz wygenerowaÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€ąĂ˘â‚¬Ë‡ tylko jeden darmowy utwĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬ÄąË‡Ä‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡r. ZaĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬ÄąË‡Ä‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡Ă„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ˘â‚¬ĹľÄ‚â€ąÄąÄ„ konto, aby otrzymaÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€ąĂ˘â‚¬Ë‡ <b>20 darmowych not</b> na start i tworzyÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€ąĂ˘â‚¬Ë‡ dalej!
+              Jako gość możesz wygenerować tylko jeden darmowy utwór. Załóż konto, aby otrzymać <b>20 darmowych not</b> na start i tworzyć dalej!
             </p>
             <div className="flex flex-col gap-3">
               <SignUpButton mode="modal">
                 <button className="w-full py-3.5 rounded-xl font-bold bg-primary text-on-primary hover:bg-primary/90 transition-colors">
-                  ZaĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬ÄąË‡Ä‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡Ă„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ˘â‚¬ĹľÄ‚â€ąÄąÄ„ darmowe konto
+                  Załóż darmowe konto
                 </button>
               </SignUpButton>
               <SignInButton mode="modal">
                 <button className="w-full py-3 rounded-xl font-bold bg-transparent border border-outline-variant/30 text-on-surface hover:bg-surface-variant/30 transition-colors">
-                  Mam juĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ˘â‚¬ĹľÄ‚â€ąÄąÄ„ konto (Zaloguj)
+                  Mam już konto (Zaloguj)
                 </button>
               </SignInButton>
               <button 

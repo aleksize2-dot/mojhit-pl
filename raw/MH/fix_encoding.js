@@ -1,0 +1,10 @@
+const fs = require('fs');
+let lines = fs.readFileSync('client/src/components/Generator.tsx', 'utf8').split('\n');
+lines[342] = '                  <p className="text-xs text-on-surface-variant">Przejrzyj prompt i dokonaj płatności</p>';
+lines[421] = '                        placeholder="Opcjonalny tytuł (np. Ostatni Lot)..."';
+lines[425] = '                        <span className="text-[10px] uppercase font-bold text-on-surface-variant font-label text-center tracking-widest">Wybierz Metodę Płatności</span>';
+lines[454] = '                      placeholder="Podaj swój e-mail..."';
+lines[457] = '                      <p className="text-[10px] text-on-surface-variant mt-1 ml-1">E-mail jest wymagany, abyśmy wiedzieli do kogo należy utwór, jeśli się zarejestrujesz.</p>';
+lines[480] = '                        <span>Wygeneruj za {currencyType === "fiat" ? "PLN (Wkrótce)" : currencyType === "coins" ? "1 monetę" : "10 not"}</span>';
+fs.writeFileSync('client/src/components/Generator.tsx', lines.join('\n'));
+console.log('Cleaned up remaining garbled lines.');
