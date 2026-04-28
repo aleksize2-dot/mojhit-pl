@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "raw/MH/docs/LA_LUZ_PRODUCER.md",
+                "file": "raw/MH/docs/MELO_MC_PRODUCER.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "LA_LUZ_PRODUCER"
+              "title": "MELO_MC_PRODUCER"
             }
           }
         ]
@@ -198,8 +198,12 @@
       "obsidian-excalidraw-plugin:Создать новый чертеж": false
     }
   },
-  "active": "fd60ac571e98376e",
+  "active": "50f90e5e5125df2c",
   "lastOpenFiles": [
+    "raw/MH/docs/LA_LUZ_PRODUCER.md",
+    "raw/MH/docs/MELO_MC_PRODUCER.md",
+    "raw/MH/server/reset_melo.js",
+    "raw/MH/server/update_melo_prompt.js",
     "raw/MH/client/src/safelist.ts",
     "raw/MH/replace-marquee.js",
     "raw/MH/client/public/avatars/melo.webp",
@@ -213,9 +217,6 @@
     "raw/MH/read.js",
     "raw/MH/check_history.js",
     "raw/MH/refactor_user_avatar.js",
-    "raw/MH/fix_desktop_shift.js",
-    "raw/MH/fix_mojibake_useGeneratorLogic2.js",
-    "raw/MH/fix_mojibake_useGeneratorLogic.js",
     "raw/MH/client/dist/avatars/laluz.webp",
     "raw/MH/client/dist/avatars/openart-gpt-image-2-1_1777326211419_bc9cdbcc.webp",
     "raw/MH/client/dist/avatars/melo.webp",
@@ -223,7 +224,6 @@
     "raw/MH/memory/2026-04-28.md",
     "raw/MH/client/dist/avatars/kosa.webp",
     "raw/MH/client/dist/avatars/gielda.webp",
-    "raw/MH/docs/LA_LUZ_PRODUCER.md",
     "memory/wiki/meta-pixel.md",
     "memory/wiki/dj-marek-ai-composer.md",
     "memory/wiki/cookie-rodo.md",
@@ -244,7 +244,6 @@
     "raw/MH/server/node_modules/openai/src/resources/webhooks/api.md",
     "raw/MH/server/node_modules/openai/src/resources/responses/api.md",
     "raw/MH/server/node_modules/openai/src/resources/realtime/api.md",
-    "raw/MH/server/node_modules/openai/src/resources/conversations/api.md",
-    "raw/MH/client/node_modules/@clerk/localizations/node_modules/@clerk/shared/README.md"
+    "raw/MH/server/node_modules/openai/src/resources/conversations/api.md"
   ]
 }

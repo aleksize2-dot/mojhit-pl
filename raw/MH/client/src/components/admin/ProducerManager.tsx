@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export function ProducerManager() {
   const [producers, setProducers] = useState<any[]>([]);
@@ -6,6 +6,7 @@ export function ProducerManager() {
   const [editing, setEditing] = useState<any | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ key: 'created_at', direction: 'desc' });
   const [cacheBuster, setCacheBuster] = useState(Date.now());
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchProducers = async () => {
     try {
@@ -104,8 +105,73 @@ export function ProducerManager() {
           </div>
           
           <div>
-            <label className="block text-xs font-bold mb-1 text-on-surface-variant">Avatar URL (np. /avatars/kosa.webp)</label>
-            <input type="text" className="w-full bg-surface-container-low border border-outline-variant/20 focus:border-primary p-3 rounded-xl outline-none" value={editing.img || ''} onChange={e => setEditing({...editing, img: e.target.value})} />
+            <label className="block text-xs font-bold mb-1 text-on-surface-variant">Avatar</label>
+            <div className="flex items-center gap-3">
+              <div className="w-16 h-16 rounded-xl overflow-hidden border border-outline-variant/20 bg-surface-container-low flex-shrink-0">
+                {editing.img ? (
+                  <img src={editing.img} alt="avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-on-surface-variant">
+                    <span className="material-symbols-outlined text-2xl">person</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex-1">
+                <input
+                  type="file"
+                  accept="image/webp,image/png,image/jpeg"
+                  className="hidden"
+                  ref={fileInputRef}
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file || !editing.id) return;
+                    
+                    // Convert to base64
+                    const reader = new FileReader();
+                    reader.onload = async (ev) => {
+                      const base64 = ev.target?.result;
+                      if (!base64) return;
+                      
+                      try {
+                        const res = await fetch('/api/admin/upload-avatar', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          credentials: 'include',
+                          body: JSON.stringify({ id: editing.id, image: base64 })
+                        });
+                        const data = await res.json();
+                        if (res.ok && data.url) {
+                          setEditing({...editing, img: data.url});
+                        } else {
+                          alert(data.error || 'Błąd zapisu avatara');
+                        }
+                      } catch (err) {
+                        alert('Błąd wysyłania pliku');
+                      }
+                    };
+                    reader.readAsDataURL(file);
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-surface-container-high hover:bg-surface-variant text-on-surface px-3 py-2 rounded-xl text-xs font-bold border border-outline-variant/20 transition-colors flex items-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-[16px]">upload</span>
+                  Wybierz plik
+                </button>
+                {editing.img && (
+                  <button
+                    type="button"
+                    onClick={() => setEditing({...editing, img: ''})}
+                    className="ml-2 text-xs text-error hover:underline"
+                  >
+                    Usuń
+                  </button>
+                )}
+                <p className="text-[10px] text-on-surface-variant mt-1">WebP, PNG lub JPG. Zostanie zapisany jako /avatars/{editing.id || 'nazwa'}.webp</p>
+              </div>
+            </div>
           </div>
           
           <div className="col-span-1 md:col-span-2">

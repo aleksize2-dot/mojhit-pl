@@ -1540,6 +1540,36 @@ app.get('/api/admin/producers', requireAuth(), requireAdmin, async (req, res) =>
     }
   });
 
+// Admin: Upload avatar image
+const fs = require('fs');
+const path = require('path');
+app.post('/api/admin/upload-avatar', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { id, image } = req.body;
+    if (!id || !image) return res.status(400).json({ error: 'id and image (base64) required' });
+    
+    // Remove data:image prefix
+    const matches = image.match(/^data:image\/([a-zA-Z]+);base64,(.+)$/);
+    if (!matches) return res.status(400).json({ error: 'Invalid base64 image' });
+    
+    const ext = matches[1] === 'png' ? 'png' : 'webp';
+    const buffer = Buffer.from(matches[2], 'base64');
+    
+    const avatarsDir = path.join(__dirname, '..', 'client', 'public', 'avatars');
+    if (!fs.existsSync(avatarsDir)) fs.mkdirSync(avatarsDir, { recursive: true });
+    
+    const filename = id + '.' + ext;
+    fs.writeFileSync(path.join(avatarsDir, filename), buffer);
+    
+    const avatarUrl = '/avatars/' + filename;
+    console.log('[UPLOAD] Avatar saved:', avatarUrl);
+    res.json({ success: true, url: avatarUrl });
+  } catch (error) {
+    console.error('[UPLOAD] Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Admin: POST create a new producer
 app.post('/api/admin/producers', requireAuth(), requireAdmin, async (req, res) => {
   try {
@@ -2562,38 +2592,26 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
     }
     console.log('[VIDEO] Using audioId:', audioId, 'for task:', audioTask.task_id, 'variant:', variantIndex);
     
-    // Look up variant-specific ID for unique video per variant
-    let variantDbId = audioTask.id; // fallback to kie_tasks.id
-    try {
-      const { data: variantRow } = await supabase
-        .from('kie_track_variants')
-        .select('id')
-        .eq('task_id', audioTask.id)
-        .eq('variant_index', variantIndex)
-        .limit(1);
-      if (variantRow && variantRow.length > 0) variantDbId = variantRow[0].id;
-    } catch { /* use fallback */ }
-    
-    // Check existing video for this specific variant
+    // Check existing completed video for this audio task
     const { data: existingVids } = await supabase
       .from('video_tasks')
       .select('id, status, video_url')
-      .eq('audio_task_id', variantDbId)
+      .eq('audio_task_id', audioTask.id)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .limit(1);
     
     if (existingVids && existingVids.length > 0 && existingVids[0].status === 'completed' && existingVids[0].video_url) {
-      console.log('[VIDEO] Reusing existing video for variant', variantIndex, ':', existingVids[0].id);
+      console.log('[VIDEO] Reusing existing completed video:', existingVids[0].id);
       return res.json({ success: true, existing: true, video_url: existingVids[0].video_url });
     }
     
-    // 4. Create video task record (keyed by variant ID for uniqueness)
+    // 4. Create video task record (keyed by kie_tasks.id per FK constraint)
     const { data: videoTask, error: videoTaskError } = await supabase
       .from('video_tasks')
       .insert({
         user_id: user.id,
-        audio_task_id: variantDbId,
+        audio_task_id: audioTask.id,
         status: 'pending'
       })
       .select()
@@ -2655,23 +2673,11 @@ app.get('/api/video/check', requireAuth(), async (req, res) => {
     
     if (!user) return res.status(401).json({ error: 'Not authenticated' });
     
-    // If variant_index is provided, look up the specific variant's ID
-    let lookupId = audio_task_id;
-    if (variant_index !== undefined) {
-      const { data: variantRow } = await supabase
-        .from('kie_track_variants')
-        .select('id')
-        .eq('task_id', audio_task_id)
-        .eq('variant_index', parseInt(variant_index))
-        .limit(1);
-      if (variantRow && variantRow.length > 0) lookupId = variantRow[0].id;
-    }
-    
     const { data: tasks } = await supabase
       .from('video_tasks')
       .select('status, video_url')
       .eq('user_id', user.id)
-      .eq('audio_task_id', lookupId)
+      .eq('audio_task_id', audio_task_id)
       .eq('status', 'completed')
       .order('created_at', { ascending: false })
       .limit(1);
