@@ -52,6 +52,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
   // ── Guest / limit modal ──
   const [guestEmail, setGuestEmail] = useState('');
   const [showGuestLimitModal, setShowGuestLimitModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // ── Computed ──
   const activeProducer = producers.find(p => p.id === activeAgent) || producers[0];
@@ -793,13 +794,12 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
         );
       }
 
-      alert(
-        'Utwory zostały wygenerowane! Znajdziesz je w panelu Moje Utwory. Dwa warianty (V1 i V2) są gotowe do odsłuchu.'
-      );
+      setShowSuccessModal(true);
       window.dispatchEvent(new Event('updateBalance'));
       setTitle('');
       setFinalAiPrompt(null);
-      setMessages([
+      setMessages(prev => [
+        ...prev,
         {
           role: 'assistant',
           content: `Gotowe! 🎶 Twoje utwory (V1 i V2) są już w panelu **Moje Utwory**. ${activeProducer.initMsg}`,
@@ -842,6 +842,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
     isProducerPanelOpen,
     guestEmail,
     showGuestLimitModal,
+    showSuccessModal,
     isActionMenuOpen,
     // Computed
     activeProducer,
@@ -858,6 +859,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
     setIsProducerPanelOpen,
     setGuestEmail,
     setShowGuestLimitModal,
+    setShowSuccessModal,
     setIsActionMenuOpen,
     setEditedLyrics,
     setFinalAiPrompt,
