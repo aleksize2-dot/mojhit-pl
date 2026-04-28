@@ -1,9 +1,10 @@
 import { ChatMessage } from './ChatMessage';
 import { useGeneratorLogic } from './useGeneratorLogic';
-import { useAuth, SignInButton, SignUpButton } from '@clerk/clerk-react';
+import { useAuth, useUser, SignInButton, SignUpButton } from '@clerk/clerk-react';
 
 export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {}) {
   const { isSignedIn } = useAuth();
+  const { user } = useUser();
   const {
     // States
     producers,
@@ -258,6 +259,18 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                           </div>
                         </div>
                         <span className={`text-sm font-bold ${activeProducer.colorText}`}>{activeProducer.name}</span>
+                      </div>
+                    )}
+                    
+                    {m.role === 'user' && (
+                      <div className="relative flex-shrink-0 mt-1">
+                        <div className="w-8 h-8 rounded-full overflow-hidden shadow-sm border border-outline-variant/20 bg-surface-container-high flex items-center justify-center">
+                          {user?.imageUrl ? (
+                            <img src={user.imageUrl} alt={user.fullName || 'User'} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="material-symbols-outlined text-sm text-on-surface-variant">person</span>
+                          )}
+                        </div>
                       </div>
                     )}
                     <div className={`p-4 rounded-2xl text-sm md:text-base font-body shadow-sm leading-relaxed ${m.role === 'user' ? `${activeProducer.colorBg} text-white rounded-tr-sm` : 'bg-surface-container-high text-on-surface rounded-tl-xl border border-outline-variant/10'}`}>
