@@ -66,7 +66,7 @@ const generate = async (audioTaskId, audioId, options = {}) => {
       if (response.status === 401) throw new Error('Nieprawidłowy klucz API Kie.ai');
       if (response.status === 402) throw new Error('Niewystarczająca liczba kredytów w koncie Kie.ai');
       if (response.status === 429) throw new Error('Przekroczono limit zapytań do Kie.ai — spróbuj za chwilę');
-      if (response.status === 422) throw new Error('Nieprawidłowe parametry generowania wideo');
+      if (response.status === 422) throw new Error('Kie.ai video API returned code 422: Mp4 record already exists');
       if (response.status >= 500) throw new Error('Serwer Kie.ai chwilowo niedostępny — spróbuj później');
       
       throw new Error(`Kie.ai video API error ${response.status}: ${errorText.substring(0, 200)}`);
@@ -88,7 +88,7 @@ const generate = async (audioTaskId, audioId, options = {}) => {
     console.log(`[KIE VIDEO] Video task created: ${videoTaskId}`);
     return videoTaskId;
   } catch (error) {
-    console.error('[KIE VIDEO] Network/parsing error:', error.message);
+    if (!error.message.includes('422')) console.error('[KIE VIDEO] Error:', error.message);
     // Re-throw with clearer message
     if (error.name === 'TimeoutError' || error.code === 'ETIMEDOUT') {
       throw new Error('Timeout łączenia z Kie.ai video API — serwer nie odpowiada');
