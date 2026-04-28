@@ -675,31 +675,15 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
 
     setIsLoading(true);
 
-    // Prompt user for next hit and hide the payment/prompt panel so they can continue chatting
-    setMessages(prev => [
-      ...prev,
-      {
-        role: 'assistant',
-        content: `Zaczynamy magię w studiu! 🎛️ Twój utwór właśnie się generuje i zajmie to około 1-3 minuty.\n\nW międzyczasie, może zrobimy kolejny hit? Jaka okazja jest następna: Urodziny? Rocznica? A może piosenka do auta? 😎`
-      }
-    ]);
-    
-    // We capture these values right before clearing them from state
-    const promptLyricsToGenerate = finalAiPrompt.lyrics;
-    const promptTagsToGenerate = finalAiPrompt.tags;
-    
-    setFinalAiPrompt(null);
-    setTitle('');
-
     try {
       const sunoRes = await fetch('/api/suno/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          prompt: promptLyricsToGenerate,
+          prompt: finalAiPrompt.lyrics,
           title: finalTitle,
-          tags: promptTagsToGenerate,
+          tags: finalAiPrompt.tags,
           instrumental: false,
           model: 'V5_5',
           customMode: true,
@@ -718,12 +702,33 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
           setIsLoading(false);
           return;
         }
+        
+        // Handle insufficient funds nicely
+        if (sunoRes.status === 402 || sunoData.error?.toLowerCase().includes('niewystarczaj')) {
+           throw new Error('Niewystarczająca ilość not! Zmień metodę płatności na Gwiazdki lub doładuj konto.');
+        }
+
         throw new Error(
           sunoData.error || 'Błąd API Kie.ai'
         );
       }
       if (!sunoData.taskId)
         throw new Error('Nie otrzymano ID zadania');
+
+      // ──────────────────────────────────────────────────────────
+      // ✅ SUCCESSFUL START: Hide prompt panel & send chat message
+      // ──────────────────────────────────────────────────────────
+      const promptLyricsToGenerate = finalAiPrompt.lyrics;
+      setFinalAiPrompt(null);
+      setTitle('');
+
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: `Zaczynamy magię w studiu! 🎛️ Twój utwór właśnie się generuje i zajmie to około 1-3 minuty.\n\nW międzyczasie, może zrobimy kolejny hit? Jaka okazja jest następna: Urodziny? Rocznica? A może piosenka do auta? 😎`
+        }
+      ]);
 
       const queryId = sunoData.dbId || sunoData.taskId;
 
