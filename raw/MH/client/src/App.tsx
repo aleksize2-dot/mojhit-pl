@@ -6,6 +6,7 @@ import { Footer } from './components/Footer';
 import { CookieBanner } from './components/CookieBanner';
 
 import { Home } from './pages/Home';
+import './safelist';
 const MyTracks = lazy(() => import('./pages/MyTracks').then(module => ({ default: module.MyTracks })));
 const TrackDetail = lazy(() => import('./pages/TrackDetail').then(module => ({ default: module.TrackDetail })));
 const Browse = lazy(() => import('./pages/Browse').then(module => ({ default: module.Browse })));

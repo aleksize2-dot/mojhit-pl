@@ -80,6 +80,27 @@ export const safelist = [
   'to-amber-400', 'to-amber-500', 'to-amber-600', 'to-amber-700',
   'via-amber-400', 'via-amber-500', 'via-amber-600', 'via-amber-700',
 
+  // RED-800
+  'text-red-800', 'bg-red-800', 'border-red-800', 'border-red-800/20', 'border-red-800/80',
+  'bg-red-800/5', 'bg-red-800/10', 'shadow-red-800/30',
+  'from-red-800', 'to-red-800', 'via-red-800',
+
+  // RED-900
+  'text-red-900', 'bg-red-900', 'border-red-900', 'border-red-900/20', 'border-red-900/80',
+  'bg-red-900/5', 'bg-red-900/10', 'shadow-red-900/30',
+  'from-red-900', 'to-red-900', 'via-red-900',
+
+  // LIME (for Kosa)
+  'text-lime-500', 'bg-lime-500', 'border-lime-500', 'border-lime-500/20', 'border-lime-500/80',
+  'bg-lime-500/5', 'bg-lime-500/10', 'shadow-lime-500/30',
+  'from-lime-500', 'to-lime-500', 'via-lime-500',
+  'from-slate-700', 'to-slate-700',
+
+  // YELLOW (for La Luz)
+  'text-yellow-500', 'bg-yellow-500', 'border-yellow-500', 'border-yellow-500/20', 'border-yellow-500/80',
+  'bg-yellow-500/5', 'bg-yellow-500/10', 'shadow-yellow-500/30',
+  'from-yellow-400', 'to-yellow-400',
+
   // OTHERS
   'text-white', 'bg-white', 'border-white', 'border-white/20', 'border-white/80', 'bg-white/5', 'bg-white/10', 'shadow-white/30', 'from-white', 'to-white', 'via-white',
   'text-black', 'bg-black', 'border-black', 'border-black/20', 'border-black/80', 'bg-black/5', 'bg-black/10', 'shadow-black/30', 'from-black', 'to-black', 'via-black'
