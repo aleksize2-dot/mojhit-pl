@@ -112,7 +112,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
         </div>
       </div>
 
-      <div ref={chatContainerRef} className="flex-1 min-h-0 relative max-w-6xl mx-auto flex gap-0 px-0 md:px-2 lg:px-6 w-full mt-0 z-10 full-bleed md:static md:w-full md:left-auto md:right-auto md:ml-auto md:mr-auto">
+      <div ref={chatContainerRef} className="flex-1 min-h-0 relative max-w-6xl mx-auto flex gap-0 px-0 md:px-2 lg:px-6 w-full mt-0 z-10 w-[100vw] left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] md:w-full md:left-auto md:right-auto md:ml-auto md:mr-auto md:mx-auto">
 
 
         <div className="relative group flex-1 min-w-0 flex flex-col">
