@@ -774,11 +774,11 @@ app.post('/api/test-generate-video', async (req, res) => {
       .from('kie_tasks')
       .select('id, task_id, audio_url, title, duration')
       .or(`id.eq.${audioTaskId},task_id.eq.${audioTaskId}`)
-      .eq('status', 'completed')
+.in('status', ['completed', 'processing'])
       .single();
     
     if (audioTaskError || !audioTask) {
-      return res.status(404).json({ error: 'Completed audio task not found' });
+      return res.status(404).json({ error: 'Audio task not found' });
     }
     
     // 3. Create video task record
@@ -1293,7 +1293,8 @@ app.post('/api/tracks', requireAuth(), async (req, res) => {
         title,
         description,
         audio_url,
-        kie_task_id
+        kie_task_id,
+        producer_id: kie_task_id ? (await supabase.from('kie_tasks').select('persona_id').eq('id', kie_task_id).single()).data?.persona_id : null
       })
       .select()
       .single();
@@ -2518,11 +2519,11 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
       .select('id, task_id, audio_url, title, duration')
       .eq('user_id', user.id)
       .or(`id.eq.${audioTaskId},task_id.eq.${audioTaskId}`)
-      .eq('status', 'completed')
+      .in('status', ['completed', 'processing'])
       .single();
     
     if (audioTaskError || !audioTask) {
-      return res.status(404).json({ error: 'Completed audio task not found or does not belong to you' });
+      return res.status(404).json({ error: 'Audio task not found or does not belong to you' });
     }
     
     // Check if a video already exists for this audio task (Kie doesn't allow duplicates)
@@ -2638,20 +2639,63 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
     }
     
     // 6. Call Kie Video API
-    const videoTaskId = await video.generate(audioTask.task_id, audioId, videoOptions);
+    let videoTaskId;
+    try {
+      videoTaskId = await video.generate(audioTask.task_id, audioId, videoOptions);
+    } catch (genError) {
+      // If video already exists (422), find the existing one
+      if (genError.message.includes('422') && genError.message.includes('already exists')) {
+        console.log('[VIDEO] 422 - video already exists, looking up existing...');
+        // Try to find a video task that was completed for this audio
+        const { data: existingVidTask } = await supabase
+          .from('video_tasks')
+          .select('video_task_id, video_url')
+          .eq('audio_task_id', audioTask.id)
+          .not('video_task_id', 'is', null)
+          .not('video_url', 'is', null)
+          .order('created_at', { ascending: false })
+          .limit(1);
+        
+        if (existingVidTask && existingVidTask.length > 0 && existingVidTask[0].video_url) {
+          await supabase.from('video_tasks').update({
+            status: 'completed',
+            video_url: existingVidTask[0].video_url,
+            video_task_id: existingVidTask[0].video_task_id
+          }).eq('id', videoTask.id);
+          return res.json({ success: true, existing: true, video_url: existingVidTask[0].video_url });
+        }
+        
+        // No existing video in DB, check Kie directly
+        const status = await video.getSunoAudioId(audioTask.task_id);
+        if (status) {
+          // Video exists on Kie but we don't have the task ID. Create a placeholder.
+          await supabase.from('video_tasks').update({
+            status: 'completed',
+            video_url: 'CHECK_KIE',
+            error_message: 'Video exists on Kie, but task ID unknown. Run status check.'
+          }).eq('id', videoTask.id);
+          return res.json({ success: true, existing: true, message: 'Video exists on Kie, checking status...' });
+        }
+        throw genError;
+      } else {
+        throw genError;
+      }
+    }
     
     // 7. Update video task with video_task_id
-    await supabase
-      .from('video_tasks')
-      .update({ video_task_id: videoTaskId })
-      .eq('id', videoTask.id);
-    
-    res.json({
-      success: true,
-      videoTaskId,
-      dbId: videoTask.id,
-      message: 'Video generation started. Check /api/video/status/:id for progress.'
-    });
+    if (videoTaskId) {
+      await supabase
+        .from('video_tasks')
+        .update({ video_task_id: videoTaskId })
+        .eq('id', videoTask.id);
+      
+      res.json({
+        success: true,
+        videoTaskId,
+        dbId: videoTask.id,
+        message: 'Video generation started. Check /api/video/status/:id for progress.'
+      });
+    }
   } catch (error) {
     console.error('Video generate error:', error);
     res.status(500).json({ error: error.message });
@@ -3621,7 +3665,7 @@ app.post('/api/tracks/:id/share', requireAuth(), async (req, res) => {
 app.post('/api/tracks/:id/delete', requireAuth(), async (req, res) => {
   try {
     const { id } = req.params;
-    const authData = req.auth;
+    const authData = typeof req.auth === 'function' ? req.auth() : req.auth;
     const clerkId = authData?.userId;
     if (!clerkId) return res.status(401).json({ error: 'Unauthorized' });
 

@@ -200,6 +200,8 @@
   },
   "active": "50f90e5e5125df2c",
   "lastOpenFiles": [
+    "raw/MH/client/src/components/ui/Modal.tsx",
+    "raw/MH/client/src/components/ui",
     "raw/MH/docs/LA_LUZ_PRODUCER.md",
     "raw/MH/docs/MELO_MC_PRODUCER.md",
     "raw/MH/server/reset_melo.js",
@@ -216,7 +218,6 @@
     "raw/MH/find.js",
     "raw/MH/read.js",
     "raw/MH/check_history.js",
-    "raw/MH/refactor_user_avatar.js",
     "raw/MH/client/dist/avatars/laluz.webp",
     "raw/MH/client/dist/avatars/openart-gpt-image-2-1_1777326211419_bc9cdbcc.webp",
     "raw/MH/client/dist/avatars/melo.webp",

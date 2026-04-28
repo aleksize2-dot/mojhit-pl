@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Modal } from './ui/Modal';
 
 type Track = {
   id: string;
@@ -16,6 +17,42 @@ export function MyTracks() {
   const [tracks, setTracks] = useState<Track[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Modal state
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'info' | 'error' | 'warning' | 'success';
+    confirmText?: string;
+    cancelText?: string;
+    onConfirm: () => void;
+    onCancel?: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info',
+    onConfirm: () => {},
+  });
+
+  const closeModal = () => setModalConfig(prev => ({ ...prev, isOpen: false }));
+  
+  const showModal = (config: Partial<typeof modalConfig>) => {
+    setModalConfig(prev => ({
+      ...prev,
+      ...config,
+      isOpen: true,
+      onConfirm: () => {
+        if (config.onConfirm) config.onConfirm();
+        closeModal();
+      },
+      onCancel: config.onCancel ? () => {
+        if (config.onCancel) config.onCancel();
+        closeModal();
+      } : undefined
+    }));
+  };
 
   useEffect(() => {
     fetch('/api/tracks/my', { credentials: 'include' })
@@ -94,7 +131,13 @@ export function MyTracks() {
       }).then(r => r.json())
         .then(data => {
           navigator.clipboard.writeText(data.url || `${window.location.origin}/track/${track.id}`);
-          alert('Link skopiowany!');
+          showModal({
+            title: 'Sukces!',
+            message: 'Link został pomyślnie skopiowany do schowka.',
+            type: 'success',
+            confirmText: 'OK',
+            onConfirm: closeModal
+          });
         }).catch(console.error);
     }
   };
@@ -102,22 +145,44 @@ export function MyTracks() {
   const handleDelete = async (e: React.MouseEvent, trackId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm('Usunąć ten utwór? (Akcja jest trwała)')) return;
-    try {
-      const res = await fetch(`/api/tracks/${trackId}/delete`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-      if (res.ok) {
-        setTracks(prev => prev.filter(t => t.id !== trackId));
-      } else {
-        const err = await res.json();
-        alert(err.error || 'Błąd usuwania');
+    
+    showModal({
+      title: 'Usuń utwór',
+      message: 'Czy na pewno chcesz usunąć ten utwór? Tej akcji nie można cofnąć.',
+      type: 'warning',
+      confirmText: 'Usuń',
+      cancelText: 'Anuluj',
+      onCancel: closeModal,
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`/api/tracks/${trackId}/delete`, {
+            method: 'POST',
+            credentials: 'include',
+          });
+          if (res.ok) {
+            setTracks(prev => prev.filter(t => t.id !== trackId));
+          } else {
+            const err = await res.json();
+            showModal({
+              title: 'Błąd usuwania',
+              message: err.error || 'Wystąpił problem podczas usuwania utworu.',
+              type: 'error',
+              confirmText: 'OK',
+              onConfirm: closeModal
+            });
+          }
+        } catch (err) {
+          console.error('Delete error:', err);
+          showModal({
+            title: 'Błąd',
+            message: 'Nie udało się połączyć z serwerem. Spróbuj ponownie później.',
+            type: 'error',
+            confirmText: 'OK',
+            onConfirm: closeModal
+          });
+        }
       }
-    } catch (err) {
-      console.error('Delete error:', err);
-      alert('Nie udało się usunąć utworu');
-    }
+    });
   };
 
   const getStyle = (desc: string) => {
@@ -147,7 +212,7 @@ export function MyTracks() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {tracks.map((track: any) => {
+        {tracks.map((track: Track) => {
           const style = getStyle(track.description);
           const dateStr = new Date(track.created_at).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
           const isVideoPending = track.video_status === 'pending' || track.video_status === 'processing';
@@ -231,6 +296,8 @@ export function MyTracks() {
           );
         })}
       </div>
+      
+      <Modal {...modalConfig} />
     </div>
   );
 }
