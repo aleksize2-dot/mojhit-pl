@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChatMessage } from './ChatMessage';
 import { useGeneratorLogic } from './useGeneratorLogic';
 import { useAuth, useUser, SignInButton, SignUpButton } from '@clerk/clerk-react';
@@ -9,13 +10,10 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
     // States
     producers,
     activeAgent,
-    userPlan,
     title,
     isLoading,
     currencyType,
     messages,
-    playingMsgIndex,
-    loadingTtsIndex,
     chatInput,
     isChatLoading,
     isAssistantTyping,
@@ -24,20 +22,15 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
     isEditingPrompt,
     editedLyrics,
     isRegenerating,
-    attachedFile,
-    isListening,
-    isVoiceResponseEnabled,
     isProducerPanelOpen,
     guestEmail,
     showGuestLimitModal,
     showSuccessModal,
     generationError,
-    isActionMenuOpen,
     // Computed
     activeProducer,
     // Refs
     chatContainerRef,
-    fileInputRef,
     chatEndRef,
     // State setters
     setChatInput,
@@ -48,18 +41,11 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
     setShowGuestLimitModal,
     setShowSuccessModal,
     setGenerationError,
-    setIsActionMenuOpen,
     setEditedLyrics,
     setFinalAiPrompt,
     setMessages,
     // Handlers
     handleProducerSelect,
-    handleMicClick,
-    toggleVoiceResponse,
-    handleFileAttach,
-    handleFileChange,
-    removeAttachedFile,
-    handlePlayTTS,
     handleSendMessage,
     handleRegeneratePrompt,
     handleEditPrompt,
