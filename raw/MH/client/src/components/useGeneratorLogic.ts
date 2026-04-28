@@ -674,15 +674,32 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
     }
 
     setIsLoading(true);
+
+    // Prompt user for next hit and hide the payment/prompt panel so they can continue chatting
+    setMessages(prev => [
+      ...prev,
+      {
+        role: 'assistant',
+        content: `Zaczynamy magię w studiu! 🎛️ Twój utwór właśnie się generuje i zajmie to około 1-3 minuty.\n\nW międzyczasie, może zrobimy kolejny hit? Jaka okazja jest następna: Urodziny? Rocznica? A może piosenka do auta? 😎`
+      }
+    ]);
+    
+    // We capture these values right before clearing them from state
+    const promptLyricsToGenerate = finalAiPrompt.lyrics;
+    const promptTagsToGenerate = finalAiPrompt.tags;
+    
+    setFinalAiPrompt(null);
+    setTitle('');
+
     try {
       const sunoRes = await fetch('/api/suno/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          prompt: finalAiPrompt.lyrics,
+          prompt: promptLyricsToGenerate,
           title: finalTitle,
-          tags: finalAiPrompt.tags,
+          tags: promptTagsToGenerate,
           instrumental: false,
           model: 'V5_5',
           customMode: true,
@@ -772,7 +789,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
 
       const payload = {
         title: finalTitle,
-        description: finalAiPrompt.lyrics,
+        description: promptLyricsToGenerate,
         currency_type: currencyType,
         audio_url: audio_url,
         variants: lastStatusData?.variants || [],
@@ -796,13 +813,12 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
 
       setShowSuccessModal(true);
       window.dispatchEvent(new Event('updateBalance'));
-      setTitle('');
-      setFinalAiPrompt(null);
+      
       setMessages(prev => [
         ...prev,
         {
           role: 'assistant',
-          content: `Gotowe! 🎶 Twoje utwory (V1 i V2) są już w panelu **Moje Utwory**. ${activeProducer.initMsg}`,
+          content: `Gotowe! 🎶 Twoje utwory (V1 i V2) są już w panelu **Moje Utwory**.`,
         },
       ]);
     } catch (err: any) {
