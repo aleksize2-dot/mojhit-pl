@@ -248,21 +248,19 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
             <div className="flex-1 px-2 py-3 md:p-6 overflow-y-auto flex flex-col gap-5 bg-gradient-to-b from-surface-container-lowest to-surface-container-low/30 relative">
                
                {messages.map((m, idx) => (
-                 <div key={idx} className={`flex gap-3 max-w-[90%] md:max-w-[80%] ${m.role === 'user' ? 'self-end flex-row-reverse' : ''}`}>
+                 <div key={idx} className={`flex ${m.role === 'user' ? 'gap-3 max-w-[90%] md:max-w-[80%] self-end flex-row-reverse' : 'flex-col gap-2 w-full max-w-full'}`}>
                     {m.role === 'assistant' && (
-                      <div className="relative flex-shrink-0 mt-1">
-                        {/* Tier Badge (Centered Above) */}
-                        
-                        
-                        <div className={`w-10 h-10 rounded-full overflow-hidden shadow-sm border-2 relative flex items-center justify-center bg-surface-container-low ${activeProducer.colorBorder}`}>
+                      <div className="flex items-center gap-2">
+                        <div className={`w-8 h-8 rounded-full overflow-hidden shadow-sm border relative flex items-center justify-center bg-surface-container-low ${activeProducer.colorBorder}`}>
                           <img src={activeProducer.img} alt={activeProducer.name} className="absolute inset-0 w-full h-full object-cover max-w-none" onError={(e) => { e.currentTarget.style.display='none'; if(e.currentTarget.nextElementSibling) (e.currentTarget.nextElementSibling as HTMLElement).style.display='flex'; }} />
-                          <div style={{ display: 'none' }} className={`relative z-10 material-symbols-outlined text-lg items-center justify-center ${activeProducer.colorText}`}>
+                          <div style={{ display: 'none' }} className={`relative z-10 material-symbols-outlined text-sm items-center justify-center ${activeProducer.colorText}`}>
                              {activeProducer.icon}
                           </div>
                         </div>
+                        <span className={`text-sm font-bold ${activeProducer.colorText}`}>{activeProducer.name}</span>
                       </div>
                     )}
-                    <div className={`p-4 rounded-2xl text-sm md:text-base font-body shadow-sm leading-relaxed ${m.role === 'user' ? `${activeProducer.colorBg} text-white rounded-tr-sm` : 'bg-surface-container-high text-on-surface rounded-tl-none border border-outline-variant/10'}`}>
+                    <div className={`p-4 rounded-2xl text-sm md:text-base font-body shadow-sm leading-relaxed ${m.role === 'user' ? `${activeProducer.colorBg} text-white rounded-tr-sm` : 'bg-surface-container-high text-on-surface rounded-tl-xl border border-outline-variant/10'}`}>
                        <ChatMessage content={m.content} isUser={m.role === 'user'} />
                        {m.role !== 'user' && (userPlan.toLowerCase() === 'vip' || userPlan.toLowerCase() === 'legend') && (
                          <div className="mt-3 flex justify-end">
@@ -277,7 +275,6 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                              {loadingTtsIndex === idx ? (
                                <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
                              ) : (
-
                                <span className="material-symbols-outlined text-[16px]">{playingMsgIndex === idx ? 'pause_circle' : 'volume_up'}</span>
                              )}
                              {loadingTtsIndex === idx ? 'Wczytywanie...' : playingMsgIndex === idx ? 'Pauza' : 'Głos (VIP)'}
@@ -289,11 +286,14 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                ))}
 
                {isChatLoading && !isAssistantTyping && (
-                 <div className="flex gap-3 max-w-[85%]">
-                    <div className="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center material-symbols-outlined flex-shrink-0 text-lg border border-outline-variant/10 mt-1">
-                      smart_toy
+                 <div className="flex flex-col gap-2 w-full max-w-full">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center material-symbols-outlined flex-shrink-0 text-sm border border-outline-variant/10">
+                        smart_toy
+                      </div>
+                      <span className="text-sm font-bold text-on-surface-variant">System</span>
                     </div>
-                    <div className="bg-surface-container-high p-4 rounded-2xl rounded-tl-none border border-outline-variant/10 flex items-center gap-1.5 shadow-sm">
+                    <div className="bg-surface-container-high p-4 rounded-2xl rounded-tl-xl border border-outline-variant/10 flex items-center w-max gap-1.5 shadow-sm">
                       <span className="w-2.5 h-2.5 bg-primary/60 rounded-full animate-bounce"></span>
                       <span className="w-2.5 h-2.5 bg-primary/60 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></span>
                       <span className="w-2.5 h-2.5 bg-primary/60 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></span>
@@ -302,20 +302,18 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                )}
                
                {isAssistantTyping && (
-                 <div className="flex gap-3 max-w-[85%] animate-in fade-in duration-200">
-                    <div className="relative flex-shrink-0 mt-1">
-                      {/* Tier Badge (Centered Above) */}
-                      
-                      
-                      <div className={`w-10 h-10 rounded-full overflow-hidden border relative flex items-center justify-center bg-surface-container-low ${activeProducer.colorBorder}`}>
+                 <div className="flex flex-col gap-2 w-full max-w-full animate-in fade-in duration-200">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-8 h-8 rounded-full overflow-hidden border relative flex items-center justify-center bg-surface-container-low ${activeProducer.colorBorder}`}>
                         <img src={activeProducer.img} alt={activeProducer.name} className="absolute inset-0 w-full h-full object-cover max-w-none opacity-80" onError={(e) => { e.currentTarget.style.display='none'; if(e.currentTarget.nextElementSibling) (e.currentTarget.nextElementSibling as HTMLElement).style.display='flex'; }} />
-                        <div style={{ display: 'none' }} className={`relative z-10 material-symbols-outlined text-lg items-center justify-center ${activeProducer.colorText}`}>
+                        <div style={{ display: 'none' }} className={`relative z-10 material-symbols-outlined text-sm items-center justify-center ${activeProducer.colorText}`}>
                            {activeProducer.icon}
                         </div>
-                        <div className={`absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full animate-pulse z-20 ${activeProducer.colorBg}`}></div>
+                        <div className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full animate-pulse z-20 ${activeProducer.colorBg}`}></div>
                       </div>
+                      <span className={`text-sm font-bold ${activeProducer.colorText}`}>{activeProducer.name}</span>
                     </div>
-                    <div className={`p-4 rounded-2xl rounded-tl-none border flex items-center gap-2 shadow-sm ${activeProducer.colorBg5} ${activeProducer.colorBorder20}`}>
+                    <div className={`p-4 rounded-2xl rounded-tl-xl border flex items-center gap-2 shadow-sm ${activeProducer.colorBg5} ${activeProducer.colorBorder20}`}>
                       <span className="flex gap-1">
                         <span className={`w-2 h-2 rounded-full animate-bounce ${activeProducer.colorBg}`}></span>
                         <span className={`w-2 h-2 rounded-full animate-bounce ${activeProducer.colorBg}`} style={{animationDelay: '150ms'}}></span>
