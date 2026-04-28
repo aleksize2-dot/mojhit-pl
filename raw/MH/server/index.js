@@ -3669,14 +3669,25 @@ app.post('/api/tracks/:id/delete', requireAuth(), async (req, res) => {
     const clerkId = authData?.userId;
     if (!clerkId) return res.status(401).json({ error: 'Unauthorized' });
 
-    // ĐźŃ€ĐľĐ˛ĐµŃ€Đ¸Ń‚ŃŚ, Ń‡Ń‚Đľ Ń‚Ń€ĐµĐş ĐżŃ€Đ¸Đ˝Đ°Đ´Đ»ĐµĐ¶Đ¸Ń‚ ĐżĐľĐ»ŃŚĐ·ĐľĐ˛Đ°Ń‚ĐµĐ»ŃŽ
+    // Lookup user in DB
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('clerk_id', clerkId)
+      .single();
+
+    if (userError || !user) {
+      return res.status(404).json({ error: 'User not found in db' });
+    }
+
+    // проверить, что трек принадлежит пользователю
     const { data: track, error: fetchErr } = await supabase
       .from('tracks')
       .select('id, user_id')
       .eq('id', id)
       .single();
     if (fetchErr || !track) return res.status(404).json({ error: 'Track not found' });
-    if (track.user_id !== clerkId) return res.status(403).json({ error: 'Not your track' });
+    if (track.user_id !== user.id) return res.status(403).json({ error: 'Not your track' });
 
     // Soft-delete: ŃŃ‚Đ°Đ˛Đ¸ĐĽ expired = true
     const { error: updateErr } = await supabase
