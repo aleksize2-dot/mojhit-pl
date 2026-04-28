@@ -66,9 +66,9 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
   if (!producers.length || !activeProducer) return <div className="p-8 flex justify-center"><span className="material-symbols-outlined animate-spin text-3xl text-primary">progress_activity</span></div>;
 
   return (
-    <section className="flex-1 flex flex-col min-h-0">
+    <section className="flex-1 flex flex-col min-h-0 -mt-4 md:mt-0">
 
-      <div className="text-center space-y-1 mb-1 mt-2 md:space-y-2 md:mb-2 md:mt-4 px-4 md:px-0">
+      <div className="text-center space-y-1 mb-1 md:space-y-2 md:mb-2 md:mt-4 px-4 md:px-0">
         <h2 className={`text-xl md:text-3xl font-black headline-font tracking-tight bg-gradient-to-r bg-clip-text text-transparent inline-block ${activeProducer.gradient}`}>Wybierz wykonawcę</h2>
         <p className="text-on-surface-variant max-w-lg mx-auto text-[10px] md:text-sm font-label hidden md:block">Kto dziś lepiej poczuje Twój klimat?</p>
       </div>
@@ -111,12 +111,12 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
         </div>
       </div>
 
-      <div ref={chatContainerRef} className="flex-1 min-h-0 relative max-w-6xl mx-auto flex gap-0 px-0 md:px-2 lg:px-6 w-full mt-0 z-10">
+      <div ref={chatContainerRef} className="flex-1 min-h-0 relative max-w-6xl mx-auto flex gap-0 px-0 md:px-2 lg:px-6 w-full mt-0 z-10 full-bleed md:static md:w-full md:left-auto md:right-auto md:ml-auto md:mr-auto">
 
 
         <div className="relative group flex-1 min-w-0 flex flex-col">
         <div className={`hidden md:block absolute -inset-0.5 rounded-3xl blur opacity-15 group-focus-within:opacity-30 transition duration-500 bg-gradient-to-r ${activeProducer.gradient}`}></div>
-        <div className="flex-1 flex flex-col min-h-0 relative bg-surface-container-lowest md:rounded-3xl overflow-hidden md:ring-1 ring-outline-variant/20 shadow-none md:shadow-2xl border-t border-outline-variant/10 md:border-none">
+        <div className="flex-1 flex flex-col min-h-0 relative bg-surface-container-lowest md:rounded-3xl overflow-hidden md:ring-1 ring-outline-variant/20 shadow-none md:shadow-2xl border-t md:border border-outline-variant/10 md:border-none rounded-none">
           <div className="flex-1 flex flex-col min-h-0">
 
             {isProducerPanelOpen && (
@@ -245,7 +245,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                )}
              </div>
             
-            <div className="flex-1 p-3 md:p-6 overflow-y-auto flex flex-col gap-5 bg-gradient-to-b from-surface-container-lowest to-surface-container-low/30 relative">
+            <div className="flex-1 px-2 py-3 md:p-6 overflow-y-auto flex flex-col gap-5 bg-gradient-to-b from-surface-container-lowest to-surface-container-low/30 relative">
                
                {messages.map((m, idx) => (
                  <div key={idx} className={`flex gap-3 max-w-[90%] md:max-w-[80%] ${m.role === 'user' ? 'self-end flex-row-reverse' : ''}`}>
@@ -490,7 +490,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
             </div>
 
             {!finalAiPrompt ? (
-              <div className="p-2 md:p-4 border-t border-outline-variant/10 bg-surface-container-low shrink-0 relative z-10">
+              <div className="p-0 py-2 md:p-4 border-t border-outline-variant/10 bg-surface-container-low shrink-0 relative z-10">
                  {attachedFile && (
                    <div className="flex items-center gap-2 mb-2 px-2 py-1.5 bg-primary/10 border border-primary/20 rounded-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
                      <span className="material-symbols-outlined text-primary text-lg">attach_file</span>
@@ -503,36 +503,8 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                    </div>
                  )}
                  
-                 {/* Action Menu (collapsible) */}
-                 <div className="flex items-center gap-2 mb-2 px-1">
-                   <button 
-                     onClick={() => setIsActionMenuOpen(!isActionMenuOpen)}
-                     className={`w-8 h-8 rounded-full bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary flex items-center justify-center transition-all shadow-sm ${isActionMenuOpen ? 'rotate-45' : ''}`}
-                   >
-                     <span className="material-symbols-outlined text-[20px]">add</span>
-                   </button>
-                   
-                   <div className={`flex items-center gap-4 overflow-hidden transition-all duration-300 ${isActionMenuOpen ? 'max-w-[200px] opacity-100' : 'max-w-0 opacity-0'}`}>
-                      <button 
-                        onClick={handleFileAttach} 
-                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${attachedFile ? 'bg-primary text-on-primary' : 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary'}`} 
-                        title={attachedFile ? `ZaĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦czono: ${attachedFile.name}` : 'ZaĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦cz plik / inspiracjÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄľÄ‚â€ąĂ‚Â'}
-                      ><span className="material-symbols-outlined text-[20px]">attach_file</span></button>
-                      <button 
-                        onClick={handleMicClick} 
-                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isListening ? 'bg-error/20 text-error animate-pulse' : 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary'}`} 
-                        title={'Dyktuj głosowo'}
-                      ><span className="material-symbols-outlined text-[20px]">mic</span></button>
-                      <button 
-                        onClick={toggleVoiceResponse} 
-                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isVoiceResponseEnabled ? 'bg-tertiary/20 text-tertiary animate-pulse' : userPlan === 'VIP' || userPlan === 'Legend' ? 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary' : 'bg-surface-variant text-on-surface-variant/40 hover:text-on-surface-variant'}`} 
-                        title={userPlan === 'VIP' || userPlan === 'Legend' ? (isVoiceResponseEnabled ? 'Wyłącz czytanie na głos' : 'Włącz czytanie na głos') : 'Głosowe odpowiedzi (tylko VIP/Legend)'}
-                      ><span className="material-symbols-outlined text-[20px]">volume_up</span></button>
-                   </div>
-                 </div>
-
-                 <div className="flex gap-3 items-end">
-                   <div className="flex-1 bg-surface-container-lowest border border-outline-variant/20 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary rounded-2xl p-2 transition-all shadow-sm flex items-end">
+                 <div className="flex gap-2 items-end px-2 md:px-0">
+                   <div className="flex-1 min-w-0 bg-surface-container-lowest border-x-0 border-y md:border border-outline-variant/20 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary md:rounded-2xl p-2 transition-all shadow-sm flex items-end">
                      <textarea 
                        value={chatInput}
                        onChange={(e) => setChatInput(e.target.value)}
@@ -558,6 +530,34 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                        accept="audio/*,image/*,video/*,.txt,.mp3,.wav,.pdf"
                      />
                    </div>
+
+                   <div className="flex items-center shrink-0 h-[60px] gap-2">
+                     <div className={`flex items-center gap-1 md:gap-2 overflow-hidden transition-all duration-300 ${isActionMenuOpen ? 'max-w-[150px] opacity-100 pr-1' : 'max-w-0 opacity-0 pr-0'}`}>
+                        <button 
+                          onClick={handleFileAttach} 
+                          className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors ${attachedFile ? 'bg-primary text-on-primary' : 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary'}`} 
+                          title={attachedFile ? `Załączono: ${attachedFile.name}` : 'Załącz plik / inspirację'}
+                        ><span className="material-symbols-outlined text-[20px]">attach_file</span></button>
+                        <button 
+                          onClick={handleMicClick} 
+                          className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors ${isListening ? 'bg-error/20 text-error animate-pulse' : 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary'}`} 
+                          title={'Dyktuj głosowo'}
+                        ><span className="material-symbols-outlined text-[20px]">mic</span></button>
+                        <button 
+                          onClick={toggleVoiceResponse} 
+                          className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors ${isVoiceResponseEnabled ? 'bg-tertiary/20 text-tertiary animate-pulse' : userPlan === 'VIP' || userPlan === 'Legend' ? 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary' : 'bg-surface-variant text-on-surface-variant/40 hover:text-on-surface-variant'}`} 
+                          title={userPlan === 'VIP' || userPlan === 'Legend' ? (isVoiceResponseEnabled ? 'Wyłącz czytanie na głos' : 'Włącz czytanie na głos') : 'Głosowe odpowiedzi (tylko VIP/Legend)'}
+                        ><span className="material-symbols-outlined text-[20px]">volume_up</span></button>
+                     </div>
+
+                     <button 
+                       onClick={() => setIsActionMenuOpen(!isActionMenuOpen)}
+                       className={`w-[48px] h-[48px] shrink-0 rounded-full bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary flex items-center justify-center transition-all shadow-sm ${isActionMenuOpen ? 'rotate-45 bg-surface-container-highest' : ''}`}
+                     >
+                       <span className="material-symbols-outlined text-[24px]">add</span>
+                     </button>
+                   </div>
+
                    <button 
                      onClick={handleSendMessage}
                      disabled={isChatLoading || (!chatInput.trim() && !attachedFile)} 
@@ -609,7 +609,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
         </div>
       </div>
       
-      <p className="text-[10px] text-center text-on-surface-variant opacity-70 mt-4 leading-relaxed lg:px-4 uppercase tracking-widest font-label font-bold">
+      <p className="hidden md:block text-[10px] text-center text-on-surface-variant opacity-70 mt-4 leading-relaxed lg:px-4 uppercase tracking-widest font-label font-bold">
         Polityka plików: Utwory wygenerowane wygasają po 14 dniach. Pobierz mp3, jeśli chcesz je zachować.
       </p>
       
