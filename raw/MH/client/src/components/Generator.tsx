@@ -484,7 +484,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                            ) : (
                              <>
                                <span className="material-symbols-outlined text-2xl" style={{fontVariationSettings: "'FILL' 1"}}>magic_button</span>
-                        <span>Wygeneruj za {currencyType === "fiat" ? "PLN (Wkrótce)" : currencyType === "coins" ? "1 monetę" : "10 not"}</span>
+                        <span>Wygeneruj za {currencyType === "fiat" ? "PLN (Wkrótce)" : currencyType === "coins" ? "1 Hit" : "10 not"}</span>
                              </>
                            )}
                          </button>

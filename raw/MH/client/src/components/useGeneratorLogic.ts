@@ -705,7 +705,11 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
         
         // Handle insufficient funds nicely
         if (sunoRes.status === 402 || sunoData.error?.toLowerCase().includes('niewystarczaj')) {
-           throw new Error('Niewystarczająca ilość not! Zmień metodę płatności na Gwiazdki lub doładuj konto.');
+           if (currencyType === 'coins') {
+             throw new Error('Niewystarczająca ilość Hitów! Zmień metodę płatności na noty, BLIK lub doładuj konto.');
+           } else {
+             throw new Error('Niewystarczająca ilość not! Zmień metodę płatności na Hity (Gwiazdki) lub doładuj konto.');
+           }
         }
 
         throw new Error(
