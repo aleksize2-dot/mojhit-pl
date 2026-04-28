@@ -156,7 +156,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                            onClick={(e) => { e.stopPropagation(); if (!p.isLocked) { handleProducerSelect(p); setIsProducerPanelOpen(false); } else { window.location.href=`/biuro-producentow?producer=${p.id}`; } }}
                            className="flex items-center gap-2 shrink-0 transition-opacity hover:opacity-100 cursor-pointer h-full"
                          >
-                           <div className={`w-[76px] h-[76px] overflow-hidden border-x border-outline-variant/30 flex-shrink-0`}>
+                           <div className={`w-[76px] h-[76px] rounded-2xl overflow-hidden border border-outline-variant/30 flex-shrink-0`}>
                              <img src={p.img} alt={p.name} className="w-full h-full object-cover" />
                            </div>
                            <span className={`text-[10px] font-bold uppercase tracking-widest font-label whitespace-nowrap ${p.colorText}`}>{p.name}</span>
