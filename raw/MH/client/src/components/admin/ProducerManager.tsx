@@ -1,14 +1,5 @@
 import { useState, useEffect } from 'react';
 
-const THEMES = {
-  lime: { name: '🟢 Lime (Energia)', gradient: 'from-primary to-tertiary', button_gradient: 'linear-gradient(45deg, #ff9064, #734bbd, #ff9064)', theme_config: { colorText: 'text-lime-500', colorBg: 'bg-lime-500', colorBorder: 'border-lime-500', colorBorder80: 'border-lime-500/80', colorShadow30: 'shadow-lime-500/30', colorBg10: 'bg-lime-500/10', colorBg5: 'bg-lime-500/5', colorBorder20: 'border-lime-500/20' } },
-  pink: { name: '🔴 Pink (Emocje)', gradient: 'from-pink-500 to-rose-400', button_gradient: 'linear-gradient(45deg, #f43f5e, #be185d, #f43f5e)', theme_config: { colorText: 'text-pink-500', colorBg: 'bg-pink-500', colorBorder: 'border-pink-500', colorBorder80: 'border-pink-500/80', colorShadow30: 'shadow-pink-500/30', colorBg10: 'bg-pink-500/10', colorBg5: 'bg-pink-500/5', colorBorder20: 'border-pink-500/20' } },
-  cyan: { name: '🔵 Cyan (Cyber)', gradient: 'from-cyan-500 to-blue-500', button_gradient: 'linear-gradient(45deg, #06b6d4, #3b82f6, #06b6d4)', theme_config: { colorText: 'text-cyan-500', colorBg: 'bg-cyan-500', colorBorder: 'border-cyan-500', colorBorder80: 'border-cyan-500/80', colorShadow30: 'shadow-cyan-500/30', colorBg10: 'bg-cyan-500/10', colorBg5: 'bg-cyan-500/5', colorBorder20: 'border-cyan-500/20' } },
-  purple: { name: '🟣 Purple (Mistyczny)', gradient: 'from-purple-500 to-fuchsia-500', button_gradient: 'linear-gradient(45deg, #a855f7, #d946ef, #a855f7)', theme_config: { colorText: 'text-purple-500', colorBg: 'bg-purple-500', colorBorder: 'border-purple-500', colorBorder80: 'border-purple-500/80', colorShadow30: 'shadow-purple-500/30', colorBg10: 'bg-purple-500/10', colorBg5: 'bg-purple-500/5', colorBorder20: 'border-purple-500/20' } },
-  amber: { name: '🟠 Amber (Ulica)', gradient: 'from-amber-500 to-orange-500', button_gradient: 'linear-gradient(45deg, #f59e0b, #f97316, #f59e0b)', theme_config: { colorText: 'text-amber-500', colorBg: 'bg-amber-500', colorBorder: 'border-amber-500', colorBorder80: 'border-amber-500/80', colorShadow30: 'shadow-amber-500/30', colorBg10: 'bg-amber-500/10', colorBg5: 'bg-amber-500/5', colorBorder20: 'border-amber-500/20' } },
-  yellow: { name: '🟡 Yellow (Słoneczny)', gradient: 'from-yellow-500 to-amber-400', button_gradient: 'linear-gradient(45deg, #eab308, #ca8a04, #eab308)', theme_config: { colorText: 'text-yellow-300', colorBg: 'bg-yellow-500', colorBorder: 'border-yellow-500', colorBorder80: 'border-yellow-500/80', colorShadow30: 'shadow-yellow-500/30', colorBg10: 'bg-yellow-500/10', colorBg5: 'bg-yellow-500/5', colorBorder20: 'border-yellow-500/20' } }
-};
-
 export function ProducerManager() {
   const [producers, setProducers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -125,32 +116,6 @@ export function ProducerManager() {
           <div className="col-span-1 md:col-span-2">
             <label className="block text-xs font-bold mb-1 text-on-surface-variant">System Prompt (Instrukcja dla modelu)</label>
             <textarea className="w-full bg-surface-container-low border border-outline-variant/20 focus:border-primary p-3 rounded-xl outline-none custom-scrollbar" rows={6} value={editing.system_prompt || ''} onChange={e => setEditing({...editing, system_prompt: e.target.value})} />
-          </div>
-
-          <div className="col-span-1 md:col-span-2 border border-outline-variant/20 rounded-xl p-4 bg-surface-container-lowest">
-            <label className="block text-xs font-bold mb-3 text-on-surface-variant uppercase tracking-widest">Szybkie Szablony (Nadpiszą poniższe pola)</label>
-            <select 
-              className="w-full bg-surface-container border border-outline-variant/30 focus:border-primary p-3 rounded-lg outline-none font-bold"
-              onChange={(e) => {
-                const themeKey = e.target.value as keyof typeof THEMES;
-                if(themeKey && THEMES[themeKey]) {
-                  if(confirm(`Czy na pewno chcesz nadpisać obecne ustawienia kolorów szablonem "${THEMES[themeKey].name}"?`)) {
-                    setEditing({
-                      ...editing,
-                      gradient: THEMES[themeKey].gradient,
-                      button_gradient: THEMES[themeKey].button_gradient,
-                      theme_config: JSON.stringify(THEMES[themeKey].theme_config, null, 2)
-                    });
-                  }
-                }
-              }}
-              defaultValue=""
-            >
-              <option value="" disabled>-- Wybierz gotowy motyw --</option>
-              {Object.entries(THEMES).map(([k, v]) => (
-                <option key={k} value={k}>{v.name}</option>
-              ))}
-            </select>
           </div>
 
           <div className="col-span-1 md:col-span-2 mt-2">

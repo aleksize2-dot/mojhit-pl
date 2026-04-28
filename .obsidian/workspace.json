@@ -200,6 +200,10 @@
   },
   "active": "fd60ac571e98376e",
   "lastOpenFiles": [
+    "raw/MH/client/public/avatars/melo.webp",
+    "raw/MH/client/public/avatars/aura.webp",
+    "raw/MH/client/public/avatars/laluz.webp",
+    "raw/MH/client/public/avatars/openart-gpt-image-2-1_1777326211419_bc9cdbcc.webp",
     "memory/2026-04-28.md",
     "raw/MH/repl.js",
     "raw/MH/find2.js",
@@ -216,12 +220,9 @@
     "raw/MH/client/dist/avatars/melo.webp",
     "raw/MH/client/dist/avatars/aura.webp",
     "raw/MH/memory/2026-04-28.md",
-    "raw/MH/client/public/avatars/laluz.webp",
     "raw/MH/client/dist/avatars/kosa.webp",
     "raw/MH/client/dist/avatars/gielda.webp",
     "raw/MH/client/dist/favicon.svg",
-    "raw/MH/client/dist/icons.svg",
-    "raw/MH/client/dist/avatars/remi.webp",
     "raw/MH/docs/LA_LUZ_PRODUCER.md",
     "memory/wiki/meta-pixel.md",
     "memory/wiki/dj-marek-ai-composer.md",
@@ -244,7 +245,6 @@
     "raw/MH/server/node_modules/openai/src/resources/responses/api.md",
     "raw/MH/server/node_modules/openai/src/resources/realtime/api.md",
     "raw/MH/server/node_modules/openai/src/resources/conversations/api.md",
-    "raw/MH/client/node_modules/@clerk/localizations/node_modules/@clerk/shared/README.md",
-    "raw/MH/client/node_modules/ansi-styles/readme.md"
+    "raw/MH/client/node_modules/@clerk/localizations/node_modules/@clerk/shared/README.md"
   ]
 }
