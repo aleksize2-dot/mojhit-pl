@@ -8,7 +8,7 @@ interface UseGeneratorLogicProps {
 }
 
 export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
-  const { giftMode, giftTemplate, isSignedIn } = props;
+  const { isSignedIn } = props;
   const location = useLocation();
 
   // ── Producer / user state ──
@@ -157,6 +157,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
               typingMsg:
                 found.typing_msg || 'Kminie nad bitem...;Szukam brzmienia...',
               aiModelPromptId: found.id,
+              elevenlabsVoice: theme.elevenlabs_voice || null,
             };
           });
 
