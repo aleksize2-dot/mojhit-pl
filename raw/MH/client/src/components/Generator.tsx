@@ -275,25 +275,6 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                     )}
                     <div className={`p-4 rounded-2xl text-sm md:text-base font-body shadow-sm leading-relaxed w-fit max-w-[90%] md:max-w-[85%] ${m.role === 'user' ? `${activeProducer.colorBg} text-white rounded-tr-xl self-end` : 'bg-surface-container-high text-on-surface rounded-tl-xl border border-outline-variant/10 self-start'}`}>
                        <ChatMessage content={m.content} isUser={m.role === 'user'} />
-                       {m.role !== 'user' && (userPlan.toLowerCase() === 'vip' || userPlan.toLowerCase() === 'legend') && (
-                         <div className="mt-3 flex justify-end">
-                           <button 
-                             onClick={() => {
-                               const theme = typeof activeProducer.theme_config === 'string' ? JSON.parse(activeProducer.theme_config || '{}') : (activeProducer.theme_config || {});
-                               handlePlayTTS(m.content, theme.elevenlabs_voice, idx);
-                             }}
-                             disabled={loadingTtsIndex === idx}
-                             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${playingMsgIndex === idx ? 'bg-primary text-on-primary' : 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary'} ${loadingTtsIndex === idx ? 'opacity-70 cursor-not-allowed' : ''}`}
-                           >
-                             {loadingTtsIndex === idx ? (
-                               <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
-                             ) : (
-                               <span className="material-symbols-outlined text-[16px]">{playingMsgIndex === idx ? 'pause_circle' : 'volume_up'}</span>
-                             )}
-                             {loadingTtsIndex === idx ? 'Wczytywanie...' : playingMsgIndex === idx ? 'Pauza' : 'Głos (VIP)'}
-                           </button>
-                         </div>
-                       )}
                     </div>
                  </div>
                ))}
@@ -514,19 +495,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
 
             {!finalAiPrompt ? (
               <div className="p-0 py-2 md:p-4 border-t border-outline-variant/10 bg-surface-container-low shrink-0 relative z-10">
-                 {attachedFile && (
-                   <div className="flex items-center gap-2 mb-2 px-2 py-1.5 bg-primary/10 border border-primary/20 rounded-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
-                     <span className="material-symbols-outlined text-primary text-lg">attach_file</span>
-                     <span className="text-xs font-bold text-primary truncate flex-1">{attachedFile.name}</span>
-                     <span className="text-[10px] text-primary/70">{(attachedFile.size / 1024).toFixed(0)} KB</span>
-                     <button 
-                       onClick={removeAttachedFile}
-                       className="material-symbols-outlined text-error hover:text-error/80 text-lg transition-colors"
-                     >close</button>
-                   </div>
-                 )}
-                 
-                 <div className="flex gap-2 items-end px-2 md:px-0">
+                  <div className="flex gap-2 items-end px-2 md:px-0">
                    <div className="flex-1 min-w-0 bg-surface-container-lowest border-x-0 border-y md:border border-outline-variant/20 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary md:rounded-2xl p-2 transition-all shadow-sm flex items-end">
                      <textarea 
                        value={chatInput}
@@ -545,46 +514,12 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                           height: chatInput ? `${Math.min(chatInput.split('\n').length * 24 + 20, 120)}px` : '44px'
                        }}
                      ></textarea>
-                     <input
-                       type="file"
-                       ref={fileInputRef}
-                       className="hidden"
-                       onChange={handleFileChange}
-                       accept="audio/*,image/*,video/*,.txt,.mp3,.wav,.pdf"
-                     />
-                   </div>
-
-                   <div className="flex items-center shrink-0 h-[60px] gap-2">
-                     <div className={`flex items-center gap-1 md:gap-2 overflow-hidden transition-all duration-300 ${isActionMenuOpen ? 'max-w-[150px] opacity-100 pr-1' : 'max-w-0 opacity-0 pr-0'}`}>
-                        <button 
-                          onClick={handleFileAttach} 
-                          className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors ${attachedFile ? 'bg-primary text-on-primary' : 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary'}`} 
-                          title={attachedFile ? `Załączono: ${attachedFile.name}` : 'Załącz plik / inspirację'}
-                        ><span className="material-symbols-outlined text-[20px]">attach_file</span></button>
-                        <button 
-                          onClick={handleMicClick} 
-                          className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors ${isListening ? 'bg-error/20 text-error animate-pulse' : 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary'}`} 
-                          title={'Dyktuj głosowo'}
-                        ><span className="material-symbols-outlined text-[20px]">mic</span></button>
-                        <button 
-                          onClick={toggleVoiceResponse} 
-                          className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors ${isVoiceResponseEnabled ? 'bg-tertiary/20 text-tertiary animate-pulse' : userPlan === 'VIP' || userPlan === 'Legend' ? 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary' : 'bg-surface-variant text-on-surface-variant/40 hover:text-on-surface-variant'}`} 
-                          title={userPlan === 'VIP' || userPlan === 'Legend' ? (isVoiceResponseEnabled ? 'Wyłącz czytanie na głos' : 'Włącz czytanie na głos') : 'Głosowe odpowiedzi (tylko VIP/Legend)'}
-                        ><span className="material-symbols-outlined text-[20px]">volume_up</span></button>
-                     </div>
-
-                     <button 
-                       onClick={() => setIsActionMenuOpen(!isActionMenuOpen)}
-                       className={`w-[48px] h-[48px] shrink-0 rounded-full bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary flex items-center justify-center transition-all shadow-sm ${isActionMenuOpen ? 'rotate-45 bg-surface-container-highest' : ''}`}
-                     >
-                       <span className="material-symbols-outlined text-[24px]">add</span>
-                     </button>
-                   </div>
+                    </div>
 
                    <button 
                      onClick={handleSendMessage}
-                     disabled={isChatLoading || (!chatInput.trim() && !attachedFile)} 
-                     className={`w-[60px] h-[60px] rounded-2xl flex items-center justify-center transition-all flex-shrink-0 shadow-md ${isChatLoading || (!chatInput.trim() && !attachedFile) ? 'bg-surface-variant text-on-surface-variant shadow-none' : `${activeProducer.colorBg} text-white hover:opacity-90 hover:shadow-lg active:scale-95`}`}
+                     disabled={isChatLoading || (!chatInput.trim())} 
+                     className={`w-[60px] h-[60px] rounded-2xl flex items-center justify-center transition-all flex-shrink-0 shadow-md ${isChatLoading || (!chatInput.trim()) ? 'bg-surface-variant text-on-surface-variant shadow-none' : `${activeProducer.colorBg} text-white hover:opacity-90 hover:shadow-lg active:scale-95`}`}
                    >
                      <span className="material-symbols-outlined text-2xl" style={{fontVariationSettings: "'FILL' 1", marginLeft: '4px'}}>send</span>
                    </button>
