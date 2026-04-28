@@ -1,35 +1,35 @@
 import { Routes, Route, useSearchParams, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, Suspense, lazy } from 'react';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
 import { Footer } from './components/Footer';
 import { CookieBanner } from './components/CookieBanner';
 
 import { Home } from './pages/Home';
-import { MyTracks } from './pages/MyTracks';
-import { TrackDetail } from './pages/TrackDetail';
-import { Browse } from './pages/Browse';
-import { Contests } from './pages/Contests';
+const MyTracks = lazy(() => import('./pages/MyTracks').then(module => ({ default: module.MyTracks })));
+const TrackDetail = lazy(() => import('./pages/TrackDetail').then(module => ({ default: module.TrackDetail })));
+const Browse = lazy(() => import('./pages/Browse').then(module => ({ default: module.Browse })));
+const Contests = lazy(() => import('./pages/Contests').then(module => ({ default: module.Contests })));
 
-import { Regulamin } from './pages/Regulamin';
-import { PolitykaPrywatnosci } from './pages/PolitykaPrywatnosci';
-import { JakZdobycMonety } from './pages/JakZdobycMonety';
-import { FaqPomoc } from './pages/FaqPomoc';
-import { Kontakt } from './pages/Kontakt';
-import { Cennik } from './pages/Cennik';
-import { KupMonety } from './pages/KupMonety';
-import { InstrukcjaFaq } from './pages/InstrukcjaFaq';
-import { Wsparcie } from './pages/Wsparcie';
-import { TrendyTygodnia } from './pages/TrendyTygodnia';
-import { Nowosci } from './pages/Nowosci';
-import { BiuroProducentow } from './pages/BiuroProducentow';
-import { AdminDashboard } from './pages/AdminDashboard';
-import { BankTekstow } from './pages/BankTekstow';
-import { TekstDetail } from './pages/TekstDetail';
-import { Polecaj } from './pages/Polecaj';
-import { MyProducers } from './pages/MyProducers';
-import { GiftCatalogPage } from './pages/GiftFunnel/GiftCatalogPage';
-import { GiftTemplatePage } from './pages/GiftFunnel/GiftTemplatePage';
+const Regulamin = lazy(() => import('./pages/Regulamin').then(module => ({ default: module.Regulamin })));
+const PolitykaPrywatnosci = lazy(() => import('./pages/PolitykaPrywatnosci').then(module => ({ default: module.PolitykaPrywatnosci })));
+const JakZdobycMonety = lazy(() => import('./pages/JakZdobycMonety').then(module => ({ default: module.JakZdobycMonety })));
+const FaqPomoc = lazy(() => import('./pages/FaqPomoc').then(module => ({ default: module.FaqPomoc })));
+const Kontakt = lazy(() => import('./pages/Kontakt').then(module => ({ default: module.Kontakt })));
+const Cennik = lazy(() => import('./pages/Cennik').then(module => ({ default: module.Cennik })));
+const KupMonety = lazy(() => import('./pages/KupMonety').then(module => ({ default: module.KupMonety })));
+const InstrukcjaFaq = lazy(() => import('./pages/InstrukcjaFaq').then(module => ({ default: module.InstrukcjaFaq })));
+const Wsparcie = lazy(() => import('./pages/Wsparcie').then(module => ({ default: module.Wsparcie })));
+const TrendyTygodnia = lazy(() => import('./pages/TrendyTygodnia').then(module => ({ default: module.TrendyTygodnia })));
+const Nowosci = lazy(() => import('./pages/Nowosci').then(module => ({ default: module.Nowosci })));
+const BiuroProducentow = lazy(() => import('./pages/BiuroProducentow').then(module => ({ default: module.BiuroProducentow })));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
+const BankTekstow = lazy(() => import('./pages/BankTekstow').then(module => ({ default: module.BankTekstow })));
+const TekstDetail = lazy(() => import('./pages/TekstDetail').then(module => ({ default: module.TekstDetail })));
+const Polecaj = lazy(() => import('./pages/Polecaj').then(module => ({ default: module.Polecaj })));
+const MyProducers = lazy(() => import('./pages/MyProducers').then(module => ({ default: module.MyProducers })));
+const GiftCatalogPage = lazy(() => import('./pages/GiftFunnel/GiftCatalogPage').then(module => ({ default: module.GiftCatalogPage })));
+const GiftTemplatePage = lazy(() => import('./pages/GiftFunnel/GiftTemplatePage').then(module => ({ default: module.GiftTemplatePage })));
 
 function App() {
   const [searchParams] = useSearchParams();
@@ -50,7 +50,8 @@ function App() {
       <Header />
 
       <main className={isAdmin ? "w-full pt-6 flex-1 pb-[82px] md:pb-0 flex flex-col min-h-0" : `w-full max-w-7xl mx-auto ${isHome ? 'px-0' : 'px-4'} md:px-6 pt-4 space-y-4 md:space-y-10 flex-1 pb-[82px] md:pb-0 flex flex-col min-h-0`}>
-        <Routes>
+        <Suspense fallback={<div className="flex items-center justify-center h-full min-h-[50vh]"><span className="material-symbols-outlined animate-spin text-4xl text-primary">progress_activity</span></div>}>
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/my-tracks" element={<MyTracks />} />
           <Route path="/track/:id" element={<TrackDetail />} />
@@ -76,6 +77,7 @@ function App() {
           <Route path="/upominek" element={<GiftCatalogPage />} />
           <Route path="/upominek/:slug" element={<GiftTemplatePage />} />
         </Routes>
+        </Suspense>
       </main>
 
       <div className={isHome ? "hidden md:block" : ""}>

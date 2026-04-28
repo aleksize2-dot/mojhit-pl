@@ -214,7 +214,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
     }
     const producerThoughts = (
       activeProducer.typingMsg ||
-      'Kminie nad bitem...;Szukam brzmienia...;Prawie gotowe! Ă„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬Ă‚ÂÄ‚â€žĂ„â€¦Ă„Ä…ÄąĹźÄ‚â€žĂ„â€¦Ä‚â€ąÄąÄ„Ă„â€šĂ˘â‚¬ĹˇÄ‚â€šĂ‚Âµ'
+      'Kminie nad bitem...;Szukam brzmienia...;Prawie gotowe! 🎵'
     )
       .split(';')
       .filter((t: string) => t.trim().length > 0);
@@ -317,7 +317,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
   const handleMicClick = () => {
     if (!recognitionRef.current) {
       alert(
-        'Twoja przeglĂ„â€šĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚ËĂ˘â‚¬ĹˇĂ‚Â¬darka nie obsĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇuguje rozpoznawania mowy. SprĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬ÄąË‡Ä‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡buj uĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ˘â‚¬ĹľÄ‚â€ąÄąÄ„yÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€ąĂ˘â‚¬Ë‡ Chrome.'
+        'Twoja przeglądarka nie obsługuje rozpoznawania mowy. Spróbuj użyć Chrome.'
       );
       return;
     }
@@ -338,7 +338,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
   const toggleVoiceResponse = () => {
     if (userPlan !== 'VIP' && userPlan !== 'Legend') {
       alert(
-        'Ă„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬Ă‚ÂÄ‚â€žĂ„â€¦Ă„Ä…ÄąĹźĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă„â€žÄ‚â€žĂ„â€¦Ä‚â€šĂ‚Â  GĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇosowe odpowiedzi (czytanie na gĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇos) sÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦ dostÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄľÄ‚â€ąĂ‚Âpne tylko w pakiecie VIP lub Legend!'
+        '🔇 Głosowe odpowiedzi (czytanie na głos) są dostępne tylko w pakiecie VIP lub Legend!'
       );
       return;
     }
@@ -362,7 +362,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
       if (file) {
         if (file.size > 10 * 1024 * 1024) {
           alert(
-            'Plik jest za duĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ˘â‚¬ĹľÄ‚â€ąÄąÄ„y! Maksymalny rozmiar: 10MB'
+            'Plik jest za duży! Maksymalny rozmiar: 10MB'
           );
           return;
         }
@@ -429,7 +429,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
 
     const userMsg = chatInput.trim();
     const fileMsg = attachedFile
-      ? `[ZaĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦czono plik: ${attachedFile.name}]`
+      ? `[Załączono plik: ${attachedFile.name}]`
       : '';
     const fullUserMsg = [userMsg, fileMsg].filter(Boolean).join(' ');
 
@@ -454,7 +454,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'BĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦d API');
+      if (!res.ok) throw new Error(data.error || 'Błąd API');
 
       const reply = data.content;
       const lyricsRegex =
@@ -545,7 +545,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
     } catch (err: any) {
       console.error(err);
       alert(
-        'BĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦d poĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦czenia z serwerem.'
+        'Błąd połączenia z serwerem.'
       );
     } finally {
       setIsChatLoading(false);
@@ -571,7 +571,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'BĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦d API');
+      if (!res.ok) throw new Error(data.error || 'Błąd API');
 
       const reply = data.content;
       const lyricsRegex =
@@ -601,7 +601,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
             {
               role: 'assistant',
               content:
-                'WygenerowaĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇem alternatywnÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦ wersjÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄľÄ‚â€ąĂ‚Â tekstu. SprawdĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ä‚â€žĂ„â€¦Ă„Ä…ÄąĹş poniĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ˘â‚¬ĹľÄ‚â€ąÄąÄ„ej!',
+                'Wygenerowałem alternatywną wersję tekstu. Sprawdź poniżej!',
             },
           ]);
         }
@@ -614,7 +614,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
     } catch (err: any) {
       console.error(err);
       alert(
-        'BĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦d podczas regeneracji promptu.'
+        'Błąd podczas regeneracji promptu.'
       );
     } finally {
       setIsRegenerating(false);
@@ -641,13 +641,13 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
 
   const handleGenerate = async () => {
     if (!finalAiPrompt) {
-      alert('Musisz najpierw wygenerowaÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€ąĂ˘â‚¬Ë‡ prompt!');
+      alert('Musisz najpierw wygenerować prompt!');
       return;
     }
 
     if (!isSignedIn && !guestEmail.trim()) {
       alert(
-        'Jako goĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…ÄąĹźÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€ąĂ˘â‚¬Ë‡ musisz podaÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€ąĂ˘â‚¬Ë‡ adres e-mail, abyĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…ÄąĹźmy wiedzieli komu przypisaÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€ąĂ˘â‚¬Ë‡ utwĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬ÄąË‡Ä‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡r!'
+        'Jako gość musisz podać adres e-mail, abyśmy wiedzieli komu przypisać utwór!'
       );
       return;
     }
@@ -659,7 +659,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
 
     if (currencyType === 'fiat') {
       alert(
-        'ModuĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇ pĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇatnoĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…ÄąĹźci elektronicznych (BLIK / Przelewy24) w przygotowaniu! Tymczasem uĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ˘â‚¬ĹľÄ‚â€ąÄąÄ„yj monet lub not.'
+        'Moduł płatności elektronicznych (BLIK / Przelewy24) w przygotowaniu! Tymczasem użyj monet lub not.'
       );
       return;
     }
@@ -701,7 +701,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
           return;
         }
         throw new Error(
-          sunoData.error || 'BĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦d API Kie.ai'
+          sunoData.error || 'Błąd API Kie.ai'
         );
       }
       if (!sunoData.taskId)
@@ -734,7 +734,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
         if (!statusRes.ok)
           throw new Error(
             statusData.error ||
-              'BĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦d statusu zadania'
+              'Błąd statusu zadania'
           );
 
         if (
@@ -754,7 +754,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
           statusData.status === 'failed'
         ) {
           throw new Error(
-            'BĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦d serwera generujÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦cego (kie.ai)'
+            'Błąd serwera generującego (kie.ai)'
           );
         }
         attempts++;
@@ -765,7 +765,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
         (!lastStatusData || !lastStatusData.variants)
       ) {
         throw new Error(
-          'Przekroczono limit czasu oczekiwania na utwĂ„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬ÄąË‡Ä‚â€žĂ„â€¦Ä‚ËĂ˘â€šÂ¬ÄąË‡r (~12 min)'
+          'Przekroczono limit czasu oczekiwania na utwór (~12 min)'
         );
       }
 
@@ -789,12 +789,12 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
       if (!res.ok) {
         throw new Error(
           data.error ||
-            'WystÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦piĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇ nieznany bĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦d serwera'
+            'Wystąpił nieznany błąd serwera'
         );
       }
 
       alert(
-        'Utwory zostaĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇy wygenerowane! Znajdziesz je w panelu Moje Utwory. Dwa warianty (V1 i V2) sÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦ gotowe do odsĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇuchu.'
+        'Utwory zostały wygenerowane! Znajdziesz je w panelu Moje Utwory. Dwa warianty (V1 i V2) są gotowe do odsłuchu.'
       );
       window.dispatchEvent(new Event('updateBalance'));
       setTitle('');
@@ -802,11 +802,11 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
       setMessages([
         {
           role: 'assistant',
-          content: `Gotowe! Ă„â€šĂ˘â‚¬ĹľÄ‚ËĂ˘â€šÂ¬Ă‚ÂÄ‚â€žĂ„â€¦Ă„Ä…ÄąĹźÄ‚â€žĂ„â€¦Ä‚â€ąÄąÄ„Ă„â€šĂ˘â‚¬ĹˇÄ‚â€šĂ‚Âµ Twoje utwory (V1 i V2) sÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦ juĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ˘â‚¬ĹľÄ‚â€ąÄąÄ„ w panelu **Moje Utwory**. ${activeProducer.initMsg}`,
+          content: `Gotowe! 🎶 Twoje utwory (V1 i V2) są już w panelu **Moje Utwory**. ${activeProducer.initMsg}`,
         },
       ]);
     } catch (err: any) {
-      alert(`BĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦d: ${err.message}`);
+      alert(`Błąd: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
