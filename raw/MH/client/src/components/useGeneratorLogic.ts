@@ -134,9 +134,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
               name: found.name,
               badge: found.badge,
               icon: found.icon,
-              img: found.img
-                ? `${found.img}${found.img.includes('?') ? '&' : '?'}v=${Date.now()}`
-                : '',
+              img: found.img || '',
               gradient: found.gradient,
               buttonGradient: found.button_gradient,
               placeholder: found.placeholder,

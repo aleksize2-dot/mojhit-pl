@@ -200,6 +200,8 @@
   },
   "active": "fd60ac571e98376e",
   "lastOpenFiles": [
+    "memory/2026-04-28.md",
+    "raw/MH/repl.js",
     "raw/MH/find2.js",
     "raw/MH/find.js",
     "raw/MH/read.js",
@@ -209,8 +211,6 @@
     "raw/MH/fix_mojibake_useGeneratorLogic2.js",
     "raw/MH/fix_mojibake_useGeneratorLogic.js",
     "raw/MH/refactor_app.js",
-    "raw/MH/hide_strip.js",
-    "raw/MH/add_user_avatar.js",
     "raw/MH/client/dist/avatars/laluz.webp",
     "raw/MH/client/dist/avatars/openart-gpt-image-2-1_1777326211419_bc9cdbcc.webp",
     "raw/MH/client/dist/avatars/melo.webp",
