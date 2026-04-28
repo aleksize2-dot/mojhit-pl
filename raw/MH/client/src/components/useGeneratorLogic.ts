@@ -378,6 +378,8 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
   }, []);
 
   const handlePlayTTS = async (text: string, voice: string, index: number) => {
+    // No voice configured — silently ignore
+    if (!voice) return;
     if (playingMsgIndex === index) {
       if (audioRef.current) {
         audioRef.current.pause();
