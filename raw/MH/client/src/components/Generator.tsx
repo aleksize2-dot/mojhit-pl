@@ -3,7 +3,7 @@ import { ChatMessage } from './ChatMessage';
 import { useLocation } from 'react-router-dom';
 import { useAuth, SignInButton, SignUpButton } from '@clerk/clerk-react';
 
-export function Generator() {
+export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {}) {
   const { isSignedIn } = useAuth();
   const [guestEmail, setGuestEmail] = useState('');
   const [showGuestLimitModal, setShowGuestLimitModal] = useState(false);
@@ -11,7 +11,7 @@ export function Generator() {
   const [producers, setProducers] = useState<any[]>([]);
   const [activeAgent, setActiveAgent] = useState<string>('');
   const [userPlan, setUserPlan] = useState<string>('Free');
-  const [ownedProducerIds, setOwnedProducerIds] = useState<string[]>([]);
+  const [, setOwnedProducerIds] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProducersAndUser = async () => {
@@ -139,6 +139,9 @@ export function Generator() {
   const [isProducerPanelOpen, setIsProducerPanelOpen] = useState(false);
 
   const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string}[]>([]);
+  const [playingMsgIndex, setPlayingMsgIndex] = useState<number | null>(null);
+  const [loadingTtsIndex, setLoadingTtsIndex] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [chatInput, setChatInput] = useState('');
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const [isChatLoading, setIsChatLoading] = useState(false);
@@ -306,6 +309,48 @@ export function Generator() {
   const removeAttachedFile = useCallback(() => {
     setAttachedFile(null);
   }, []);
+
+  const handlePlayTTS = async (text: string, voice: string, index: number) => {
+    if (playingMsgIndex === index) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        setPlayingMsgIndex(null);
+      }
+      return;
+    }
+    
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    
+    setLoadingTtsIndex(index);
+    setPlayingMsgIndex(null);
+    
+    try {
+      const res = await fetch('/api/tts/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, voice: voice || 'Rachel' })
+      });
+      const data = await res.json();
+      if (data.audioUrl) {
+        const audio = new Audio(data.audioUrl);
+        audioRef.current = audio;
+        audio.play();
+        setPlayingMsgIndex(index);
+        audio.onended = () => {
+          setPlayingMsgIndex(null);
+        };
+      } else {
+        alert('Głos niedostępny.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Błąd generowania głosu.');
+    } finally {
+      setLoadingTtsIndex(null);
+    }
+  };
 
   const handleSendMessage = async () => {
     if ((!chatInput.trim() && !attachedFile) || isChatLoading || !activeProducer) return;
@@ -800,6 +845,25 @@ export function Generator() {
                     )}
                     <div className={`p-4 rounded-2xl text-sm md:text-base font-body shadow-sm leading-relaxed ${m.role === 'user' ? `${activeProducer.colorBg} text-white rounded-tr-sm` : 'bg-surface-container-high text-on-surface rounded-tl-none border border-outline-variant/10'}`}>
                        <ChatMessage content={m.content} isUser={m.role === 'user'} />
+                       {m.role !== 'user' && (userPlan.toLowerCase() === 'vip' || userPlan.toLowerCase() === 'legend') && (
+                         <div className="mt-3 flex justify-end">
+                           <button 
+                             onClick={() => {
+                               const theme = typeof activeProducer.theme_config === 'string' ? JSON.parse(activeProducer.theme_config || '{}') : (activeProducer.theme_config || {});
+                               handlePlayTTS(m.content, theme.elevenlabs_voice, idx);
+                             }}
+                             disabled={loadingTtsIndex === idx}
+                             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${playingMsgIndex === idx ? 'bg-primary text-on-primary' : 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary'} ${loadingTtsIndex === idx ? 'opacity-70 cursor-not-allowed' : ''}`}
+                           >
+                             {loadingTtsIndex === idx ? (
+                               <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
+                             ) : (
+                               <span className="material-symbols-outlined text-[16px]">{playingMsgIndex === idx ? 'pause_circle' : 'volume_up'}</span>
+                             )}
+                             {loadingTtsIndex === idx ? 'Wczytywanie...' : playingMsgIndex === idx ? 'Pauza' : 'Głos (VIP)'}
+                           </button>
+                         </div>
+                       )}
                     </div>
                  </div>
                ))}

@@ -42,7 +42,7 @@ export function TrackCard({
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePlay(track); }}
       >
         {track.video_thumbnail_url || track.cover_image_url ? (
-          <img src={track.video_thumbnail_url || track.cover_image_url} alt={track.title} className="w-full h-full object-cover group-hover/cover:scale-110 transition-transform duration-500" />
+          <img src={track.video_thumbnail_url || track.cover_image_url || undefined} alt={track.title} className="w-full h-full object-cover group-hover/cover:scale-110 transition-transform duration-500" />
         ) : (
           <span className={`material-symbols-outlined text-3xl ${playingId === track.id ? 'text-primary' : 'text-on-surface-variant'}`}>
             {playingId === track.id ? 'pause_circle' : 'play_circle'}
