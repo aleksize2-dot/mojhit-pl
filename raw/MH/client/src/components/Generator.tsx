@@ -274,7 +274,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                         </div>
                       </div>
                     )}
-                    <div className={`p-4 rounded-2xl text-sm md:text-base font-body shadow-sm leading-relaxed w-full max-w-[90%] md:max-w-[85%] ${m.role === 'user' ? `${activeProducer.colorBg} text-white rounded-tr-xl self-end` : 'bg-surface-container-high text-on-surface rounded-tl-xl border border-outline-variant/10'}`}>
+                    <div className={`p-4 rounded-2xl text-sm md:text-base font-body shadow-sm leading-relaxed w-fit max-w-[90%] md:max-w-[85%] ${m.role === 'user' ? `${activeProducer.colorBg} text-white rounded-tr-xl self-end` : 'bg-surface-container-high text-on-surface rounded-tl-xl border border-outline-variant/10 self-start'}`}>
                        <ChatMessage content={m.content} isUser={m.role === 'user'} />
                        {m.role !== 'user' && (userPlan.toLowerCase() === 'vip' || userPlan.toLowerCase() === 'legend') && (
                          <div className="mt-3 flex justify-end">
