@@ -104,7 +104,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                     <span className={`text-[10px] font-bold uppercase tracking-widest font-label whitespace-nowrap ${isActive ? p.colorText : 'text-on-surface-variant'}`}>{p.name}</span>
                   </div>
                   <div className="flex flex-col items-center gap-0.5 mt-0.5">
-                    {p.badge && <span className="text-[7px] text-on-surface-variant uppercase tracking-wider font-label bg-surface-container-high px-1 py-0.5 rounded border border-outline-variant/20">{p.badge}</span>}
+                    {p.badge && <span className={`text-[7px] uppercase tracking-wider font-label px-1 py-0.5 rounded border ${p.colorText} ${p.colorBg10} ${p.colorBorder20}`}>{p.badge}</span>}
                     {p.tier === 'vip' && <div className="text-[7px] font-black bg-primary/10 text-primary px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">VIP</div>}
                     {p.tier === 'legend' && <div className="text-[7px] font-black bg-primary/10 text-primary px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">LEGEND</div>}
                   </div>
@@ -180,7 +180,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                      </div>
                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                        {activeProducer.badge && (
-                         <span className="text-[9px] text-on-surface-variant uppercase tracking-wider font-label bg-surface-container-highest px-1.5 py-0.5 rounded border border-outline-variant/20">{activeProducer.badge}</span>
+                         <span className={`text-[9px] uppercase tracking-wider font-label px-1.5 py-0.5 rounded border ${activeProducer.colorText} ${activeProducer.colorBg10} ${activeProducer.colorBorder20}`}>{activeProducer.badge}</span>
                        )}
                        {(activeProducer.tier === 'vip' || activeProducer.tier === 'legend') && (
                          <div className="bg-primary text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm border border-white/10 uppercase whitespace-nowrap inline-block">
@@ -244,7 +244,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                               <span className={`font-bold text-sm ${isActive ? p.colorText : 'text-on-surface'}`}>{p.name}</span>
                             </div>
                             <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
-                              {p.badge && <span className="text-[8px] text-on-surface-variant uppercase tracking-wider font-label bg-surface-container-high px-1.5 py-0.5 rounded border border-outline-variant/20">{p.badge}</span>}
+                              {p.badge && <span className={`text-[8px] uppercase tracking-wider font-label px-1.5 py-0.5 rounded border ${p.colorText} ${p.colorBg10} ${p.colorBorder20}`}>{p.badge}</span>}
                               {p.tier === 'vip' && <div className="inline-block bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase">VIP</div>}
                               {p.tier === 'legend' && <div className="inline-block bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase">LEGEND</div>}
                             </div>
@@ -273,7 +273,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                           <span className={`text-sm font-bold leading-none ${activeProducer.colorText}`}>{activeProducer.name}</span>
                           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                             {activeProducer.badge && (
-                              <span className="text-[8px] text-on-surface-variant uppercase tracking-wider font-label bg-surface-container-high px-1.5 py-0.5 rounded border border-outline-variant/20">{activeProducer.badge}</span>
+                              <span className={`text-[8px] uppercase tracking-wider font-label px-1.5 py-0.5 rounded border ${activeProducer.colorText} ${activeProducer.colorBg10} ${activeProducer.colorBorder20}`}>{activeProducer.badge}</span>
                             )}
                             {(activeProducer.tier === 'vip' || activeProducer.tier === 'legend') && (
                               <div className="w-fit bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">
@@ -352,7 +352,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                         <span className={`text-sm font-bold leading-none ${activeProducer.colorText}`}>{activeProducer.name}</span>
                           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                             {activeProducer.badge && (
-                              <span className="text-[8px] text-on-surface-variant uppercase tracking-wider font-label bg-surface-container-high px-1.5 py-0.5 rounded border border-outline-variant/20">{activeProducer.badge}</span>
+                              <span className={`text-[8px] uppercase tracking-wider font-label px-1.5 py-0.5 rounded border ${activeProducer.colorText} ${activeProducer.colorBg10} ${activeProducer.colorBorder20}`}>{activeProducer.badge}</span>
                             )}
                             {(activeProducer.tier === 'vip' || activeProducer.tier === 'legend') && (
                               <div className="w-fit bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">
