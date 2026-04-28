@@ -225,17 +225,18 @@ export function ProducerManager() {
               value={(() => {
                 try {
                   const tc = typeof editing.theme_config === 'string' ? JSON.parse(editing.theme_config || '{}') : (editing.theme_config || {});
-                  return tc.elevenlabs_voice || 'River';
-                } catch(e) { return 'River'; }
+                  return tc.elevenlabs_voice || '';
+                } catch(e) { return ''; }
               })()} 
               onChange={e => {
                 try {
                   const tc = typeof editing.theme_config === 'string' ? JSON.parse(editing.theme_config || '{}') : (editing.theme_config || {});
-                  tc.elevenlabs_voice = e.target.value;
+                  tc.elevenlabs_voice = e.target.value || null;
                   setEditing({...editing, theme_config: JSON.stringify(tc, null, 2)});
                 } catch(err) { console.error('Invalid theme_config JSON'); }
               }}
             >
+              <option value="">— Bez głosu —</option>
               <option value="River">River (Męski)</option>
               <option value="Roger">Roger (Męski - Głęboki)</option>
               <option value="Brian">Brian (Męski - Rezonujący)</option>

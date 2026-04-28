@@ -39,6 +39,17 @@
 - **Fix:** Removed the extra `}`. Both backend (:3000) and frontend (:5174) restored.
 - **Lesson:** Always `npm start` locally after merging refactoring changes before deploying.
 
+### 2026-04-27: KIE API — Windows curl.exe JSON issue
+- **Symptom:** `curl.exe` on Windows sends JSON with incorrect formatting to KIE API, causing request failures.
+- **Root cause:** Windows `curl.exe` treats JSON body differently than Node.js `fetch`.
+- **Fix:** Use Node `fetch` (or explicit `--data-raw` with proper escaping in curl) instead of plain `curl.exe`.
+- **Lesson:** Test API calls via the actual Node.js runtime, not Windows curl.exe.
+
+### 2026-04-27: Bugfix bundle (Gift Funnel prep patch)
+1. **PUT /api/admin/producers** — Added `delete updates.stats` because virtual `stats` field prevented saving producer data.
+2. **POST /api/tracks** — Fixed empty `audio_url` sent from frontend when status was 'completed' but no tracks existed yet.
+3. **Generator.tsx** — Fixed `variants.length` check instead of `variants` — empty array is truthy in JS, causing skipping of empty-variant state.
+
 ### 2026-04-22: config.patch size-drop
 - **Symptom:** Using `config.patch` in OpenClaw config to set `skills.entries` caused config to shrink from ~28K to ~9.6K.
 - **Root cause:** Bug in OpenClaw 2026.4.22 config patching system.

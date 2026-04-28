@@ -7,6 +7,14 @@ AI performers are personas that users can interact with to generate music tracks
 - **CJ Remi** – AI performer (details TBD)
 - **MELO MC** – AI performer (details TBD)
 - **Kosa** – AI performer (details TBD)
+- **La Luz** – AI performer, Polish Latino Fiesta style.
+  - **ID:** `la_luz`
+  - **Created:** 2026-04-27
+  - **Style:** Reggaeton, Spanish guitar, synth trumpet
+  - **Niche:** Polska Fiesta (no overlap with CJ Remi, Kosa, MELO MC)
+  - **Avatar:** `/avatars/laluz.webp` (also in `public/avatars/`)
+  - **Midjourney:** Gold chain, earring, floral shirt, sunset gradient
+  - **Repo:** Pushed to GitHub
 
 ## Specialized Performers
 
@@ -34,6 +42,8 @@ Performers can be unlocked via subscription tiers or one-time purchases. Users c
 - Active status, main page visibility, tier level
 
 ## Integration with Tracks
+
+All performers are stored in the `producers` table in Supabase. La Luz was added as a new row alongside CJ Remi, Kosa, and MELO MC.
 
 When a track is generated via chat with a performer, the `personaId` is passed to the backend and stored in `kie_tasks.persona_id`, then linked to the track via `tracks.producer_id`. This allows tracks to display the performer's name and link to their chat. The performer's `suno_version` determines which Suno AI model generates the music.
 

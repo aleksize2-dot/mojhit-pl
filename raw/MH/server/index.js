@@ -3661,7 +3661,7 @@ app.post('/api/tts/generate', requireAuth(), async (req, res) => {
     }
 
     if (process.env.KIE_API_KEY) {
-      const fetch = require('node-fetch');
+      const fetch = (await import('node-fetch')).default;
       const baseUrl = process.env.KIE_API_BASE_URL || 'https://api.kie.ai';
       
       const payload = {
@@ -3692,37 +3692,44 @@ app.post('/api/tts/generate', requireAuth(), async (req, res) => {
 
       const taskId = dataCreate.data.taskId;
       
-      // Poll for completion (up to ~30s)
-      for (let i = 0; i < 15; i++) {
+      // Poll for completion (up to ~60s, ElevenLabs TTS can be slow)
+      console.log('[TTS] Polling task:', taskId);
+      for (let i = 0; i < 30; i++) {
         await new Promise(resolve => setTimeout(resolve, 2000));
         const resPoll = await fetch(`${baseUrl}/api/v1/jobs/recordInfo?taskId=${taskId}`, {
           headers: { 'Authorization': `Bearer ${process.env.KIE_API_KEY}` }
         });
         const dataPoll = await resPoll.json();
         
-        if (dataPoll?.data?.state === 'success') {
+        const pollState = dataPoll?.data?.state || 'unknown';
+        if (i % 5 === 0) console.log('[TTS] Poll attempt', i+1, 'state:', pollState);
+        
+        if (pollState === 'success') {
           try {
             let resultJson = dataPoll.data.resultJson;
             if (typeof resultJson === 'string') {
               resultJson = JSON.parse(resultJson);
             }
             if (resultJson.resultUrls && resultJson.resultUrls.length > 0) {
+              console.log('[TTS] Got audio URL:', resultJson.resultUrls[0].substring(0, 60));
               return res.json({ audioUrl: resultJson.resultUrls[0] });
             } else if (resultJson.audioUrl) {
+              console.log('[TTS] Got audio URL:', resultJson.audioUrl.substring(0, 60));
               return res.json({ audioUrl: resultJson.audioUrl });
             }
           } catch (e) {
-            console.error('Failed to parse resultJson:', e);
+            console.error('[TTS] Failed to parse resultJson:', e);
           }
           return res.status(500).json({ error: 'Invalid TTS result format' });
         }
-        if (dataPoll?.data?.state === 'fail') {
-           throw new Error('Kie.ai TTS task failed: ' + dataPoll.data.failMsg);
+        if (pollState === 'fail') {
+           throw new Error('Kie.ai TTS task failed: ' + (dataPoll.data.failMsg || 'Unknown'));
         }
       }
-      throw new Error('Kie.ai TTS task timed out');
+      console.warn('[TTS] Task timed out after 60s:', taskId);
+      throw new Error('Kie.ai TTS task timed out. Spróbuj ponownie za chwilę.');
     } else if (process.env.ELEVENLABS_API_KEY) {
-      const fetch = require('node-fetch');
+      const fetch = (await import('node-fetch')).default;
       
       // 1. Fetch available voices to resolve name to ID
       let voiceId = 'pNInz6obpgDQGcFmaJcg'; // Fallback to Adam if not found
