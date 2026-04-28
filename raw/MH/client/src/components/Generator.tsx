@@ -69,13 +69,13 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
   return (
     <section className="flex-1 flex flex-col min-h-0 -mt-4 md:mt-0">
 
-      <div className="text-center space-y-1 mb-1 md:space-y-2 md:mb-2 md:mt-4 px-4 md:px-0">
+      <div className="hidden md:block text-center space-y-1 mb-1 md:space-y-2 md:mb-2 md:mt-4 px-4 md:px-0">
         <h2 className={`text-xl md:text-3xl font-black headline-font tracking-tight bg-gradient-to-r bg-clip-text text-transparent inline-block ${activeProducer.gradient}`}>Wybierz wykonawcę</h2>
         <p className="text-on-surface-variant max-w-lg mx-auto text-[10px] md:text-sm font-label hidden md:block">Kto dziś lepiej poczuje Twój klimat?</p>
       </div>
 
       {/* -- Horizontal scroll strip (both mobile & desktop) -- */}
-      <div className="w-full relative mask-image-fade -mt-10 md:-mt-14 z-0 overflow-hidden">
+      <div className="hidden md:block w-full relative mask-image-fade -mt-10 md:-mt-14 z-0 overflow-hidden">
         <div className="flex items-start gap-3 md:gap-6 animate-marquee-slow pt-12 md:pt-16 pb-0 w-max hover:[animation-play-state:paused]">
           {[0, 1].flatMap((copyIndex) =>
             producers.filter((p: any) => p.is_on_main_page).map((p: any) => {
