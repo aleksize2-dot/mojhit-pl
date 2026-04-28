@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { Modal } from './ui/Modal';
 
 type Track = {
   id: string;
@@ -43,6 +44,42 @@ export function TrackDetail() {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [videoError, setVideoError] = useState<string | null>(null);
   const [videoDbId, setVideoDbId] = useState<string | null>(null);
+
+  // Modal state
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'info' | 'error' | 'warning' | 'success';
+    confirmText?: string;
+    cancelText?: string;
+    onConfirm: () => void;
+    onCancel?: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info',
+    onConfirm: () => {},
+  });
+
+  const closeModal = () => setModalConfig(prev => ({ ...prev, isOpen: false }));
+  
+  const showModal = (config: Partial<typeof modalConfig>) => {
+    setModalConfig(prev => ({
+      ...prev,
+      ...config,
+      isOpen: true,
+      onConfirm: () => {
+        if (config.onConfirm) config.onConfirm();
+        closeModal();
+      },
+      onCancel: config.onCancel ? () => {
+        if (config.onCancel) config.onCancel();
+        closeModal();
+      } : undefined
+    }));
+  };
 
   // Swipe handling
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -209,7 +246,13 @@ export function TrackDetail() {
       }).catch(console.error);
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Link skopiowany!');
+      showModal({
+        title: 'Sukces!',
+        message: 'Link został pomyślnie skopiowany do schowka.',
+        type: 'success',
+        confirmText: 'OK',
+        onConfirm: closeModal
+      });
     }
   };
 
@@ -617,6 +660,8 @@ export function TrackDetail() {
           className="hidden" 
         />
       )}
+      
+      <Modal {...modalConfig} />
     </div>
     </>
   );
