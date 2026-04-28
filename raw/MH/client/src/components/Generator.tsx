@@ -74,48 +74,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
         <p className="text-on-surface-variant max-w-lg mx-auto text-[10px] md:text-sm font-label hidden md:block">Kto dziś lepiej poczuje Twój klimat?</p>
       </div>
 
-      {/* -- Horizontal scroll strip (both mobile & desktop) -- */}
-      <div className="hidden md:block w-full relative mask-image-fade -mt-10 md:-mt-14 z-0 overflow-hidden">
-        <div className="flex items-start gap-3 md:gap-6 animate-marquee-slow pt-12 md:pt-16 pb-0 w-max hover:[animation-play-state:paused]">
-          {[0, 1].flatMap((copyIndex) =>
-            producers.filter((p: any) => p.is_on_main_page).map((p: any) => {
-              const isActive = activeAgent === p.id;
-              const isLocked = p.isLocked;
-              return (
-                <button
-                  key={`strip-${p.id}-${copyIndex}`}
-                  onClick={() => { if (!isLocked) { handleProducerSelect(p); } else { window.location.href=`/biuro-producentow?producer=${p.id}`; } }}
-                  className={`flex flex-col items-center gap-1.5 shrink-0 px-2 py-1 md:px-3 md:py-2 rounded-2xl transition-all duration-200
-                    ${isActive ? '' : 'hover:bg-surface-container-high opacity-60 hover:opacity-100'}`}
-                >
-                  <div className="relative shrink-0">
-                    {/* Tier Badge (Centered Above) */}
-                    
-                    
-                    
-                    <div className={`relative w-14 h-14 md:w-20 md:h-20 rounded-full overflow-hidden border-2 transition-all duration-200
-                      ${isActive ? `bg-surface-container-lowest border-transparent animate-sound-wave ${p.colorText}` : 'border-outline-variant/30 grayscale-[60%]'}`}>
-                      <img src={p.img} alt={p.name} className="absolute inset-0 w-full h-full object-cover" onError={e => { e.currentTarget.style.display='none'; (e.currentTarget.nextElementSibling as HTMLElement).style.display='flex'; }} />
-                      <div style={{display:'none'}} className={`z-10 w-full h-full flex items-center justify-center material-symbols-outlined text-2xl ${p.colorText}`}>{p.icon}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    {isLocked && <span className="material-symbols-outlined text-[14px] text-primary" style={{fontVariationSettings: "'FILL' 1"}}>lock</span>}
-                    <span className={`text-[10px] font-bold uppercase tracking-widest font-label whitespace-nowrap ${isActive ? p.colorText : 'text-on-surface-variant'}`}>{p.name}</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-0.5 mt-0.5">
-                    {p.badge && <span className={`text-[7px] uppercase tracking-wider font-label px-1 py-0.5 rounded border ${p.colorText} ${p.colorBg10} ${p.colorBorder20}`}>{p.badge}</span>}
-                    {p.tier === 'vip' && <div className="text-[7px] font-black bg-primary/10 text-primary px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">VIP</div>}
-                    {p.tier === 'legend' && <div className="text-[7px] font-black bg-primary/10 text-primary px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">LEGEND</div>}
-                  </div>
-                </button>
-              );
-            })
-          )}
-        </div>
-      </div>
-
-      <div ref={chatContainerRef} className="flex-1 min-h-0 md:min-h-[750px] lg:min-h-[850px] relative max-w-6xl mx-auto flex gap-0 px-0 md:px-2 lg:px-6 w-full mt-0 z-10 w-[100vw] left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] md:w-full md:left-auto md:right-auto md:ml-auto md:mr-auto md:mx-auto">
+            <div ref={chatContainerRef} className="flex-1 min-h-0 md:min-h-[750px] lg:min-h-[850px] relative max-w-6xl mx-auto flex gap-0 px-0 md:px-2 lg:px-6 w-full mt-0 z-10 w-[100vw] left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] md:w-full md:left-auto md:right-auto md:ml-auto md:mr-auto md:mx-auto">
 
 
         <div className="relative group flex-1 min-w-0 flex flex-col">
@@ -157,15 +116,12 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
             )}
 
              <div className="relative" data-producer-dropdown>
-               <button
+               <div
                  onClick={() => setIsProducerPanelOpen(p => !p)}
-                 className="w-full p-4 border-b border-outline-variant/10 flex items-center justify-between bg-surface-container-low shrink-0 hover:bg-surface-container transition-colors duration-200 group"
+                 className="w-full h-[76px] px-4 border-b border-outline-variant/10 flex items-center justify-between bg-surface-container-low shrink-0 hover:bg-surface-container transition-colors duration-200 group overflow-hidden cursor-pointer relative"
                >
-                 <div className="flex items-center gap-3">
+                 <div className="flex items-center gap-3 relative z-20 bg-surface-container-low shrink-0 pr-4 h-full">
                     <div className="relative shrink-0">
-                      {/* Tier Badge (Centered Above) */}
-                      
-                      
                       <div className={`w-10 h-10 rounded-full overflow-hidden relative flex items-center justify-center bg-surface-container-low border-2 border-transparent shadow-[0_0_15px_currentColor] ${activeProducer.colorText}`}>
                         <img src={activeProducer.img} alt={activeProducer.name} className="absolute inset-0 w-full h-full object-cover max-w-none" onError={(e) => { e.currentTarget.style.display='none'; if(e.currentTarget.nextElementSibling) (e.currentTarget.nextElementSibling as HTMLElement).style.display='flex'; }} />
                         <div style={{ display: 'none' }} className={`relative z-10 material-symbols-outlined text-xl flex items-center justify-center ${activeProducer.colorText}`}>{activeProducer.icon}</div>
@@ -178,7 +134,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                        {activeProducer.isLocked && <span className="material-symbols-outlined text-[18px] text-primary" style={{fontVariationSettings: "'FILL' 1"}}>lock</span>}
                        <p className="font-extrabold headline-font text-on-surface text-base leading-tight">{activeProducer.name}</p>
                      </div>
-                     <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                        {activeProducer.badge && (
                          <span className={`text-[9px] uppercase tracking-wider font-label px-1.5 py-0.5 rounded border ${activeProducer.colorText} ${activeProducer.colorBg10} ${activeProducer.colorBorder20}`}>{activeProducer.badge}</span>
                        )}
@@ -190,7 +146,27 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                      </div>
                    </div>
                  </div>
-                 <div className="flex items-center gap-2">
+
+                 <div className="flex-1 overflow-hidden relative mask-image-fade h-full flex items-center opacity-60 group-hover:opacity-100 transition-opacity">
+                   <div className="flex items-center gap-4 animate-marquee-reverse w-max">
+                     {[0, 1].flatMap((copyIndex) =>
+                       producers.filter((p: any) => p.is_on_main_page && p.id !== activeProducer.id).map((p: any) => (
+                         <div
+                           key={`strip-${p.id}-${copyIndex}`}
+                           onClick={(e) => { e.stopPropagation(); if (!p.isLocked) { handleProducerSelect(p); setIsProducerPanelOpen(false); } else { window.location.href=`/biuro-producentow?producer=${p.id}`; } }}
+                           className="flex items-center gap-2 shrink-0 transition-opacity hover:opacity-100 cursor-pointer"
+                         >
+                           <div className={`w-8 h-8 rounded-full overflow-hidden border-2 ${p.colorBorder80}`}>
+                             <img src={p.img} alt={p.name} className="w-full h-full object-cover" />
+                           </div>
+                           <span className={`text-[10px] font-bold uppercase tracking-widest font-label whitespace-nowrap ${p.colorText}`}>{p.name}</span>
+                         </div>
+                       ))
+                     )}
+                   </div>
+                 </div>
+
+                 <div className="flex items-center gap-2 relative z-20 bg-surface-container-low shrink-0 pl-4 h-full">
                    {finalAiPrompt && (
                      <span onClick={e => { e.stopPropagation(); setFinalAiPrompt(null); setMessages([{role: 'assistant', content: activeProducer.initMsg}]); }} className="text-[10px] text-error font-bold font-label px-2 py-1 rounded-lg hover:bg-error/10 border border-error/20 transition-colors uppercase tracking-wider">Reset</span>
                    )}
@@ -211,7 +187,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                       </svg>
                     </span>
                  </div>
-               </button>
+               </div>
 
                {isProducerPanelOpen && (
                  <div className="md:hidden absolute top-full left-0 right-0 z-50 bg-surface-container-low border-b border-outline-variant/20 shadow-2xl overflow-y-auto max-h-[340px]">

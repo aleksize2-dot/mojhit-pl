@@ -212,3 +212,14 @@ body {
   100% { box-shadow: 0 0 15px currentColor, 0 0 0 0 currentColor; }
 }
 .animate-sound-wave { animation: sound-wave 2s linear infinite; }
+
+@keyframes marquee-reverse {
+  0% { transform: translateX(calc(-50% - 0.5rem)); }
+  100% { transform: translateX(0); }
+}
+.animate-marquee-reverse {
+  animation: marquee-reverse 30s linear infinite;
+}
+.animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
