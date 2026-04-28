@@ -53,6 +53,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
   const [guestEmail, setGuestEmail] = useState('');
   const [showGuestLimitModal, setShowGuestLimitModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
 
   // ── Computed ──
   const activeProducer = producers.find(p => p.id === activeAgent) || producers[0];
@@ -693,7 +694,13 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
         }),
       });
 
-      const sunoData = await sunoRes.json();
+      const responseText = await sunoRes.text();
+      let sunoData;
+      try {
+        sunoData = responseText ? JSON.parse(responseText) : {};
+      } catch (e) {
+        throw new Error(`Serwer zwrócił nieprawidłową odpowiedź (Status ${sunoRes.status}): ${responseText || 'Pusta odpowiedź'}`);
+      }
       if (!sunoRes.ok) {
         if (
           sunoRes.status === 403 &&
@@ -832,7 +839,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
         },
       ]);
     } catch (err: any) {
-      alert(`Błąd: ${err.message}`);
+      setGenerationError(`Błąd: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -869,6 +876,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
     guestEmail,
     showGuestLimitModal,
     showSuccessModal,
+    generationError,
     isActionMenuOpen,
     // Computed
     activeProducer,
@@ -886,6 +894,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
     setGuestEmail,
     setShowGuestLimitModal,
     setShowSuccessModal,
+    setGenerationError,
     setIsActionMenuOpen,
     setEditedLyrics,
     setFinalAiPrompt,

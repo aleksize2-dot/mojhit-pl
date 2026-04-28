@@ -30,8 +30,9 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
     isProducerPanelOpen,
     guestEmail,
     showGuestLimitModal,
-    isActionMenuOpen,
     showSuccessModal,
+    generationError,
+    isActionMenuOpen,
     // Computed
     activeProducer,
     // Refs
@@ -46,6 +47,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
     setGuestEmail,
     setShowGuestLimitModal,
     setShowSuccessModal,
+    setGenerationError,
     setIsActionMenuOpen,
     setEditedLyrics,
     setFinalAiPrompt,
@@ -631,6 +633,29 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                 className="w-full py-3 rounded-xl font-bold bg-transparent border border-outline-variant/30 text-on-surface hover:bg-surface-variant/30 transition-colors"
               >
                 Kontynuuj tworzenie
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {generationError && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-surface-container rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl border border-outline-variant/20 animate-in zoom-in-95 duration-300 relative overflow-hidden">
+            <div className={`absolute top-0 left-0 w-full h-1 bg-red-500`}></div>
+            <div className={`w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mx-auto mb-4`}>
+              <span className="material-symbols-outlined text-3xl">error</span>
+            </div>
+            <h3 className="text-2xl font-black headline-font text-center text-on-surface mb-2">Wystąpił Błąd</h3>
+            <p className="text-sm text-on-surface-variant text-center mb-6">
+              {generationError}
+            </p>
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={() => setGenerationError(null)}
+                className="w-full py-3.5 rounded-xl font-bold bg-surface-variant text-on-surface hover:bg-surface-variant/80 transition-colors"
+              >
+                Zamknij
               </button>
             </div>
           </div>
