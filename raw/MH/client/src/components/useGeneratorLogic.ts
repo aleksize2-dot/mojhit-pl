@@ -831,6 +831,16 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
       setShowSuccessModal(true);
       window.dispatchEvent(new Event('updateBalance'));
       
+      // Auto-trigger video generation for first variant
+      if (payload.kie_task_id) {
+        fetch('/api/video/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ audioTaskId: payload.kie_task_id, variantIndex: 0 })
+        }).catch(() => {});
+      }
+      
       setMessages(prev => [
         ...prev,
         {

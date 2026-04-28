@@ -1542,7 +1542,6 @@ app.get('/api/admin/producers', requireAuth(), requireAdmin, async (req, res) =>
 
 // Admin: Upload avatar image
 const fs = require('fs');
-const path = require('path');
 app.post('/api/admin/upload-avatar', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { id, image } = req.body;
