@@ -103,8 +103,11 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                     {isLocked && <span className="material-symbols-outlined text-[14px] text-primary" style={{fontVariationSettings: "'FILL' 1"}}>lock</span>}
                     <span className={`text-[10px] font-bold uppercase tracking-widest font-label whitespace-nowrap ${isActive ? p.colorText : 'text-on-surface-variant'}`}>{p.name}</span>
                   </div>
-                  {p.tier === 'vip' && <div className="text-[7px] font-black bg-primary/10 text-primary px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">VIP</div>}
-                  {p.tier === 'legend' && <div className="text-[7px] font-black bg-primary/10 text-primary px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">LEGEND</div>}
+                  <div className="flex flex-col items-center gap-0.5 mt-0.5">
+                    {p.badge && <span className="text-[7px] text-on-surface-variant uppercase tracking-wider font-label bg-surface-container-high px-1 py-0.5 rounded border border-outline-variant/20">{p.badge}</span>}
+                    {p.tier === 'vip' && <div className="text-[7px] font-black bg-primary/10 text-primary px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">VIP</div>}
+                    {p.tier === 'legend' && <div className="text-[7px] font-black bg-primary/10 text-primary px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">LEGEND</div>}
+                  </div>
                 </button>
               );
             })
@@ -175,11 +178,16 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                        {activeProducer.isLocked && <span className="material-symbols-outlined text-[18px] text-primary" style={{fontVariationSettings: "'FILL' 1"}}>lock</span>}
                        <p className="font-extrabold headline-font text-on-surface text-base leading-tight">{activeProducer.name}</p>
                      </div>
-                     {(activeProducer.tier === 'vip' || activeProducer.tier === 'legend') && (
-                       <div className="mt-1 bg-primary text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm border border-white/10 uppercase whitespace-nowrap inline-block">
-                         {activeProducer.tier === 'vip' ? 'VIP' : 'LEGEND'}
-                       </div>
-                     )}
+                     <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                       {activeProducer.badge && (
+                         <span className="text-[9px] text-on-surface-variant uppercase tracking-wider font-label bg-surface-container-highest px-1.5 py-0.5 rounded border border-outline-variant/20">{activeProducer.badge}</span>
+                       )}
+                       {(activeProducer.tier === 'vip' || activeProducer.tier === 'legend') && (
+                         <div className="bg-primary text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm border border-white/10 uppercase whitespace-nowrap inline-block">
+                           {activeProducer.tier === 'vip' ? 'VIP' : 'LEGEND'}
+                         </div>
+                       )}
+                     </div>
                    </div>
                  </div>
                  <div className="flex items-center gap-2">
@@ -235,8 +243,11 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                               {isLocked && <span className="material-symbols-outlined text-[16px] text-primary" style={{fontVariationSettings: "'FILL' 1"}}>lock</span>}
                               <span className={`font-bold text-sm ${isActive ? p.colorText : 'text-on-surface'}`}>{p.name}</span>
                             </div>
-                            {p.tier === 'vip' && <div className="mt-0.5 inline-block bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase">VIP</div>}
-                            {p.tier === 'legend' && <div className="mt-0.5 inline-block bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase">LEGEND</div>}
+                            <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                              {p.badge && <span className="text-[8px] text-on-surface-variant uppercase tracking-wider font-label bg-surface-container-high px-1.5 py-0.5 rounded border border-outline-variant/20">{p.badge}</span>}
+                              {p.tier === 'vip' && <div className="inline-block bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase">VIP</div>}
+                              {p.tier === 'legend' && <div className="inline-block bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase">LEGEND</div>}
+                            </div>
                            <p className="text-xs text-on-surface-variant truncate">{p.headerStatus}</p>
                          </div>
                        </button>
@@ -260,11 +271,16 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                         </div>
                         <div className="flex flex-col">
                           <span className={`text-sm font-bold leading-none ${activeProducer.colorText}`}>{activeProducer.name}</span>
-                          {(activeProducer.tier === 'vip' || activeProducer.tier === 'legend') && (
-                            <div className="mt-1 w-fit bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">
-                              {activeProducer.tier === 'vip' ? 'VIP' : 'LEGEND'}
-                            </div>
-                          )}
+                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                            {activeProducer.badge && (
+                              <span className="text-[8px] text-on-surface-variant uppercase tracking-wider font-label bg-surface-container-high px-1.5 py-0.5 rounded border border-outline-variant/20">{activeProducer.badge}</span>
+                            )}
+                            {(activeProducer.tier === 'vip' || activeProducer.tier === 'legend') && (
+                              <div className="w-fit bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">
+                                {activeProducer.tier === 'vip' ? 'VIP' : 'LEGEND'}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -334,11 +350,16 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                       </div>
                       <div className="flex flex-col">
                         <span className={`text-sm font-bold leading-none ${activeProducer.colorText}`}>{activeProducer.name}</span>
-                        {(activeProducer.tier === 'vip' || activeProducer.tier === 'legend') && (
-                          <div className="mt-1 w-fit bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">
-                            {activeProducer.tier === 'vip' ? 'VIP' : 'LEGEND'}
+                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                            {activeProducer.badge && (
+                              <span className="text-[8px] text-on-surface-variant uppercase tracking-wider font-label bg-surface-container-high px-1.5 py-0.5 rounded border border-outline-variant/20">{activeProducer.badge}</span>
+                            )}
+                            {(activeProducer.tier === 'vip' || activeProducer.tier === 'legend') && (
+                              <div className="w-fit bg-primary/10 text-primary text-[7px] font-black px-1 py-0.5 rounded border border-primary/20 uppercase leading-none">
+                                {activeProducer.tier === 'vip' ? 'VIP' : 'LEGEND'}
+                              </div>
+                            )}
                           </div>
-                        )}
                       </div>
                     </div>
                     <div className={`p-4 rounded-2xl rounded-tl-xl border flex items-center gap-2 shadow-sm ${activeProducer.colorBg5} ${activeProducer.colorBorder20}`}>
