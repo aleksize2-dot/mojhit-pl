@@ -688,6 +688,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
           model: 'V5_5',
           customMode: true,
           personaId: activeProducer.id,
+          currency_type: currencyType,
           email: !isSignedIn ? guestEmail.trim() : undefined,
         }),
       });
