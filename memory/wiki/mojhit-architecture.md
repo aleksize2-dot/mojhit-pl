@@ -15,6 +15,11 @@
 - **Video Generation:** Kie.ai MP4 API wrapper (`video.js`) for PRO tier video generation
 - **Monorepo scripts:** `npm run dev` runs client+server concurrently via `concurrently`
 
+### Payments
+- **Stripe:** Direct integration via existing secret key in server `.env`. No third-party wrapper skills.
+  - Decision (2026-04-24): Stripe API skill from Maton was installed then **removed** — prefer direct Stripe calls.
+  - BLIK support critical for Polish market.
+
 ### Local Development
 - **Frontend (Vite):** Runs on port 5173
 - **Backend (Node.js/Express):** Runs on port 3000
@@ -50,6 +55,26 @@ All cover image endpoints now include `cover_image_url` field.
 **Database tables:** `admin_roles`, `admin_permissions`, `user_admin_roles` (see `supabase-schema.md`).
 
 **Frontend:** AdminDashboard.tsx tab "Role i Uprawnienia" — full CRUD with categorized permission toggles, user role management modal.
+
+### Email Notification Service
+
+- **Module:** `emailService.js` — uses `nodemailer` for sending track-ready notification emails
+- **Trigger:** KIE webhook callback after first successful track variant
+- **Template:** mojhit.pl branded (gradient #ff9064 → #734bbd, Inter font)
+- **Status:** Ready, **SMTP not configured** — set `SMTP_HOST/PORT/USER/PASS` in `.env` to activate
+- See [[mojhit-email-service|Email Notification Service]] for full details
+
+### Prompt Editing & Regeneration
+
+- **Frontend (`Generator.tsx`):** "Nowa wersja" (regenerate) and "Edytuj" (manual edit) buttons below generated song prompts
+- **Backend (`index.js`):** `POST /api/chat-composer` accepts `regenerate: true` parameter
+- See [[mojhit-prompt-editing|Prompt Regeneration & Editing]] for full details
+
+### Referral & Affiliate Program
+
+- **Frontend:** `Polecaj.tsx` (3-step refer flow) + `AffiliateManager.tsx` (dashboard with 4 metrics)
+- **Database:** `referral_rewards`, `affiliate_earnings`, `users.referral_code`, `users.referred_by`, `users.is_affiliate`
+- See [[mojhit-referral|Referral & Affiliate Program]] for full details
 
 ### Video Generation Support (PRO Tier)
 

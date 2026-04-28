@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
+import { ReviewsCarousel } from './ReviewsCarousel';
 
 export interface Track {
   id: string;
@@ -12,6 +13,8 @@ export interface Track {
   likes: number;
   producer_id?: string;
   producers?: { name: string };
+  video_thumbnail_url?: string;
+  video_status?: string;
 }
 
 export function TrackCard({ 
@@ -38,20 +41,26 @@ export function TrackCard({
         className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden shadow-lg bg-primary/20 flex items-center justify-center group/cover"
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePlay(track); }}
       >
-        {track.cover_image_url ? (
-          <img src={track.cover_image_url} alt={track.title} className="w-full h-full object-cover group-hover/cover:scale-110 transition-transform duration-500" />
+        {track.video_thumbnail_url || track.cover_image_url ? (
+          <img src={track.video_thumbnail_url || track.cover_image_url} alt={track.title} className="w-full h-full object-cover group-hover/cover:scale-110 transition-transform duration-500" />
         ) : (
           <span className={`material-symbols-outlined text-3xl ${playingId === track.id ? 'text-primary' : 'text-on-surface-variant'}`}>
             {playingId === track.id ? 'pause_circle' : 'play_circle'}
           </span>
         )}
         
-        {/* Hover / Playing Overlay */}
-        <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity ${playingId === track.id ? 'opacity-100' : 'opacity-0 group-hover/cover:opacity-100'}`}>
-          <span className="material-symbols-outlined text-3xl text-white">
-            {playingId === track.id ? 'pause_circle' : 'play_circle'}
-          </span>
-        </div>
+        {/* Hover / Playing / Pending Overlay */}
+        {(track as any).video_status === 'pending' || (track as any).video_status === 'processing' ? (
+          <div className={`absolute inset-0 bg-black/60 flex items-center justify-center`}>
+            <span className="material-symbols-outlined text-white animate-spin">progress_activity</span>
+          </div>
+        ) : (
+          <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity ${playingId === track.id ? 'opacity-100' : 'opacity-0 group-hover/cover:opacity-100'}`}>
+            <span className="material-symbols-outlined text-3xl text-white">
+              {playingId === track.id ? 'pause_circle' : 'play_circle'}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex-grow min-w-0">
@@ -108,20 +117,29 @@ export function RecentTracks() {
   useEffect(() => {
     let animationFrameId: number;
     let lastTime = performance.now();
-    const speed = 0.05; // pixels per millisecond
+    const speed = 0.015; // pixels per millisecond
+    let exactScrollLeft = 0;
+    let isInitialized = false;
 
     const animate = (time: number) => {
       const delta = time - lastTime;
       lastTime = time;
 
       if (!isPaused && scrollRef.current && tracks.length > 0) {
-        const { scrollWidth } = scrollRef.current;
-        scrollRef.current.scrollLeft += speed * delta;
-        
-        // Reset seamless loop when scrolling past half (since we duplicate tracks)
-        if (scrollRef.current.scrollLeft >= scrollWidth / 2) {
-           scrollRef.current.scrollLeft -= scrollWidth / 2;
+        if (!isInitialized) {
+          exactScrollLeft = scrollRef.current.scrollLeft;
+          isInitialized = true;
         }
+
+        const { scrollWidth } = scrollRef.current;
+        exactScrollLeft += speed * delta;
+        
+        // Reset seamless loop when scrolling past half
+        if (exactScrollLeft >= scrollWidth / 2) {
+           exactScrollLeft -= scrollWidth / 2;
+        }
+        
+        scrollRef.current.scrollLeft = exactScrollLeft;
       }
       animationFrameId = requestAnimationFrame(animate);
     };
@@ -211,7 +229,7 @@ export function RecentTracks() {
   if (tracks.length === 0) return null;
 
   return (
-    <section className="space-y-12 w-full overflow-hidden">
+    <section className="space-y-12 w-full">
       {/* Ostatnio stworzone - Marquee */}
       <div>
         <div className="flex justify-between items-end mb-4 px-2">
@@ -222,7 +240,7 @@ export function RecentTracks() {
         </div>
 
         <div 
-          className="w-full relative flex mask-image-fade"
+          className="full-bleed relative flex mask-image-fade"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
           onTouchStart={() => setIsPaused(true)}
@@ -271,6 +289,9 @@ export function RecentTracks() {
           </div>
         </div>
       )}
+
+      {/* Reviews Carousel */}
+      <ReviewsCarousel />
     </section>
   );
 }

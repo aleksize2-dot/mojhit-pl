@@ -13,6 +13,7 @@ type Track = {
   producers?: { id?: string, name: string };
   users?: { email: string, clerk_id: string };
   likes_count?: number;
+  kie_task_id?: string;
   variants?: Array<{ audio_url: string, stream_audio_url?: string, image_url?: string }>;
 };
 
@@ -35,6 +36,13 @@ export function TrackDetail() {
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   const [isShuffle, setIsShuffle] = useState(false);
+  
+  // Video generation
+  const [generatingVideo, setGeneratingVideo] = useState(false);
+  const [videoStatus, setVideoStatus] = useState<string | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoError, setVideoError] = useState<string | null>(null);
+  const [videoDbId, setVideoDbId] = useState<string | null>(null);
 
   // Swipe handling
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -80,6 +88,19 @@ export function TrackDetail() {
       setProgress(0);
       setCurrentTime(0);
       setError(null);
+      
+      // Check if there's an existing completed video for this track
+      if (trackData.kie_task_id) {
+        fetch(`/api/video/check?audio_task_id=${trackData.kie_task_id}&variant_index=${activeVariant}`, { credentials: 'include' })
+          .then(res => res.ok ? res.json() : null)
+          .then(videoData => {
+            if (videoData && videoData.status === 'completed' && videoData.video_url) {
+              setVideoStatus('completed');
+              setVideoUrl(videoData.video_url);
+            }
+          })
+          .catch(() => {});
+      }
     })
     .catch(err => {
       console.error(err);
@@ -89,6 +110,23 @@ export function TrackDetail() {
       setLoading(false);
     });
   }, [id]);
+  
+  // Re-check for existing video when variant changes
+  useEffect(() => {
+    if (!track?.kie_task_id) return;
+    setVideoUrl(null);
+    setVideoStatus(null);
+    setVideoDbId(null);
+    fetch(`/api/video/check?audio_task_id=${track.kie_task_id}&variant_index=${activeVariant}`, { credentials: 'include' })
+      .then(res => res.ok ? res.json() : null)
+      .then(videoData => {
+        if (videoData && videoData.status === 'completed' && videoData.video_url) {
+          setVideoStatus('completed');
+          setVideoUrl(videoData.video_url);
+        }
+      })
+      .catch(() => {});
+  }, [activeVariant, track?.kie_task_id]);
 
   useEffect(() => {
     if (audioRef.current && track) {
@@ -180,6 +218,74 @@ export function TrackDetail() {
     window.open(`/api/tracks/${track.id}/download?variant=${activeVariant}`, '_blank');
   };
 
+  // Video generation
+  const handleGenerateVideo = async () => {
+    if (!track?.kie_task_id) return;
+    setGeneratingVideo(true);
+    setVideoError(null);
+    setVideoStatus('pending');
+    setVideoUrl(null);
+
+    try {
+      const res = await fetch('/api/video/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ audioTaskId: track.kie_task_id, variantIndex: activeVariant })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Błąd generowania wideo');
+      
+      if (data.existing && data.video_url) {
+        // Video already exists, show it immediately
+        setVideoStatus('completed');
+        setVideoUrl(data.video_url);
+        setGeneratingVideo(false);
+      } else {
+        setVideoDbId(data.dbId);
+      }
+      console.log('[VIDEO] Generation result:', data);
+    } catch (e: any) {
+      setVideoError(e.message);
+      setVideoStatus('failed');
+      setGeneratingVideo(false);
+    }
+  };
+
+  // Poll video status
+  useEffect(() => {
+    if (!videoDbId) return;
+    if (videoStatus !== 'pending' && videoStatus !== 'processing') return;
+    
+    const poll = async () => {
+      try {
+        const statusRes = await fetch(`/api/video/status/${videoDbId}`, {
+          credentials: 'include'
+        });
+        if (!statusRes.ok) return;
+        const statusData = await statusRes.json();
+        console.log('[VIDEO] Status poll:', statusData);
+        
+        if (statusData.status === 'completed') {
+          setVideoStatus('completed');
+          setVideoUrl(statusData.video_url);
+          setGeneratingVideo(false);
+        } else if (statusData.status === 'failed') {
+          setVideoStatus('failed');
+          setVideoError(statusData.error_message || 'Generowanie wideo nie powiodło się');
+          setGeneratingVideo(false);
+        } else {
+          setVideoStatus(statusData.status || 'processing');
+        }
+      } catch (e) {
+        console.error('[VIDEO] Poll error:', e);
+      }
+    };
+    
+    const interval = setInterval(poll, 5000);
+    return () => clearInterval(interval);
+  }, [videoStatus, videoDbId]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[80vh]">
@@ -199,9 +305,18 @@ export function TrackDetail() {
     );
   }
 
-  const activeAudioUrl = track.variants && track.variants.length > 0 
+  // Proxy CDN URLs through our backend to fix CORS issues
+  const proxyAudio = (url: string | null | undefined) => {
+    if (!url) return '';
+    if (url.includes('musicfile.kie.ai') || url.includes('tempfile.aiquickdraw.com')) {
+      return '/api/proxy/audio?url=' + encodeURIComponent(url);
+    }
+    return url;
+  };
+
+  const activeAudioUrl = proxyAudio(track.variants && track.variants.length > 0 
     ? (track.variants[activeVariant].audio_url || track.variants[activeVariant].stream_audio_url) 
-    : track.audio_url;
+    : track.audio_url);
     
   const currentCover = track.variants && track.variants[activeVariant] && track.variants[activeVariant].image_url 
     ? track.variants[activeVariant].image_url 
@@ -304,17 +419,52 @@ export function TrackDetail() {
         </button>
       </div>
 
-      {/* Album Art */}
-      <div className="px-6 w-full aspect-square mb-8">
-        <div className="w-full h-full rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-surface-container-high relative group">
-          {currentCover ? (
-            <img src={currentCover} alt={track.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-tertiary/20">
-              <span className="material-symbols-outlined text-8xl text-on-surface/20">music_note</span>
-            </div>
-          )}
-        </div>
+      {/* Visual Content: Video or Album Art */}
+      <div className="px-6 w-full mb-8">
+        {videoUrl ? (
+          <div className="w-full rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-surface-container-high aspect-video">
+            <video
+              src={videoUrl}
+              controls
+              autoPlay
+              playsInline
+              className="w-full h-full object-contain bg-black"
+              poster={currentCover || undefined}
+            />
+          </div>
+        ) : (
+          <div className="w-full aspect-square rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-surface-container-high relative group">
+            {currentCover ? (
+              <img src={currentCover} alt={track.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-tertiary/20">
+                <span className="material-symbols-outlined text-8xl text-on-surface/20">music_note</span>
+              </div>
+            )}
+            
+            {/* Video Generation Status Overlay */}
+            {(generatingVideo || videoStatus === 'pending' || videoStatus === 'processing') && (
+              <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center backdrop-blur-sm z-10">
+                <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-3"></div>
+                <p className="text-white font-bold text-sm tracking-wide">Montujemy teledysk...</p>
+                <p className="text-white/70 text-xs mt-1">To może zająć około minuty</p>
+              </div>
+            )}
+            
+            {/* Show "Generate Video" button on cover if not generating and no video URL yet, and no auto-trigger happened */}
+            {!videoUrl && videoStatus !== 'pending' && videoStatus !== 'processing' && !generatingVideo && track.kie_task_id && (
+               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm z-10">
+                 <button 
+                   onClick={handleGenerateVideo}
+                   className="bg-primary text-on-primary font-bold px-6 py-3 rounded-full shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"
+                 >
+                   <span className="material-symbols-outlined">movie</span>
+                   Stwórz Wideo
+                 </button>
+               </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Track Info & Like */}
@@ -366,8 +516,9 @@ export function TrackDetail() {
         </div>
       )}
 
-      {/* Progress Bar */}
-      <div className="px-8 mb-6">
+      {/* Progress Bar (Hide if video is playing since video has controls) */}
+      {!videoUrl && (
+        <div className="px-8 mb-6">
         <div 
           className="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden cursor-pointer relative group" 
           onClick={handleSeek}
@@ -381,16 +532,19 @@ export function TrackDetail() {
           <span>{formatTime(duration)}</span>
         </div>
       </div>
+      )}
 
       {/* Playback Controls */}
       <div className="px-8 flex items-center justify-between mb-8">
-        <button 
-          onClick={() => setIsShuffle(!isShuffle)} 
-          className={`transition-colors ${isShuffle ? 'text-primary' : 'text-on-surface-variant hover:text-on-surface'}`} 
-          title="Losowe odtwarzanie"
-        >
-          <span className="material-symbols-outlined text-[22px]">shuffle</span>
-        </button>
+        {!videoUrl ? (
+          <button 
+            onClick={() => setIsShuffle(!isShuffle)} 
+            className={`transition-colors ${isShuffle ? 'text-primary' : 'text-on-surface-variant hover:text-on-surface'}`} 
+            title="Losowe odtwarzanie"
+          >
+            <span className="material-symbols-outlined text-[22px]">shuffle</span>
+          </button>
+        ) : <div className="w-[22px]"></div>}
         
         <div className="flex items-center gap-6">
           <button 
@@ -401,14 +555,16 @@ export function TrackDetail() {
             <span className="material-symbols-outlined text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>skip_previous</span>
           </button>
           
-          <button 
-            onClick={togglePlay} 
-            className="w-16 h-16 bg-on-surface text-surface rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl"
-          >
-            <span className="material-symbols-outlined text-4xl ml-1" style={{fontVariationSettings: "'FILL' 1"}}>
-              {isPlaying ? 'pause' : 'play_arrow'}
-            </span>
-          </button>
+          {!videoUrl && (
+            <button 
+              onClick={togglePlay} 
+              className="w-16 h-16 bg-on-surface text-surface rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl"
+            >
+              <span className="material-symbols-outlined text-4xl ml-1" style={{fontVariationSettings: "'FILL' 1"}}>
+                {isPlaying ? 'pause' : 'play_arrow'}
+              </span>
+            </button>
+          )}
           
           <button 
             onClick={goToNext} 
@@ -424,6 +580,16 @@ export function TrackDetail() {
         </button>
       </div>
 
+      {/* Video Generation Error */}
+      {videoError && !videoUrl && (
+        <div className="px-6 mb-8 text-center">
+          <p className="text-error text-xs flex items-center justify-center gap-1">
+            <span className="material-symbols-outlined text-[14px]">error</span>
+            {videoError}
+          </p>
+        </div>
+      )}
+
       {/* Lyrics Section */}
       <div className="px-6 pb-12 flex-1 flex flex-col">
         <div className="bg-primary/5 rounded-3xl p-6 md:p-8 flex-1 border border-primary/10">
@@ -438,7 +604,7 @@ export function TrackDetail() {
       </div>
 
       {/* Audio Element */}
-      {activeAudioUrl && (
+      {activeAudioUrl && !videoUrl && (
         <audio 
           ref={audioRef} 
           src={activeAudioUrl} 

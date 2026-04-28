@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 
 export default function ApiSettingsManager() {

@@ -48,10 +48,23 @@
 - Future: Video task moderation
 
 ## Business Impact
-- **PRO tier differentiation** – exclusive video generation feature
+- **All tiers** – video generation available for every user (Free, VIP, Legend)
+- **Watermark distinction** – Free tier has watermark; VIP/Legend get watermark-free
 - **Marketing angle** – "Turn your AI music into viral videos"
-- **User retention** – PRO users creating videos less likely to churn
-- **Growth loop** – User shares video → shows mojhit.pl watermark → brings new users
+- **User retention** – Users creating videos less likely to churn
+- **Growth loop** – Video with mojhit.pl watermark → viral sharing → new users
+
+## 2026-04-28 Change: Video доступно для всех тарифов
+- Убрана проверка `subscription_tier` в `POST /api/video/generate`
+- Добавлена кнопка "Generuj wideo" на странице `TrackDetail.tsx`
+- Polling статуса каждые 5 секунд через `GET /api/video/status/:dbId`
+- Pricing (Cennik.tsx) обновлён: Free показывает "Generuj wideo do utworów"
+
+### Watermark Logic (2026-04-28)
+- **Free tier** → `author: 'mojhit.pl'`, `domainName: 'mojhit.pl'` (водяной знак)
+- **VIP / Legend** → параметры не передаются (чистое видео, без ватермарки)
+- Логика на бэкенде: `user.subscription_tier` проверяется перед вызовом Kie API
+- Ценник отражает: Free — "Generuj wideo", VIP/Legend — "MP4 bez znaku wodnego"
 
 ## Testing
 - **Test endpoints:** `POST /api/test‑generate‑video` (no auth), `GET /api/test‑video‑status/:id`

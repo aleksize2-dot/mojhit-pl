@@ -56,7 +56,8 @@ export function MyProducers() {
         }
 
         if (Array.isArray(allProducersData)) {
-          setProducers(allProducersData);
+          const fetchTime = Date.now();
+          setProducers(allProducersData.map(p => ({...p, img: p.img ? `${p.img}${p.img.includes('?') ? '&' : '?'}v=${fetchTime}` : p.img})));
         }
       } catch (err) {
         console.error('Error fetching user data/producers:', err);

@@ -128,15 +128,35 @@ const getTaskStatus = async (videoTaskId) => {
     console.log(`[KIE VIDEO STATUS] Response:`, JSON.stringify(data, null, 2));
     
     // Normalize response format
-    // Expected: { code: 200, msg: "success", data: { video_url: "...", thumbnail_url: "...", duration: 123 } }
+    // Kie returns: { code: 200, msg: "success", data: { taskId, successFlag, response: { videoUrl }, ... } }
     const result = data.data || data;
     
+    // Map Kie response to our status format
+    // From docs: successFlag is PENDING | SUCCESS | CREATE_TASK_FAILED | GENERATE_MP4_FAILED
+    let status = 'unknown';
+    const flag = result.successFlag || '';
+    if (flag === 'SUCCESS' || result.status === 'completed') {
+      status = 'completed';
+    } else if (flag === 'CREATE_TASK_FAILED' || flag === 'GENERATE_MP4_FAILED' || flag === 'FAILED' || result.status === 'failed' || result.errorCode || result.errorMessage) {
+      status = 'failed';
+    } else if (flag === 'PENDING') {
+      status = 'processing';
+    } else if (result.status) {
+      status = result.status;
+    }
+    
+    // Video URL may be nested in result.response.videoUrl or at top level
+    const resp = result.response || {};
+    const videoUrl = resp.videoUrl || resp.video_url || result.videoUrl || result.video_url || result.url;
+    const thumbnailUrl = resp.thumbnailUrl || resp.thumbnail_url || result.thumbnailUrl || result.thumbnail_url || result.imageUrl || resp.imageUrl;
+    const duration = result.duration || resp.duration || 0;
+    
     return {
-      status: result.status || 'unknown',
-      video_url: result.videoUrl || result.video_url || result.url,
-      thumbnail_url: result.thumbnailUrl || result.thumbnail_url || result.imageUrl,
-      duration: result.duration || 0,
-      expires_at: result.expiresAt || result.expires_at, // ISO timestamp
+      status,
+      video_url: videoUrl,
+      thumbnail_url: thumbnailUrl,
+      duration,
+      expires_at: result.expiresAt || result.expires_at || resp.expiresAt || resp.expires_at,
       raw: result
     };
   } catch (error) {
@@ -148,7 +168,45 @@ const getTaskStatus = async (videoTaskId) => {
   }
 };
 
+/**
+ * Fetch Suno audio ID from KIE record-info API (last resort fallback)
+ * @param {string} kieTaskId - The KIE audio task ID (task_id from kie_tasks)
+ * @returns {Promise<string|null>} The Suno audio ID or null
+ */
+const getSunoAudioId = async (kieTaskId) => {
+  const url = `${process.env.KIE_API_BASE_URL}/api/v1/generate/record-info?taskId=${kieTaskId}`;
+  console.log(`[KIE AUDIO INFO] Fetching Suno data for task: ${kieTaskId}`);
+  
+  try {
+    const response = await fetch(url, {
+      headers: { 'Authorization': `Bearer ${process.env.KIE_API_KEY}` },
+      timeout: 10000
+    });
+    
+    if (!response.ok) {
+      console.warn(`[KIE AUDIO INFO] HTTP ${response.status}`);
+      return null;
+    }
+    
+    const data = await response.json();
+    const sunoData = data?.data?.response?.sunoData 
+      || data?.data?.sunoData 
+      || data?.response?.sunoData;
+    
+    if (sunoData && sunoData.length > 0 && sunoData[0].id) {
+      console.log('[KIE AUDIO INFO] Found Suno audio ID:', sunoData[0].id);
+      return sunoData[0].id;
+    }
+    
+    return null;
+  } catch (error) {
+    console.warn('[KIE AUDIO INFO] Error:', error.message);
+    return null;
+  }
+};
+
 module.exports = {
   generate,
-  getTaskStatus
+  getTaskStatus,
+  getSunoAudioId
 };

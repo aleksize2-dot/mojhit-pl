@@ -72,7 +72,7 @@ export function Generator() {
                  name: found.name,
                  badge: found.badge,
                  icon: found.icon,
-                 img: found.img,
+                 img: found.img ? `${found.img}${found.img.includes('?') ? '&' : '?'}v=${Date.now()}` : '',
                  gradient: found.gradient,
                  buttonGradient: found.button_gradient,
                  placeholder: found.placeholder,
@@ -602,16 +602,16 @@ export function Generator() {
   if (!producers.length || !activeProducer) return <div className="p-8 flex justify-center"><span className="material-symbols-outlined animate-spin text-3xl text-primary">progress_activity</span></div>;
 
   return (
-    <section className="space-y-6">
+    <section className="flex-1 flex flex-col min-h-0">
 
-      <div className="text-center space-y-2 mb-2 mt-4">
-        <h2 className={`text-3xl font-black headline-font tracking-tight bg-gradient-to-r bg-clip-text text-transparent inline-block ${activeProducer.gradient}`}>Wybierz wykonawcę</h2>
-        <p className="text-on-surface-variant max-w-lg mx-auto text-sm font-label">Kto dziś lepiej poczuje Twój klimat?</p>
+      <div className="text-center space-y-1 mb-1 mt-2 md:space-y-2 md:mb-2 md:mt-4 px-4 md:px-0">
+        <h2 className={`text-xl md:text-3xl font-black headline-font tracking-tight bg-gradient-to-r bg-clip-text text-transparent inline-block ${activeProducer.gradient}`}>Wybierz wykonawcę</h2>
+        <p className="text-on-surface-variant max-w-lg mx-auto text-[10px] md:text-sm font-label hidden md:block">Kto dziś lepiej poczuje Twój klimat?</p>
       </div>
 
       {/* Ă„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄ„Ä‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄ„Ä‚ËĂ˘â‚¬ĹˇĂ‚Â¬ Horizontal scroll strip (both mobile & desktop) Ă„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄ„Ä‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„â€šĂ‹ÂÄ‚ËĂ˘â€šÂ¬ÄąÄ„Ä‚ËĂ˘â‚¬ĹˇĂ‚Â¬ */}
-      <div className="w-full relative mask-image-fade -mt-14 z-0 overflow-hidden">
-        <div className="flex items-start gap-6 animate-marquee-slow pt-16 pb-0 w-max hover:[animation-play-state:paused]">
+      <div className="w-full relative mask-image-fade -mt-10 md:-mt-14 z-0 overflow-hidden">
+        <div className="flex items-start gap-3 md:gap-6 animate-marquee-slow pt-12 md:pt-16 pb-0 w-max hover:[animation-play-state:paused]">
           {[0, 1].flatMap((copyIndex) =>
             producers.filter(p => p.is_on_main_page).map((p) => {
               const isActive = activeAgent === p.id;
@@ -620,7 +620,7 @@ export function Generator() {
                 <button
                   key={`strip-${p.id}-${copyIndex}`}
                   onClick={() => { if (!isLocked) { handleProducerSelect(p); } else { window.location.href=`/biuro-producentow?producer=${p.id}`; } }}
-                  className={`flex flex-col items-center gap-1.5 shrink-0 px-3 py-2 rounded-2xl transition-all duration-200
+                  className={`flex flex-col items-center gap-1.5 shrink-0 px-2 py-1 md:px-3 md:py-2 rounded-2xl transition-all duration-200
                     ${isActive ? '' : 'hover:bg-surface-container-high opacity-60 hover:opacity-100'}`}
                 >
                   <div className="relative shrink-0">
@@ -628,7 +628,7 @@ export function Generator() {
                     
                     
                     
-                    <div className={`relative w-20 h-20 rounded-full overflow-hidden border-2 transition-all duration-200
+                    <div className={`relative w-14 h-14 md:w-20 md:h-20 rounded-full overflow-hidden border-2 transition-all duration-200
                       ${isActive ? `bg-surface-container-lowest border-transparent animate-sound-wave ${p.colorText}` : 'border-outline-variant/30 grayscale-[60%]'}`}>
                       <img src={p.img} alt={p.name} className="absolute inset-0 w-full h-full object-cover" onError={e => { e.currentTarget.style.display='none'; (e.currentTarget.nextElementSibling as HTMLElement).style.display='flex'; }} />
                       <div style={{display:'none'}} className={`z-10 w-full h-full flex items-center justify-center material-symbols-outlined text-2xl ${p.colorText}`}>{p.icon}</div>
@@ -647,13 +647,13 @@ export function Generator() {
         </div>
       </div>
 
-      <div ref={chatContainerRef} className="relative max-w-6xl mx-auto flex gap-0 px-2 lg:px-6 w-full mt-0 z-10">
+      <div ref={chatContainerRef} className="flex-1 min-h-0 relative max-w-6xl mx-auto flex gap-0 px-0 md:px-2 lg:px-6 w-full mt-0 z-10">
 
 
-        <div className="relative group flex-1 min-w-0">
-        <div className={`absolute -inset-0.5 rounded-3xl blur opacity-15 group-focus-within:opacity-30 transition duration-500 bg-gradient-to-r ${activeProducer.gradient}`}></div>
-        <div className="relative bg-surface-container-lowest rounded-3xl overflow-hidden ring-1 ring-outline-variant/20 shadow-2xl">
-          <div className="flex flex-col h-[650px] md:h-[700px]">
+        <div className="relative group flex-1 min-w-0 flex flex-col">
+        <div className={`hidden md:block absolute -inset-0.5 rounded-3xl blur opacity-15 group-focus-within:opacity-30 transition duration-500 bg-gradient-to-r ${activeProducer.gradient}`}></div>
+        <div className="flex-1 flex flex-col min-h-0 relative bg-surface-container-lowest md:rounded-3xl overflow-hidden md:ring-1 ring-outline-variant/20 shadow-none md:shadow-2xl border-t border-outline-variant/10 md:border-none">
+          <div className="flex-1 flex flex-col min-h-0">
 
             {isProducerPanelOpen && (
               <div className="md:hidden absolute top-[73px] left-0 right-0 z-30 bg-surface-container-low/95 backdrop-blur-xl border-b border-outline-variant/20 shadow-2xl">
@@ -781,7 +781,7 @@ export function Generator() {
                )}
              </div>
             
-            <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-5 bg-gradient-to-b from-surface-container-lowest to-surface-container-low/30 relative">
+            <div className="flex-1 p-3 md:p-6 overflow-y-auto flex flex-col gap-5 bg-gradient-to-b from-surface-container-lowest to-surface-container-low/30 relative">
                
                {messages.map((m, idx) => (
                  <div key={idx} className={`flex gap-3 max-w-[90%] md:max-w-[80%] ${m.role === 'user' ? 'self-end flex-row-reverse' : ''}`}>
@@ -1006,7 +1006,7 @@ export function Generator() {
             </div>
 
             {!finalAiPrompt ? (
-              <div className="p-4 border-t border-outline-variant/10 bg-surface-container-low shrink-0 relative z-10">
+              <div className="p-2 md:p-4 border-t border-outline-variant/10 bg-surface-container-low shrink-0 relative z-10">
                  {attachedFile && (
                    <div className="flex items-center gap-2 mb-2 px-2 py-1.5 bg-primary/10 border border-primary/20 rounded-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
                      <span className="material-symbols-outlined text-primary text-lg">attach_file</span>
@@ -1037,12 +1037,12 @@ export function Generator() {
                       <button 
                         onClick={handleMicClick} 
                         className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isListening ? 'bg-error/20 text-error animate-pulse' : 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary'}`} 
-                        title={'Dyktuj gĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇosowo'}
+                        title={'Dyktuj głosowo'}
                       ><span className="material-symbols-outlined text-[20px]">mic</span></button>
                       <button 
                         onClick={toggleVoiceResponse} 
                         className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isVoiceResponseEnabled ? 'bg-tertiary/20 text-tertiary animate-pulse' : userPlan === 'VIP' || userPlan === 'Legend' ? 'bg-surface-variant text-on-surface-variant hover:bg-primary/20 hover:text-primary' : 'bg-surface-variant text-on-surface-variant/40 hover:text-on-surface-variant'}`} 
-                        title={userPlan === 'VIP' || userPlan === 'Legend' ? (isVoiceResponseEnabled ? 'WyĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦cz czytanie na gĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇos' : 'WĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇÄ‚â€žĂ˘â‚¬ĹˇÄ‚ËĂ˘â€šÂ¬ÄąÄľĂ„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ä‚â€šĂ‚Â¦cz czytanie na gĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇos') : 'GĂ„â€šĂ˘â‚¬ĹľÄ‚â€žĂ˘â‚¬Â¦Ă„â€šĂ‹ÂÄ‚ËĂ˘â‚¬ĹˇĂ‚Â¬Ă„Ä…Ă‹â€ˇosowe odpowiedzi (tylko VIP/Legend)'}
+                        title={userPlan === 'VIP' || userPlan === 'Legend' ? (isVoiceResponseEnabled ? 'Wyłącz czytanie na głos' : 'Włącz czytanie na głos') : 'Głosowe odpowiedzi (tylko VIP/Legend)'}
                       ><span className="material-symbols-outlined text-[20px]">volume_up</span></button>
                    </div>
                  </div>

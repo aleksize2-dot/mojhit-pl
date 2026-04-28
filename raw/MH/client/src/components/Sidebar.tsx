@@ -38,9 +38,6 @@ export function Sidebar({ isOpen, onClose, balance }: SidebarProps) {
               )}
             </div>
             <div className="flex items-center gap-1 -mt-2 -mr-2">
-              <Link to="/ustawienia" onClick={onClose} className="text-on-surface-variant hover:text-white transition-colors p-2 flex items-center justify-center" title="Ustawienia">
-                <span className="material-symbols-outlined text-xl">settings</span>
-              </Link>
               {user && (
                 <button onClick={() => signOut()} className="text-error hover:text-error/80 transition-colors p-2 flex items-center justify-center" title="Wyloguj się">
                   <span className="material-symbols-outlined text-xl">logout</span>
@@ -53,19 +50,29 @@ export function Sidebar({ isOpen, onClose, balance }: SidebarProps) {
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap mb-1">
-              <h2 className="text-lg font-bold headline-font">{user ? user.fullName || user.firstName || 'Użytkownik' : 'Not logged in'}</h2>
+              <h2 className="text-lg font-bold headline-font truncate max-w-[150px]">{user ? user.fullName || user.firstName || 'Użytkownik' : 'Not logged in'}</h2>
               {user && (
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-surface-variant text-on-surface-variant border border-outline-variant/30">
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                  balance?.plan?.toLowerCase() === 'legend' 
+                    ? 'bg-green-500/20 text-green-500 border-green-500/30' 
+                    : balance?.plan?.toLowerCase() === 'vip' 
+                      ? 'bg-tertiary/20 text-tertiary border-tertiary/30' 
+                      : 'bg-surface-variant/30 text-on-surface-variant border-outline-variant/30'
+                }`}>
                   {balance?.plan || 'Free'}
                 </span>
               )}
               <button 
                 onClick={toggleTheme}
-                className={`w-9 h-5 rounded-full relative transition-colors flex items-center p-0.5 ml-1 shadow-sm ${theme === 'dark' ? 'bg-primary' : 'bg-outline-variant'}`} 
+                className={`w-11 h-6 rounded-full relative transition-colors flex items-center shadow-sm ml-auto ${theme === 'dark' ? 'bg-primary' : 'bg-surface-variant/50 border border-outline-variant/20'}`} 
                 title="Przełącz motyw"
               >
-                <div className={`w-4 h-4 bg-white rounded-full absolute shadow-sm transition-all duration-300 flex items-center justify-center ${theme === 'dark' ? 'right-0.5' : 'left-0.5'}`}>
-                  <span className="material-symbols-outlined text-[10px] text-surface" style={{fontVariationSettings: "'FILL' 1"}}>{theme === 'dark' ? 'dark_mode' : 'light_mode'}</span>
+                <div className={`w-5 h-5 bg-white rounded-full absolute shadow-sm transition-transform duration-300 flex items-center justify-center ${theme === 'dark' ? 'translate-x-[22px]' : 'translate-x-[2px]'}`}>
+                  {theme === 'dark' ? (
+                    <svg className="w-3 h-3 text-primary" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                  ) : (
+                    <svg className="w-3.5 h-3.5 text-on-surface-variant" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 2.364a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zm-4.364 4.22a1 1 0 011.414-1.414l.707.707a1 1 0 01-1.414 1.414l-.707-.707zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-2.364a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414l-.707.707zM2 10a1 1 0 011-1h1a1 1 0 110 2H3a1 1 0 01-1-1zm2.364-4.22a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414l.707-.707zM10 5a5 5 0 100 10 5 5 0 000-10z" clipRule="evenodd"/></svg>
+                  )}
                 </div>
               </button>
             </div>

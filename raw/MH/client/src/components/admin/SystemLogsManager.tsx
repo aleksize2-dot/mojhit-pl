@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export function SystemLogsManager() {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [sortConfig, setSortConfig] = useState<{ column: string; direction: 'asc' | 'desc' }>({ column: 'created_at', direction: 'desc' });
 
   const fetchLogs = async () => {
     setLoading(true);
@@ -35,6 +37,34 @@ export function SystemLogsManager() {
     }
   };
 
+  const handleSort = (column: string) => {
+    const newDirection = sortConfig.column === column && sortConfig.direction === 'desc' ? 'asc' : 'desc';
+    setSortConfig({ column, direction: newDirection });
+  };
+
+  const sortedLogs = [...logs].sort((a, b) => {
+    let aVal = a[sortConfig.column];
+    let bVal = b[sortConfig.column];
+
+    if (aVal == null) aVal = '';
+    if (bVal == null) bVal = '';
+
+    if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const SortHeader = ({ label, column }: { label: string, column: string }) => (
+    <th className="p-4 font-medium cursor-pointer hover:bg-surface-container transition-colors select-none group" onClick={() => handleSort(column)}>
+      <div className="flex items-center gap-1">
+        {label}
+        <span className={`material-symbols-outlined text-[14px] transition-opacity ${sortConfig.column === column ? 'opacity-100 text-primary' : 'opacity-20 group-hover:opacity-50'}`}>
+          {sortConfig.column === column && sortConfig.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'}
+        </span>
+      </div>
+    </th>
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -64,22 +94,22 @@ export function SystemLogsManager() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-surface-container text-on-surface-variant border-b border-outline-variant/20">
                 <tr>
-                  <th className="p-4 font-medium">Czas</th>
-                  <th className="p-4 font-medium">Poziom</th>
-                  <th className="p-4 font-medium">Akcja</th>
-                  <th className="p-4 font-medium">Wiadomość</th>
+                  <SortHeader label="Czas" column="created_at" />
+                  <SortHeader label="Poziom" column="level" />
+                  <SortHeader label="Akcja" column="action" />
+                  <SortHeader label="Wiadomość" column="message" />
                   <th className="p-4 font-medium">Szczegóły</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/10">
-                {logs.length === 0 ? (
+                {sortedLogs.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="p-8 text-center text-on-surface-variant">
                       Brak logów w systemie.
                     </td>
                   </tr>
                 ) : (
-                  logs.map((log) => (
+                  sortedLogs.map((log) => (
                     <tr key={log.id} className="hover:bg-surface-container-lowest/50 transition-colors">
                       <td className="p-4 text-on-surface-variant font-mono text-xs">
                         {new Date(log.created_at).toLocaleString('pl-PL')}

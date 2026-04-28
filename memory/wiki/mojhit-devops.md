@@ -29,6 +29,20 @@
 ## Known Issues
 - Local server processes may hang after system sleep; script auto‑restart planned.
 - Ngrok free tier domains rotate; consider upgrading for permanent domain.
+- `config.patch` for `skills.entries` in OpenClaw 2026.4.22 triggers `size-drop` bug (28K→9.6K). Workaround: env variables instead of config patch for sensitive data.
+
+## 🐛 Incident Log
+
+### 2026-04-24: Server crash — extra curly brace
+- **Root cause:** A stray `}` in `raw/MH/server/index.js` at line 1265 (leftover from admin panel refactoring on 2026-04-23).
+- **Impact:** Backend crashed on startup.
+- **Fix:** Removed the extra `}`. Both backend (:3000) and frontend (:5174) restored.
+- **Lesson:** Always `npm start` locally after merging refactoring changes before deploying.
+
+### 2026-04-22: config.patch size-drop
+- **Symptom:** Using `config.patch` in OpenClaw config to set `skills.entries` caused config to shrink from ~28K to ~9.6K.
+- **Root cause:** Bug in OpenClaw 2026.4.22 config patching system.
+- **Workaround:** Set sensitive/API data via environment variables instead.
 
 ## Backup Strategy
 

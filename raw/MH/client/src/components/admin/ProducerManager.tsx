@@ -5,20 +5,24 @@ const THEMES = {
   pink: { name: '🔴 Pink (Emocje)', gradient: 'from-pink-500 to-rose-400', button_gradient: 'linear-gradient(45deg, #f43f5e, #be185d, #f43f5e)', theme_config: { colorText: 'text-pink-500', colorBg: 'bg-pink-500', colorBorder: 'border-pink-500', colorBorder80: 'border-pink-500/80', colorShadow30: 'shadow-pink-500/30', colorBg10: 'bg-pink-500/10', colorBg5: 'bg-pink-500/5', colorBorder20: 'border-pink-500/20' } },
   cyan: { name: '🔵 Cyan (Cyber)', gradient: 'from-cyan-500 to-blue-500', button_gradient: 'linear-gradient(45deg, #06b6d4, #3b82f6, #06b6d4)', theme_config: { colorText: 'text-cyan-500', colorBg: 'bg-cyan-500', colorBorder: 'border-cyan-500', colorBorder80: 'border-cyan-500/80', colorShadow30: 'shadow-cyan-500/30', colorBg10: 'bg-cyan-500/10', colorBg5: 'bg-cyan-500/5', colorBorder20: 'border-cyan-500/20' } },
   purple: { name: '🟣 Purple (Mistyczny)', gradient: 'from-purple-500 to-fuchsia-500', button_gradient: 'linear-gradient(45deg, #a855f7, #d946ef, #a855f7)', theme_config: { colorText: 'text-purple-500', colorBg: 'bg-purple-500', colorBorder: 'border-purple-500', colorBorder80: 'border-purple-500/80', colorShadow30: 'shadow-purple-500/30', colorBg10: 'bg-purple-500/10', colorBg5: 'bg-purple-500/5', colorBorder20: 'border-purple-500/20' } },
-  amber: { name: '🟠 Amber (Ulica)', gradient: 'from-amber-500 to-orange-500', button_gradient: 'linear-gradient(45deg, #f59e0b, #f97316, #f59e0b)', theme_config: { colorText: 'text-amber-500', colorBg: 'bg-amber-500', colorBorder: 'border-amber-500', colorBorder80: 'border-amber-500/80', colorShadow30: 'shadow-amber-500/30', colorBg10: 'bg-amber-500/10', colorBg5: 'bg-amber-500/5', colorBorder20: 'border-amber-500/20' } }
+  amber: { name: '🟠 Amber (Ulica)', gradient: 'from-amber-500 to-orange-500', button_gradient: 'linear-gradient(45deg, #f59e0b, #f97316, #f59e0b)', theme_config: { colorText: 'text-amber-500', colorBg: 'bg-amber-500', colorBorder: 'border-amber-500', colorBorder80: 'border-amber-500/80', colorShadow30: 'shadow-amber-500/30', colorBg10: 'bg-amber-500/10', colorBg5: 'bg-amber-500/5', colorBorder20: 'border-amber-500/20' } },
+  yellow: { name: '🟡 Yellow (Słoneczny)', gradient: 'from-yellow-500 to-amber-400', button_gradient: 'linear-gradient(45deg, #eab308, #ca8a04, #eab308)', theme_config: { colorText: 'text-yellow-300', colorBg: 'bg-yellow-500', colorBorder: 'border-yellow-500', colorBorder80: 'border-yellow-500/80', colorShadow30: 'shadow-yellow-500/30', colorBg10: 'bg-yellow-500/10', colorBg5: 'bg-yellow-500/5', colorBorder20: 'border-yellow-500/20' } }
 };
 
 export function ProducerManager() {
   const [producers, setProducers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<any | null>(null);
-  
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ key: 'created_at', direction: 'desc' });
+  const [cacheBuster, setCacheBuster] = useState(Date.now());
+
   const fetchProducers = async () => {
     try {
       const res = await fetch('/api/admin/producers', { credentials: 'include' });
       const data = await res.json();
       if (res.ok) {
         setProducers(data);
+        setCacheBuster(Date.now());
       } else {
         alert(data.error);
       }
@@ -35,7 +39,7 @@ export function ProducerManager() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    const isNew = !producers.find(p => p.id === editing.id);
+    const isNew = editing._isNew;
     const method = isNew ? 'POST' : 'PUT';
     const url = isNew ? '/api/admin/producers' : `/api/admin/producers/${editing.id}`;
     
@@ -90,7 +94,7 @@ export function ProducerManager() {
         <form onSubmit={handleSave} className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="col-span-1 md:col-span-2">
             <label className="block text-xs font-bold mb-1 text-on-surface-variant">ID (np. kosa, basia)</label>
-            <input required disabled={!!producers.find(p => p.id === editing.id)} type="text" className="w-full bg-surface-container-low border border-outline-variant/20 focus:border-primary p-3 rounded-xl outline-none" value={editing.id || ''} onChange={e => setEditing({...editing, id: e.target.value})} />
+            <input required disabled={!editing._isNew} type="text" className="w-full bg-surface-container-low border border-outline-variant/20 focus:border-primary p-3 rounded-xl outline-none" value={editing.id || ''} onChange={e => setEditing({...editing, id: e.target.value})} />
           </div>
           
           <div>
@@ -282,11 +286,40 @@ export function ProducerManager() {
     );
   }
 
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedProducers = [...producers].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === 'asc' ? -1 : 1;
+    }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+
+  const SortHeader = ({ label, column, align = 'left' }: { label: string, column: string, align?: 'left' | 'center' | 'right' }) => (
+    <th className={`px-6 py-4 font-bold text-sm text-on-surface-variant uppercase tracking-wider cursor-pointer hover:bg-surface-container transition-colors select-none group text-${align}`} onClick={() => handleSort(column)}>
+      <div className={`flex items-center gap-1 ${align === 'center' ? 'justify-center' : align === 'right' ? 'justify-end' : 'justify-start'}`}>
+        {label}
+        <span className={`material-symbols-outlined text-[16px] transition-opacity ${sortConfig.key === column ? 'opacity-100 text-primary' : 'opacity-20 group-hover:opacity-50'}`}>
+          {sortConfig.key === column && sortConfig.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'}
+        </span>
+      </div>
+    </th>
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold font-headline">Zarządzanie Wykonawcami</h2>
-        <button onClick={() => setEditing({ is_active: true, is_on_main_page: false, tier: 'basic', price_coins: 0, model_name: 'google/gemini-2.5-flash', suno_version: 'V4', theme_config: '{\n  "colorText": "text-lime-500",\n  "colorBg": "bg-lime-500",\n  "colorBorder": "border-lime-500"\n}' })} className="bg-primary hover:bg-primary-dark text-on-primary px-4 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors shadow-lg shadow-primary/20">
+        <button onClick={() => setEditing({ _isNew: true, is_active: true, is_on_main_page: false, tier: 'basic', price_coins: 0, model_name: 'google/gemini-2.5-flash', suno_version: 'V4', theme_config: '{\n  "colorText": "text-lime-500",\n  "colorBg": "bg-lime-500",\n  "colorBorder": "border-lime-500"\n}' })} className="bg-primary hover:bg-primary-dark text-on-primary px-4 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors shadow-lg shadow-primary/20">
           <span className="material-symbols-outlined text-[18px]">add</span> Dodaj Wykonawcę
         </button>
       </div>
@@ -296,16 +329,16 @@ export function ProducerManager() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-surface-container-low border-b border-outline-variant/10">
-                <th className="px-6 py-4 font-bold text-sm text-on-surface-variant uppercase tracking-wider">Wykonawca</th>
-                <th className="px-6 py-4 font-bold text-sm text-on-surface-variant uppercase tracking-wider">Cena / Status</th>
-                <th className="px-6 py-4 font-bold text-sm text-on-surface-variant uppercase tracking-wider text-center">Taryfa</th>
-                <th className="px-6 py-4 font-bold text-sm text-on-surface-variant uppercase tracking-wider text-center">Aktywność</th>
-                <th className="px-6 py-4 font-bold text-sm text-on-surface-variant uppercase tracking-wider">Data utworzenia</th>
+                <SortHeader label="Wykonawca" column="name" />
+                <SortHeader label="Cena / Status" column="price_coins" />
+                <SortHeader label="Taryfa" column="tier" align="center" />
+                <SortHeader label="Aktywność" column="is_active" align="center" />
+                <SortHeader label="Data utworzenia" column="created_at" />
                 <th className="px-6 py-4 font-bold text-sm text-on-surface-variant uppercase tracking-wider text-right">Akcje</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/10">
-              {producers.map(p => {
+              {sortedProducers.map(p => {
                 const date = new Date(p.created_at);
                 const isToday = new Date().toDateString() === date.toDateString();
                 const displayDate = isToday 
@@ -317,7 +350,7 @@ export function ProducerManager() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/20 shadow-sm flex-shrink-0">
-                          <img src={p.img} alt={p.name} className="w-full h-full object-cover" onError={(e) => e.currentTarget.src = 'https://placehold.co/100?text=?'} />
+                          <img src={p.img ? `${p.img}${p.img.includes('?') ? '&' : '?'}v=${cacheBuster}` : ''} alt={p.name} className="w-full h-full object-cover" onError={(e) => e.currentTarget.src = 'https://placehold.co/100?text=?'} />
                         </div>
                         <div>
                           <h3 className="font-bold text-base headline-font">{p.name}</h3>
@@ -382,7 +415,7 @@ export function ProducerManager() {
              </div>
              <h3 className="text-xl font-bold mb-2">Brak wykonawców</h3>
              <p className="text-on-surface-variant max-w-sm mb-6">Wypełnij giełdę talentów pierwszymi agentami, by użytkownicy mogli z nich korzystać.</p>
-             <button onClick={() => setEditing({ is_active: true, is_on_main_page: false, tier: 'basic', price_coins: 0, model_name: 'google/gemini-2.5-flash', suno_version: 'V4', theme_config: '{\n  "colorText": "text-lime-500",\n  "colorBg": "bg-lime-500",\n  "colorBorder": "border-lime-500"\n}' })} className="bg-surface-container-high hover:bg-surface-variant text-on-surface px-6 py-3 rounded-xl font-bold text-sm transition-colors">
+             <button onClick={() => setEditing({ _isNew: true, is_active: true, is_on_main_page: false, tier: 'basic', price_coins: 0, model_name: 'google/gemini-2.5-flash', suno_version: 'V4', theme_config: '{\n  "colorText": "text-lime-500",\n  "colorBg": "bg-lime-500",\n  "colorBorder": "border-lime-500"\n}' })} className="bg-surface-container-high hover:bg-surface-variant text-on-surface px-6 py-3 rounded-xl font-bold text-sm transition-colors">
                Dodaj pierwszego
              </button>
            </div>

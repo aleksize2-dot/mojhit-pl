@@ -7,13 +7,16 @@ import SiteSettingsManager from '../components/admin/SiteSettingsManager';
 import { SupportAgentManager } from '../components/admin/SupportAgentManager';
 import { AffiliateManager } from '../components/admin/AffiliateManager';
 import { SystemLogsManager } from '../components/admin/SystemLogsManager';
+import { PromoCodesManager } from '../components/admin/PromoCodesManager';
+import { ContestsManager } from '../components/admin/ContestsManager';
+import { ReviewsManager } from '../components/admin/ReviewsManager';
 
 
 const ADMIN_ID = 'user_3BiIa5lj5AiMLDvGL2OqjEDbqLh';
 
 export function AdminDashboard() {
   const { user, isLoaded, isSignedIn } = useUser();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'producers' | 'tracks' | 'roles' | 'settings' | 'support' | 'affiliates' | 'logs' | 'siteSettings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'producers' | 'tracks' | 'roles' | 'settings' | 'support' | 'affiliates' | 'logs' | 'siteSettings' | 'promoCodes' | 'contests' | 'reviews'>('dashboard');
   const [stats, setStats] = useState<{ totalTracks: number; totalUsers: number; revenuePLN: number; headerCounterManualEnabled?: boolean; headerCounterManualValue?: number } | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
 
@@ -35,6 +38,7 @@ export function AdminDashboard() {
   const [usersPagination, setUsersPagination] = useState({ page: 1, limit: 20, total: 0, totalPages: 0 });
   const [systemEconomy, setSystemEconomy] = useState<{ totalCoins: number; totalNotes: number; totalUsers: number } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [usersSort, setUsersSort] = useState<{ column: string; direction: 'asc' | 'desc' }>({ column: 'created_at', direction: 'desc' });
 
   // Tracks moderation state
   const [tracks, setTracks] = useState<any[]>([]);
@@ -44,6 +48,7 @@ export function AdminDashboard() {
   const [tracksSystemStats, setTracksSystemStats] = useState<{ totalLikes: number; totalPlays: number; totalTracks: number } | null>(null);
   const [tracksSearchTerm, setTracksSearchTerm] = useState('');
   const [tracksExpiredFilter, setTracksExpiredFilter] = useState('all'); // 'all', 'true', 'false'
+  const [tracksSort, setTracksSort] = useState<{ column: string; direction: 'asc' | 'desc' }>({ column: 'created_at', direction: 'desc' });
 
   // Audio player for tracks
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
@@ -56,7 +61,7 @@ export function AdminDashboard() {
   const [rolesLoading, setRolesLoading] = useState(false);
   const [rolesError, setRolesError] = useState<string | null>(null);
   const [permissions, setPermissions] = useState<any[]>([]);
-  const [userAssignments, setUserAssignments] = useState<any[]>([]);
+  // const [userAssignments, setUserAssignments] = useState<any[]>([]);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [editingRole, setEditingRole] = useState<any | null>(null);
   const [roleForm, setRoleForm] = useState({ name: '', description: '', permissionCodes: [] as string[] });
@@ -127,14 +132,16 @@ export function AdminDashboard() {
     }
   }, [activeTab, isSignedIn, user?.id]);
 
-  const fetchUsers = (page = 1, search = '') => {
+  const fetchUsers = (page = 1, search = '', sort = usersSort) => {
     setUsersLoading(true);
     setUsersError(null);
 
     const params = new URLSearchParams({
       page: page.toString(),
       limit: '20',
-      ...(search && { search })
+      ...(search && { search }),
+      sort_by: sort.column,
+      sort_dir: sort.direction
     });
 
     fetch(`/api/admin/users?${params}`, { credentials: 'include' })
@@ -181,7 +188,7 @@ export function AdminDashboard() {
       .catch(console.error);
   };
 
-  const fetchTracks = (page = 1, search = '', expired = 'all') => {
+  const fetchTracks = (page = 1, search = '', expired = 'all', sort = tracksSort) => {
     setTracksLoading(true);
     setTracksError(null);
 
@@ -189,7 +196,9 @@ export function AdminDashboard() {
       page: page.toString(),
       limit: '20',
       ...(search && { search }),
-      ...(expired !== 'all' && { expired })
+      ...(expired !== 'all' && { expired }),
+      sort_by: sort.column,
+      sort_dir: sort.direction
     });
 
     fetch(`/api/admin/tracks?${params}`, { credentials: 'include' })
@@ -209,6 +218,30 @@ export function AdminDashboard() {
         setTracksLoading(false);
       });
   };
+  const toggleTracksSort = (column: string) => {
+    const newDirection = tracksSort.column === column && tracksSort.direction === 'desc' ? 'asc' : 'desc';
+    const newSort = { column, direction: newDirection as 'asc' | 'desc' };
+    setTracksSort(newSort);
+    fetchTracks(1, tracksSearchTerm, tracksExpiredFilter, newSort);
+  };
+
+  const toggleUsersSort = (column: string) => {
+    const newDirection = usersSort.column === column && usersSort.direction === 'desc' ? 'asc' : 'desc';
+    const newSort = { column, direction: newDirection as 'asc' | 'desc' };
+    setUsersSort(newSort);
+    fetchUsers(1, searchTerm, newSort);
+  };
+
+  const SortHeader = ({ label, column, sortState, onSort }: { label: string, column: string, sortState: {column: string, direction: string}, onSort: (col: string) => void }) => (
+    <th className="p-4 cursor-pointer hover:bg-surface-bright transition-colors select-none group" onClick={() => onSort(column)}>
+      <div className="flex items-center gap-1">
+        {label}
+        <span className={`material-symbols-outlined text-[16px] transition-opacity ${sortState.column === column ? 'opacity-100 text-primary' : 'opacity-20 group-hover:opacity-50'}`}>
+          {sortState.column === column && sortState.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'}
+        </span>
+      </div>
+    </th>
+  );
 
   const handleTracksSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -357,6 +390,7 @@ export function AdminDashboard() {
   };
 
   // Toggle permission in role form
+  /*
   const togglePermission = (code: string) => {
     setRoleForm(prev => ({
       ...prev,
@@ -365,6 +399,7 @@ export function AdminDashboard() {
         : [...prev.permissionCodes, code]
     }));
   };
+  */
 
   // Select all permissions in a category
   const selectCategoryPermissions = (category: string, select: boolean) => {
@@ -535,10 +570,22 @@ export function AdminDashboard() {
         <button onClick={() => setActiveTab('logs')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm ${activeTab === 'logs' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-on-surface-variant hover:bg-surface-bright'}`}>
           <span className="material-symbols-outlined text-[20px]">history</span> Logi
         </button>
+        <button onClick={() => setActiveTab('promoCodes')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm ${activeTab === 'promoCodes' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-on-surface-variant hover:bg-surface-bright'}`}>
+          <span className="material-symbols-outlined text-[20px]">sell</span> Kody Promocyjne
+        </button>
+        <button onClick={() => setActiveTab('contests')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm ${activeTab === 'contests' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-on-surface-variant hover:bg-surface-bright'}`}>
+          <span className="material-symbols-outlined text-[20px]">emoji_events</span> Konkursy
+        </button>
+        <button onClick={() => setActiveTab('reviews')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm ${activeTab === 'reviews' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-on-surface-variant hover:bg-surface-bright'}`}>
+          <span className="material-symbols-outlined text-[20px]">star_rate</span> Opinie
+        </button>
       </div>
 
       {/* Główna Zawartość */}
       <div className="flex-1 bg-surface-container-low md:rounded-l-2xl border-y border-l border-outline-variant/10 p-4 md:p-8 overflow-hidden w-full">
+        {activeTab === 'promoCodes' && <PromoCodesManager />}
+        {activeTab === 'contests' && <ContestsManager />}
+        {activeTab === 'reviews' && <ReviewsManager />}
         {activeTab === 'dashboard' && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold font-headline mb-6">Przegląd Systemu</h2>
@@ -702,15 +749,16 @@ export function AdminDashboard() {
                     <table className="w-full">
                       <thead className="bg-surface-container-high">
                         <tr className="text-left text-sm text-on-surface-variant font-bold">
-                          <th className="p-4">ID</th>
-                          <th className="p-4">Email</th>
-                          <th className="p-4">Clerk ID</th>
+                          <SortHeader label="ID" column="id" sortState={usersSort} onSort={toggleUsersSort} />
+                          <SortHeader label="Email" column="email" sortState={usersSort} onSort={toggleUsersSort} />
+                          <SortHeader label="Clerk ID" column="clerk_id" sortState={usersSort} onSort={toggleUsersSort} />
                           <th className="p-4">Role</th>
-                          <th className="p-4">Hity</th>
-                          <th className="p-4">Noty</th>
-                          <th className="p-4">Tarif</th>
-                          <th className="p-4">Status</th>
-                          <th className="p-4">Utworzono</th>
+                          <SortHeader label="Hity" column="coins" sortState={usersSort} onSort={toggleUsersSort} />
+                          <SortHeader label="Noty" column="notes" sortState={usersSort} onSort={toggleUsersSort} />
+                          <SortHeader label="Tarif" column="subscription_tier" sortState={usersSort} onSort={toggleUsersSort} />
+                          <SortHeader label="Status" column="status" sortState={usersSort} onSort={toggleUsersSort} />
+                          <SortHeader label="Utworzono" column="created_at" sortState={usersSort} onSort={toggleUsersSort} />
+                          <SortHeader label="Partner" column="is_affiliate" sortState={usersSort} onSort={toggleUsersSort} />
                           <th className="p-4">Akcje</th>
                         </tr>
                       </thead>
@@ -804,6 +852,15 @@ export function AdminDashboard() {
                             </td>
                             <td className="p-4 text-sm text-on-surface-variant">
                               {new Date(user.created_at).toLocaleDateString('pl-PL')}
+                            </td>
+                            <td className="p-4 text-center">
+                              {user.is_affiliate ? (
+                                <div className="flex justify-center">
+                                  <span className="material-symbols-outlined text-[18px] text-green-500 font-bold bg-green-500/10 p-1.5 rounded-lg border border-green-500/20" title="Partner VIP">attach_money</span>
+                                </div>
+                              ) : (
+                                <span className="text-on-surface-variant/30 font-mono">-</span>
+                              )}
                             </td>
                             <td className="p-4">
                               <div className="flex items-center gap-2">
@@ -946,14 +1003,14 @@ export function AdminDashboard() {
                         <tr className="text-left text-sm text-on-surface-variant font-bold">
                           <th className="p-4">Okładka</th>
                           <th className="p-4">Odtwarzaj</th>
-                          <th className="p-4">Tytuł</th>
+                          <SortHeader label="Tytuł" column="title" sortState={tracksSort} onSort={toggleTracksSort} />
                           <th className="p-4">Wariant</th>
                           <th className="p-4">Wykonawca</th>
                           <th className="p-4">Użytkownik</th>
-                          <th className="p-4">Lajki</th>
-                          <th className="p-4">Odtworzenia</th>
-                          <th className="p-4">Status</th>
-                          <th className="p-4">Utworzono</th>
+                          <SortHeader label="Lajki" column="likes" sortState={tracksSort} onSort={toggleTracksSort} />
+                          <SortHeader label="Odtworzenia" column="plays" sortState={tracksSort} onSort={toggleTracksSort} />
+                          <SortHeader label="Status" column="expired" sortState={tracksSort} onSort={toggleTracksSort} />
+                          <SortHeader label="Utworzono" column="created_at" sortState={tracksSort} onSort={toggleTracksSort} />
                           <th className="p-4">Akcje</th>
                         </tr>
                       </thead>
@@ -1248,6 +1305,21 @@ export function AdminDashboard() {
                                 </span>
                               )) || (
                                 <span className="text-on-surface-variant/70 text-sm">Brak uprawnień</span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="mt-4 pt-3 border-t border-outline-variant/10">
+                            <p className="text-sm font-bold text-on-surface-variant mb-2">Przypisani użytkownicy ({role.assigned_users?.length || 0}):</p>
+                            <div className="flex flex-col gap-1">
+                              {role.assigned_users && role.assigned_users.length > 0 ? (
+                                role.assigned_users.map((au: any) => (
+                                  <div key={au.user_id} className="text-xs text-on-surface bg-surface-container-low px-2 py-1.5 rounded flex items-center justify-between">
+                                    <span className="font-medium truncate mr-2" title={au.email || au.clerk_id}>{au.email || 'Brak emaila'}</span>
+                                    <span className="font-mono text-on-surface-variant/70 shrink-0" title={au.user_id}>{au.user_id.substring(0, 8)}...</span>
+                                  </div>
+                                ))
+                              ) : (
+                                <span className="text-on-surface-variant/50 text-xs italic">Brak przypisanych użytkowników</span>
                               )}
                             </div>
                           </div>

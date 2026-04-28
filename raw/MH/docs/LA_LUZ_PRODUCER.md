@@ -98,19 +98,19 @@ WAŻNE: Wpleć imię osoby lub ksywkę jako refren! Max 1000 znaków.]
 
 ## Konfiguracja UI
 
-| Pole | Wartość |
-|------|---------|
-| **Tytuł w nagłówku** | La Luz (Polska Fiesta) |
-| **Status** | Online • Czeka na fiestę! 🕺 |
-| **Myśli** | La Luz klei rytmy... 🎸; Lecą trąbki! 🎺; Fuego, zaraz będzie bomba! 🔥; Ay ay ay, to będzie hit! 🌴 |
-| **Placeholder** | Opisz kto jest gwiazdą i na jaką okazję robimy fiestę... |
-| **Gradient** | from-yellow-400 via-red-500 to-orange-500 |
-| **Button Gradient** | linear-gradient(45deg, #f59e0b, #ef4444, #f59e0b) |
-| **Model AI** | deepseek-chat |
-| **Wersja Suno** | V4_5 |
-| **Głos (TTS)** | River (Męski) |
-| **Cena** | 0 (FREE) |
-| **Tier** | FREE |
+| Pole                 | Wartość                                                                                              |
+| -------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Tytuł w nagłówku** | La Luz (Polska Fiesta)                                                                               |
+| **Status**           | Online • Czeka na fiestę! 🕺                                                                         |
+| **Myśli**            | La Luz klei rytmy... 🎸; Lecą trąbki! 🎺; Fuego, zaraz będzie bomba! 🔥; Ay ay ay, to będzie hit! 🌴 |
+| **Placeholder**      | Opisz kto jest gwiazdą i na jaką okazję robimy fiestę...                                             |
+| **Gradient**         | from-yellow-400 via-red-500 to-orange-500                                                            |
+| **Button Gradient**  | linear-gradient(45deg, #f59e0b, #ef4444, #f59e0b)                                                    |
+| **Model AI**         | deepseek-chat                                                                                        |
+| **Wersja Suno**      | V4_5                                                                                                 |
+| **Głos (TTS)**       | River (Męski)                                                                                        |
+| **Cena**             | 0 (FREE)                                                                                             |
+| **Tier**             | FREE                                                                                                 |
 
 ---
 

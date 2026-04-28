@@ -147,24 +147,32 @@ export function MyTracks() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {tracks.map((track) => {
+        {tracks.map((track: any) => {
           const style = getStyle(track.description);
           const dateStr = new Date(track.created_at).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          const isVideoPending = track.video_status === 'pending' || track.video_status === 'processing';
+          const imageUrl = track.video_thumbnail_url || track.cover_image_url;
 
           return (
-            <Link key={track.id} to={`/track/${track.id}`} className="bg-surface-container-low p-4 rounded-xl flex items-center gap-4 group hover:bg-surface-container-high transition-colors cursor-pointer border border-outline-variant/10 hover:border-primary/30">
+            <Link key={track.id} to={`/track/${track.id}`} className="bg-surface-container-low p-4 rounded-xl flex items-center gap-4 group hover:bg-surface-container-high transition-colors cursor-pointer border border-outline-variant/10 hover:border-primary/30 relative overflow-hidden">
               <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden shadow-lg bg-gradient-to-br from-surface-container-high to-surface-container-highest flex items-center justify-center">
-                {track.cover_image_url ? (
-                  <img src={track.cover_image_url} alt={track.title} className="w-full h-full object-cover" />
+                {imageUrl ? (
+                  <img src={imageUrl} alt={track.title} className="w-full h-full object-cover" />
                 ) : (
                   <span className="material-symbols-outlined text-3xl text-primary/60">music_note</span>
                 )}
                 
-                <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity opacity-0 group-hover:opacity-100`}>
-                  <span className={`material-symbols-outlined text-3xl text-white`}>
-                    play_circle
-                  </span>
-                </div>
+                {isVideoPending ? (
+                  <div className={`absolute inset-0 bg-black/60 flex items-center justify-center`}>
+                    <span className="material-symbols-outlined text-white animate-spin">progress_activity</span>
+                  </div>
+                ) : (
+                  <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity opacity-0 group-hover:opacity-100`}>
+                    <span className={`material-symbols-outlined text-3xl text-white`}>
+                      play_circle
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="flex-grow min-w-0">

@@ -16,6 +16,11 @@ export function Cennik() {
   const [siteSettings, setSiteSettings] = useState<any>(null);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
+  const [promoCodeInput, setPromoCodeInput] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState<any>(null);
+  const [promoError, setPromoError] = useState('');
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false);
+
   useEffect(() => {
     // Fetch site settings
     fetch('/api/settings/site')
@@ -63,15 +68,53 @@ export function Cennik() {
     }
   }, [user]);
 
+  const validatePromoCode = async () => {
+    if (!promoCodeInput.trim()) return;
+    setIsValidatingPromo(true);
+    setPromoError('');
+    try {
+      const res = await fetch('/api/promo/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: promoCodeInput.trim() })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Błąd kodu');
+      setAppliedPromo(data);
+      setPromoCodeInput('');
+    } catch (e: any) {
+      setPromoError(e.message);
+      setAppliedPromo(null);
+    } finally {
+      setIsValidatingPromo(false);
+    }
+  };
+
+  const removePromoCode = () => {
+    setAppliedPromo(null);
+  };
+
   const discountPercent = siteSettings?.pricing_discount_enabled ? (siteSettings?.pricing_discount_percent || 20) : 0;
   const showBanner = siteSettings?.pricing_banner_enabled;
 
   const calculateDiscountedPrice = (monthlyPrice: number) => {
+    let finalPrice = monthlyPrice;
+    
+    // Apply annual discount
     if (billingCycle === 'annual' && discountPercent > 0) {
-      const discounted = monthlyPrice * (1 - discountPercent / 100);
-      return discounted.toFixed(2);
+      finalPrice = finalPrice * (1 - discountPercent / 100);
     }
-    return monthlyPrice.toFixed(2);
+    
+    // Apply promo code discount if valid
+    if (appliedPromo) {
+      if (appliedPromo.type === 'percent') {
+        finalPrice = finalPrice * (1 - (appliedPromo.value / 100));
+      } else if (appliedPromo.type === 'amount') {
+        finalPrice = finalPrice - appliedPromo.value;
+      }
+    }
+    
+    return Math.max(0, finalPrice).toFixed(2);
   };
 
   const defaultPackages = [
@@ -139,6 +182,7 @@ export function Cennik() {
         'Wymieniaj 20 Nut na 1 Hit [HIT]',
         'Podstawowy generator muzyki',
         'Pobierz MP3 ze znakiem wodnym',
+        'Generuj wideo do utworów',
         'Standardowa kolejka'
       ],
       link: '#',
@@ -267,6 +311,61 @@ export function Cennik() {
         </div>
       </div>
 
+      {/* Promo Code Input */}
+      <div className="max-w-md mx-auto mb-12">
+        <div className="bg-surface-container-high rounded-3xl p-6 border border-outline-variant/20 shadow-sm">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary">sell</span>
+            Masz kod promocyjny?
+          </h3>
+          
+          {appliedPromo ? (
+            <div className="flex items-center justify-between bg-primary/10 border border-primary/30 p-4 rounded-2xl">
+              <div className="flex flex-col">
+                <span className="text-primary font-bold">{appliedPromo.code}</span>
+                <span className="text-sm text-on-surface-variant">
+                  Zniżka: {appliedPromo.type === 'percent' ? `${appliedPromo.value}%` : `${appliedPromo.value} PLN`}
+                </span>
+              </div>
+              <button 
+                onClick={removePromoCode}
+                className="text-on-surface-variant hover:text-error transition-colors p-2"
+                title="Usuń kod"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={promoCodeInput}
+                  onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
+                  placeholder="Wpisz kod tutaj..."
+                  className="flex-1 bg-surface border border-outline-variant/30 rounded-2xl px-4 py-3 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-mono uppercase"
+                  disabled={isValidatingPromo}
+                />
+                <button
+                  onClick={validatePromoCode}
+                  disabled={!promoCodeInput.trim() || isValidatingPromo}
+                  className="bg-primary text-on-primary font-bold px-6 py-3 rounded-2xl hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  {isValidatingPromo ? (
+                    <span className="material-symbols-outlined animate-spin">refresh</span>
+                  ) : (
+                    'Zastosuj'
+                  )}
+                </button>
+              </div>
+              {promoError && (
+                <p className="text-error text-sm mt-1 px-2">{promoError}</p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Subscription Plans */}
       <section>
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
@@ -314,7 +413,10 @@ export function Cennik() {
           {subscriptions.map((sub: any, i: number) => {
             const isActive = currentPlan === sub.plan;
             const colorClass = sub.color || 'primary';
-            const price = calculateDiscountedPrice(sub.basePriceNum);
+            let basePriceRaw = sub.basePriceNum !== undefined ? sub.basePriceNum : (sub.priceNum || 0);
+            let basePrice = Number(basePriceRaw.toString().replace(',', '.'));
+            if (isNaN(basePrice)) basePrice = 0;
+            const price = calculateDiscountedPrice(basePrice);
             
             return (
               <div
@@ -345,15 +447,15 @@ export function Cennik() {
                       <span className="text-4xl font-extrabold headline-font">{price.replace('.', ',')} PLN</span>
                       <span className="text-on-surface-variant text-sm font-medium">/ mies.</span>
                     </div>
-                    {billingCycle === 'annual' && discountPercent > 0 && sub.basePriceNum > 0 && (
+                    {billingCycle === 'annual' && discountPercent > 0 && basePrice > 0 && (
                       <div className="text-sm text-primary font-medium flex items-center gap-1.5">
                         <span className="material-symbols-outlined text-[16px]">savings</span>
-                        Oszczędzasz {((sub.basePriceNum * 12) * (discountPercent / 100)).toFixed(2).replace('.', ',')} PLN rocznie
+                        Oszczędzasz {((basePrice * 12) * (discountPercent / 100)).toFixed(2).replace('.', ',')} PLN rocznie
                       </div>
                     )}
-                    {billingCycle === 'monthly' && discountPercent > 0 && sub.basePriceNum > 0 && (
+                    {billingCycle === 'monthly' && discountPercent > 0 && basePrice > 0 && (
                       <div className="text-sm text-on-surface-variant opacity-70">
-                        lub {calculateDiscountedPrice(sub.basePriceNum).replace('.', ',')} PLN / mies. przy planie rocznym
+                        lub {calculateDiscountedPrice(basePrice).replace('.', ',')} PLN / mies. przy planie rocznym
                       </div>
                     )}
                   </div>
@@ -375,7 +477,7 @@ export function Cennik() {
                       </div>
                     ) : (
                       <a
-                        href={sub.link}
+                        href={`${sub.link || ''}${(sub.link || '').includes('?') ? '&' : '?'}prefilled_promo_code=${appliedPromo?.code || ''}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold transition-all text-sm
@@ -385,9 +487,9 @@ export function Cennik() {
                           }`}
                       >
                         <span className="material-symbols-outlined text-lg">
-                          {sub.basePriceNum === 0 ? 'person' : 'workspace_premium'}
+                          {basePrice === 0 ? 'person' : 'workspace_premium'}
                         </span>
-                        {sub.basePriceNum === 0 ? 'Darmowy dostęp' : `Aktywuj ${sub.name}`}
+                        {basePrice === 0 ? 'Darmowy dostęp' : `Aktywuj ${sub.name}`}
                       </a>
                     )}
                   </div>
@@ -439,7 +541,7 @@ export function Cennik() {
                 <div className="mt-auto">
                   <div className="text-3xl font-extrabold headline-font mb-5">{pkg.price}</div>
                   <a
-                    href={pkg.link}
+                    href={`${pkg.link || ''}${(pkg.link || '').includes('?') ? '&' : '?'}prefilled_promo_code=${appliedPromo?.code || ''}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold transition-all text-sm

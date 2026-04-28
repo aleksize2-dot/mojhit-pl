@@ -28,6 +28,8 @@ import { BankTekstow } from './pages/BankTekstow';
 import { TekstDetail } from './pages/TekstDetail';
 import { Polecaj } from './pages/Polecaj';
 import { MyProducers } from './pages/MyProducers';
+import { GiftCatalogPage } from './pages/GiftFunnel/GiftCatalogPage';
+import { GiftTemplatePage } from './pages/GiftFunnel/GiftTemplatePage';
 
 function App() {
   const [searchParams] = useSearchParams();
@@ -41,12 +43,13 @@ function App() {
 
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
+  const isHome = location.pathname === '/';
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen transition-colors duration-300">
+    <div className={`bg-surface text-on-surface flex flex-col transition-colors duration-300 ${isHome ? 'h-[100dvh] overflow-hidden md:h-auto md:min-h-[100dvh] md:overflow-visible' : 'min-h-[100dvh]'}`}>
       <Header />
 
-      <main className={isAdmin ? "w-full pt-6 min-h-[80vh]" : "max-w-7xl mx-auto px-6 pt-6 space-y-10 min-h-[60vh]"}>
+      <main className={isAdmin ? "w-full pt-6 flex-1 pb-[82px] md:pb-0 flex flex-col min-h-0" : `w-full max-w-7xl mx-auto ${isHome ? 'px-0' : 'px-4'} md:px-6 pt-4 space-y-4 md:space-y-10 flex-1 pb-[82px] md:pb-0 flex flex-col min-h-0`}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/my-tracks" element={<MyTracks />} />
@@ -70,10 +73,14 @@ function App() {
           <Route path="/teksty/:slug" element={<TekstDetail />} />
           <Route path="/polecaj" element={<Polecaj />} />
           <Route path="/my-producers" element={<MyProducers />} />
+          <Route path="/upominek" element={<GiftCatalogPage />} />
+          <Route path="/upominek/:slug" element={<GiftTemplatePage />} />
         </Routes>
       </main>
 
-      <Footer />
+      <div className={isHome ? "hidden md:block" : ""}>
+        <Footer />
+      </div>
       <BottomNav />
       <CookieBanner />
     </div>

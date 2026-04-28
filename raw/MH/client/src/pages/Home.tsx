@@ -1,6 +1,5 @@
 import { useAuth } from '@clerk/clerk-react';
 import { Generator } from '../components/Generator';
-import { VibeTags } from '../components/VibeTags';
 import { RecentTracks } from '../components/RecentTracks';
 import { Welcome } from './Welcome';
 
@@ -16,12 +15,13 @@ export function Home() {
   }
 
   return (
-    <>
-      <div className="space-y-6">
+    <div className="flex-1 flex flex-col relative w-full min-h-0">
+      <div className="flex-1 flex flex-col md:space-y-6 min-h-0">
         <Generator />
-        <VibeTags />
       </div>
-      <RecentTracks />
-    </>
+      <div className="hidden md:block">
+        <RecentTracks />
+      </div>
+    </div>
   );
 }

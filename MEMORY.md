@@ -35,6 +35,9 @@
 - [[regulamin|Regulamin (Terms of Service)]] - Legal terms for mojhit.pl
 - [[dj-marek-ai-composer|DJ Marek AI Composer Architecture]] - Technical architecture of the AI composer chat and backend
 - [[video-generation|Video Generation (PRO Tier)]] - API, database schema, frontend integration for PRO tier video generation
+- [[mojhit-referral|Referral & Affiliate Program]] - Polecaj.tsx, AffiliateManager.tsx, reward mechanics
+- [[mojhit-prompt-editing|Prompt Regeneration & Editing]] - "Nowa wersja" / "Edytuj" buttons in performer chat
+- [[mojhit-email-service|Email Notification Service]] - nodemailer template for track-ready notifications
 
 ### ⚙️ System & Infrastructure
 - [[system-resilience|System Resilience & Limits]] - Fallback models, Gemini & DeepSeek API strategy
@@ -43,6 +46,7 @@
 - [[claude-strengths|Claude Strengths & Project Concepts]] - Empathy, nuanced prose, AI psychologist/writer applications
 - [[telegram-bot-guidelines|Telegram Bot Guidelines]] - Message length limits, interactive buttons, user onboarding patterns
 - [[cookie-rodo|Cookie & RODO Compliance]] - Consent management system for analytics (GA4, Clarity)
+- [[brevo-email|Brevo Email Marketing]] - Transactional and marketing email integration via Brevo skill
 
 ---
 *Note to self: Keep this file small. It is an index, not a database. Actual content goes into `memory/wiki/` files.*

@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react';
 export function AffiliateManager() {
   const [affiliates, setAffiliates] = useState<any[]>([]);
   const [earnings, setEarnings] = useState<any[]>([]);
+  const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'users' | 'payouts'>('payouts');
+  const [activeTab, setActiveTab] = useState<'users' | 'payouts' | 'applications'>('applications');
   const [usersSort, setUsersSort] = useState<{ column: string; direction: 'asc' | 'desc' }>({ column: 'email', direction: 'asc' });
   const [payoutsSort, setPayoutsSort] = useState<{ column: string; direction: 'asc' | 'desc' }>({ column: 'created_at', direction: 'desc' });
+  const [appsSort, setAppsSort] = useState<{ column: string; direction: 'asc' | 'desc' }>({ column: 'created_at', direction: 'desc' });
 
   useEffect(() => {
     fetchData();
@@ -21,11 +23,16 @@ export function AffiliateManager() {
         if (!res.ok) throw new Error('Błąd pobierania partnerów');
         const data = await res.json();
         setAffiliates(data);
-      } else {
+      } else if (activeTab === 'payouts') {
         const res = await fetch('/api/admin/affiliates/earnings', { credentials: 'include' });
         if (!res.ok) throw new Error('Błąd pobierania wypłat');
         const data = await res.json();
         setEarnings(data);
+      } else if (activeTab === 'applications') {
+        const res = await fetch('/api/admin/vip_applications', { credentials: 'include' });
+        if (!res.ok) throw new Error('Błąd pobierania wniosków VIP');
+        const data = await res.json();
+        setApplications(data);
       }
     } catch (err: any) {
       setError(err.message);
@@ -65,6 +72,21 @@ export function AffiliateManager() {
     }
   };
 
+  const handleApplicationAction = async (id: string, action: 'approve' | 'reject') => {
+    if (!confirm(`Czy na pewno chcesz ${action === 'approve' ? 'zatwierdzić' : 'odrzucić'} ten wniosek?`)) return;
+    try {
+      const res = await fetch(`/api/admin/vip_applications/${id}/${action}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+      if (!res.ok) throw new Error('Błąd zmiany statusu wniosku');
+      fetchData();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
   const toggleUsersSort = (column: string) => {
     const newDirection = usersSort.column === column && usersSort.direction === 'desc' ? 'asc' : 'desc';
     setUsersSort({ column, direction: newDirection });
@@ -73,6 +95,11 @@ export function AffiliateManager() {
   const togglePayoutsSort = (column: string) => {
     const newDirection = payoutsSort.column === column && payoutsSort.direction === 'desc' ? 'asc' : 'desc';
     setPayoutsSort({ column, direction: newDirection });
+  };
+
+  const toggleAppsSort = (column: string) => {
+    const newDirection = appsSort.column === column && appsSort.direction === 'desc' ? 'asc' : 'desc';
+    setAppsSort({ column, direction: newDirection });
   };
 
   const sortedUsers = [...affiliates].sort((a, b) => {
@@ -93,6 +120,16 @@ export function AffiliateManager() {
 
     if (aVal < bVal) return payoutsSort.direction === 'asc' ? -1 : 1;
     if (aVal > bVal) return payoutsSort.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const sortedApps = [...applications].sort((a, b) => {
+    let aVal = a[appsSort.column];
+    let bVal = b[appsSort.column];
+    if (aVal == null) aVal = '';
+    if (bVal == null) bVal = '';
+    if (aVal < bVal) return appsSort.direction === 'asc' ? -1 : 1;
+    if (aVal > bVal) return appsSort.direction === 'asc' ? 1 : -1;
     return 0;
   });
 
@@ -137,6 +174,12 @@ export function AffiliateManager() {
         <h2 className="text-2xl font-bold headline-font text-on-surface">Zarządzanie Afiliacją</h2>
         <div className="flex bg-surface-container-high rounded-lg p-1">
           <button 
+            onClick={() => setActiveTab('applications')}
+            className={`px-4 py-2 rounded-md font-bold text-sm transition-colors ${activeTab === 'applications' ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+          >
+            Wnioski VIP
+          </button>
+          <button 
             onClick={() => setActiveTab('payouts')}
             className={`px-4 py-2 rounded-md font-bold text-sm transition-colors ${activeTab === 'payouts' ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
           >
@@ -155,6 +198,56 @@ export function AffiliateManager() {
         <div className="flex justify-center py-10"><span className="material-symbols-outlined animate-spin text-3xl text-primary">cycle</span></div>
       ) : error ? (
         <div className="bg-error/10 text-error p-4 rounded-xl border border-error/20 font-bold">{error}</div>
+      ) : activeTab === 'applications' ? (
+        <div className="bg-surface-container-low rounded-2xl border border-outline-variant/20 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-surface-container-high border-b border-outline-variant/20">
+                  <SortHeader label="Data" column="created_at" sortState={appsSort} onSort={toggleAppsSort} />
+                  <SortHeader label="Email (User)" column="user_id" sortState={appsSort} onSort={toggleAppsSort} />
+                  <SortHeader label="Kanał/Strona" column="website" sortState={appsSort} onSort={toggleAppsSort} />
+                  <SortHeader label="Plan" column="plan" sortState={appsSort} onSort={toggleAppsSort} />
+                  <SortHeader label="Model" column="model" sortState={appsSort} onSort={toggleAppsSort} />
+                  <SortHeader label="Status" column="status" sortState={appsSort} onSort={toggleAppsSort} />
+                  <th className="p-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant text-right">Akcja</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/10">
+                {sortedApps.length === 0 ? (
+                  <tr><td colSpan={7} className="p-8 text-center text-on-surface-variant">Brak wniosków VIP</td></tr>
+                ) : sortedApps.map(app => (
+                  <tr key={app.id} className="hover:bg-surface-container-high/50 transition-colors">
+                    <td className="p-4 text-sm text-on-surface">{new Date(app.created_at).toLocaleDateString()}</td>
+                    <td className="p-4 text-sm text-on-surface">{app.users?.email || 'Brak danych'}</td>
+                    <td className="p-4 text-sm text-tertiary">
+                      {app.website ? <a href={app.website.startsWith('http') ? app.website : `https://${app.website}`} target="_blank" rel="noreferrer" className="hover:underline">{app.website}</a> : '-'}
+                    </td>
+                    <td className="p-4 text-xs text-on-surface-variant max-w-[200px] truncate" title={app.plan}>{app.plan || '-'}</td>
+                    <td className="p-4 text-sm font-bold text-on-surface">{app.model === 'instant' ? '30% Jednorazowo' : '10% Dożywotnio'}</td>
+                    <td className="p-4">
+                      <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full ${
+                        app.status === 'approved' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
+                        app.status === 'rejected' ? 'bg-error/10 text-error border border-error/20' :
+                        'bg-tertiary/10 text-tertiary border border-tertiary/20'
+                      }`}>
+                        {app.status}
+                      </span>
+                    </td>
+                    <td className="p-4 text-right">
+                      {app.status === 'pending' && (
+                        <div className="flex justify-end gap-2">
+                          <button onClick={() => handleApplicationAction(app.id, 'approve')} className="px-3 py-1.5 bg-green-500 text-black rounded-lg text-xs font-bold hover:bg-green-400 transition-colors">Zatwierdź</button>
+                          <button onClick={() => handleApplicationAction(app.id, 'reject')} className="px-3 py-1.5 bg-error text-white rounded-lg text-xs font-bold hover:bg-error/80 transition-colors">Odrzuć</button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       ) : activeTab === 'payouts' ? (
         <div className="bg-surface-container-low rounded-2xl border border-outline-variant/20 overflow-hidden">
           <div className="overflow-x-auto">

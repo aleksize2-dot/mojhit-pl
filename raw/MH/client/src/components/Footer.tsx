@@ -45,8 +45,9 @@ export function Footer() {
             <ul className="space-y-2 text-sm font-body">
               <li><Link to="/trendy-tygodnia" className="text-on-surface-variant hover:text-primary transition-colors">Trendy Tygodnia</Link></li>
               <li><Link to="/browse" className="text-on-surface-variant hover:text-primary transition-colors">Ostatnio stworzone</Link></li>
-              <li><Link to="/jak-zdobyc-monety" className="text-on-surface-variant hover:text-primary transition-colors">Jak zdobyć Monety?</Link></li>
+              <li><Link to="/polecaj" className="text-on-surface-variant hover:text-primary transition-colors">Polecaj & Zarabiaj</Link></li>
               <li><Link to="/contests" className="text-on-surface-variant hover:text-primary transition-colors">Konkursy</Link></li>
+              <li><Link to="/bank-tekstow" className="text-on-surface-variant hover:text-primary transition-colors">Bank Tekstów</Link></li>
             </ul>
           </div>
 

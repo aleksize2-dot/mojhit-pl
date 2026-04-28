@@ -9,7 +9,16 @@ const generate = async (prompt, style = '', title = '', instrumental = false, mo
   
   if (customMode || style || title) {
     payload.customMode = true; // force custom mode if style or title provided
-    if (style) payload.tags = style.substring(0, 119); // max 120 chars
+    if (style) {
+      payload.style = style.substring(0, 499); // max 500 chars
+      // Infer vocalGender from style
+      const s = style.toLowerCase();
+      if (s.includes('female') || s.includes('żeńsk') || s.includes('dziewcz')) {
+        payload.vocalGender = 'f';
+      } else if (s.includes('male') || s.includes('męsk') || s.includes('chłop')) {
+        payload.vocalGender = 'm';
+      }
+    }
     if (title) payload.title = title;
   }
 

@@ -47,13 +47,82 @@ if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
 const supabase = createClient(supabaseUrl || 'https://placeholder.supabase.co', supabaseServiceKey || supabaseAnonKey || 'placeholder-key');
 
 // System Logger
+const originalConsoleError = console.error;
+const originalConsoleWarn = console.warn;
+const originalConsoleLog = console.log;
+
 const systemLogger = async (level, action, message, metadata = {}) => {
   try {
     await supabase.from('system_logs').insert({
       level, action, message, metadata
     });
   } catch (e) {
-    console.error('Failed to log to system_logs', e);
+    originalConsoleError('Failed to log to system_logs', e);
+  }
+};
+
+// Global error hook
+console.error = function(...args) {
+  originalConsoleError.apply(console, args);
+  
+  const msg = args.map(a => {
+    if (a instanceof Error) return a.stack || a.message;
+    if (typeof a === 'object') {
+      try { return JSON.stringify(a); } catch(e) { return String(a); }
+    }
+    return String(a);
+  }).join(' ');
+
+  if (msg.includes('Failed to log to system_logs')) return;
+  
+  let action = 'APP_ERROR';
+  if (msg.includes('[Stripe]')) action = 'STRIPE_ERROR';
+  else if (msg.includes('[MERGE]')) action = 'MERGE_ERROR';
+  else if (msg.includes('[KIE WEBHOOK]')) action = 'WEBHOOK_ERROR';
+  else if (msg.includes('[SUNO GENERATE]')) action = 'GENERATION_ERROR';
+  else if (msg.includes('[KIE VIDEO]')) action = 'VIDEO_ERROR';
+  
+  // Serialize errors and objects for metadata
+  const metadata = {
+    raw: args.map(a => {
+      if (a instanceof Error) return { name: a.name, message: a.message, stack: a.stack };
+      return a;
+    })
+  };
+  
+  systemLogger('error', action, msg, metadata);
+};
+
+// Global log hook for specific important events
+console.log = function(...args) {
+  originalConsoleLog.apply(console, args);
+  
+  if (args.length === 0) return;
+  const firstArg = typeof args[0] === 'string' ? args[0] : '';
+  
+  const trackableEvents = [
+    '[Stripe]', '[PAYMENT]', '[MUSIC GENERATION]', '[SUNO GENERATE]', 
+    '[KIE WEBHOOK]', '[GUEST GENERATE]', '[MERGE]'
+  ];
+  
+  if (trackableEvents.some(tag => firstArg.includes(tag))) {
+    const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+    
+    let action = 'SYSTEM_EVENT';
+    if (firstArg.includes('[Stripe]') || firstArg.includes('[PAYMENT]')) action = 'PAYMENT_EVENT';
+    else if (firstArg.includes('[KIE WEBHOOK]')) action = 'WEBHOOK_EVENT';
+    else if (firstArg.includes('[MUSIC GENERATION]') || firstArg.includes('[SUNO GENERATE]')) action = 'GENERATION_EVENT';
+    else if (firstArg.includes('[MERGE]')) action = 'MERGE_EVENT';
+    
+    // Serialize objects for metadata
+    const metadata = {
+      raw: args.map(a => {
+        if (a instanceof Error) return { name: a.name, message: a.message, stack: a.stack };
+        return a;
+      })
+    };
+    
+    systemLogger('info', action, msg, metadata);
   }
 };
 
@@ -297,6 +366,59 @@ app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), asyn
             } else {
               console.log(`[Stripe] Successfully credited ${coinsToAdd} coins and updated plan to ${newPlan || 'unchanged'} for user ${userId}`);
             }
+            
+            // --- Affiliate Monetization Logic ---
+            if (userRecord.referred_by && session.amount_total) {
+              const { data: referrerUser } = await supabase
+                .from('users')
+                .select('id, is_affiliate, affiliate_model')
+                .eq('id', userRecord.referred_by)
+                .single();
+                
+              if (referrerUser && referrerUser.is_affiliate) {
+                let commissionPercent = 20; // fallback
+                let shouldPay = true;
+                const model = referrerUser.affiliate_model || 'lifetime';
+
+                if (model === 'instant') {
+                  commissionPercent = 30;
+                  // Instant means 30% but ONLY on the first purchase. We check if there's any existing earning record for this buyer.
+                  const { count } = await supabase
+                    .from('affiliate_earnings')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('buyer_id', userRecord.id)
+                    .eq('affiliate_id', referrerUser.id);
+                  
+                  if (count > 0) {
+                    shouldPay = false; // They already got paid for this buyer's previous purchase
+                  }
+                } else {
+                  // Lifetime model
+                  commissionPercent = 10;
+                }
+                
+                const purchaseAmountPLN = session.amount_total / 100;
+                const commissionAmount = (purchaseAmountPLN * (commissionPercent / 100)).toFixed(2);
+                
+                if (shouldPay && Number(commissionAmount) > 0) {
+                  const { error: affiliateErr } = await supabase.from('affiliate_earnings').insert({
+                    affiliate_id: referrerUser.id,
+                    buyer_id: userRecord.id,
+                    purchase_amount: purchaseAmountPLN,
+                    commission_amount: Number(commissionAmount),
+                    status: 'available'
+                  });
+                  if (affiliateErr) {
+                    console.error('[Stripe] Failed to add affiliate earnings:', affiliateErr);
+                  } else {
+                    console.log(`[Stripe] Affiliate commission added for referrer ${referrerUser.id}: ${commissionAmount} PLN (${model} model - ${commissionPercent}%)`);
+                  }
+                } else if (!shouldPay) {
+                  console.log(`[Stripe] Skipping affiliate commission for ${referrerUser.id} because model is 'instant' and buyer ${userRecord.id} already made a purchase.`);
+                }
+              }
+            }
+            // ------------------------------------
           } else {
              console.error(`[Stripe] User ${userId} not found in database.`);
           }
@@ -321,14 +443,44 @@ app.use(express.json());
 app.get('/api/tracks/recent', async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 8;
-    const { data, error } = await supabase
+    const { data: tracks, error } = await supabase
       .from('tracks')
-      .select('id, title, description, audio_url, cover_image_url, created_at, likes, producer_id, producers(name)')
+      .select('id, title, description, audio_url, cover_image_url, created_at, likes, producer_id, kie_task_id, producers(name)')
       .eq('expired', false)
       .order('created_at', { ascending: false })
       .limit(limit);
     if (error) throw error;
-    res.json(data || []);
+    
+    // Map video info
+    if (tracks && tracks.length > 0) {
+      try {
+        const taskIds = tracks.map(t => t.kie_task_id).filter(Boolean);
+        if (taskIds.length > 0) {
+          const { data: videos } = await supabase
+            .from('video_tasks')
+            .select('audio_task_id, video_url, thumbnail_url, status')
+            .in('audio_task_id', taskIds)
+            .in('status', ['completed', 'pending', 'processing']);
+            
+          if (videos && videos.length > 0) {
+            tracks.forEach(t => {
+              if (t.kie_task_id) {
+                const vid = videos.find(v => v.audio_task_id === t.kie_task_id);
+                if (vid) {
+                  t.video_url = vid.video_url;
+                  t.video_thumbnail_url = vid.thumbnail_url;
+                  t.video_status = vid.status;
+                }
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('Error fetching videos for recent tracks:', err);
+      }
+    }
+    
+    res.json(tracks || []);
   } catch (err) {
     console.error('Error fetching recent tracks:', err);
     res.status(500).json({ error: err.message });
@@ -338,16 +490,88 @@ app.get('/api/tracks/recent', async (req, res) => {
 app.get('/api/tracks/top', async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
-    const { data, error } = await supabase
+    const { data: tracks, error } = await supabase
       .from('tracks')
-      .select('id, title, description, audio_url, cover_image_url, created_at, likes, producer_id, producers(name)')
+      .select('id, title, description, audio_url, cover_image_url, created_at, likes, producer_id, kie_task_id, producers(name)')
       .eq('expired', false)
       .order('likes', { ascending: false })
       .limit(limit);
     if (error) throw error;
-    res.json(data || []);
+    
+    // Map video info
+    if (tracks && tracks.length > 0) {
+      try {
+        const taskIds = tracks.map(t => t.kie_task_id).filter(Boolean);
+        if (taskIds.length > 0) {
+          const { data: videos } = await supabase
+            .from('video_tasks')
+            .select('audio_task_id, video_url, thumbnail_url, status')
+            .in('audio_task_id', taskIds)
+            .in('status', ['completed', 'pending', 'processing']);
+            
+          if (videos && videos.length > 0) {
+            tracks.forEach(t => {
+              if (t.kie_task_id) {
+                const vid = videos.find(v => v.audio_task_id === t.kie_task_id);
+                if (vid) {
+                  t.video_url = vid.video_url;
+                  t.video_thumbnail_url = vid.thumbnail_url;
+                  t.video_status = vid.status;
+                }
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('Error fetching videos for top tracks:', err);
+      }
+    }
+    
+    res.json(tracks || []);
   } catch (err) {
     console.error('Error fetching top tracks:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ----------------------------------------
+// Templates Endpoints (Gift Funnel)
+// ----------------------------------------
+app.get('/api/templates', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('track_templates')
+      .select('id, slug, title, subtitle, description, cover_image_url, style_tags, mood, default_producer_id')
+      .eq('is_active', true)
+      .order('created_at', { ascending: true });
+    
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    console.error('Error fetching templates:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/templates/:slug', async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const { data, error } = await supabase
+      .from('track_templates')
+      .select('*')
+      .eq('slug', slug)
+      .eq('is_active', true)
+      .single();
+    
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return res.status(404).json({ error: 'Template not found' });
+      }
+      throw error;
+    }
+    res.json(data);
+  } catch (err) {
+    console.error(`Error fetching template ${req.params.slug}:`, err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -575,10 +799,38 @@ app.post('/api/test-generate-video', async (req, res) => {
     
     // 4. Determine audioId (Suno audio ID)
     let audioId = audioTask.task_id;
-    // Hardcoded mapping for known test task
-    if (audioTask.task_id === '37928fddb061b9fcc71018da636077d0') {
-      audioId = '0ca0deac-8584-457b-9768-577c7c05b7cb';
+    try {
+      const { data: variants } = await supabase
+        .from('kie_track_variants')
+        .select('tags, stream_audio_url')
+        .eq('task_id', audioTask.id)
+        .eq('variant_index', 0)
+        .limit(1);
+      
+      if (variants && variants.length > 0) {
+        const v = variants[0];
+        if (v.tags) {
+          const match = v.tags.match(/suno_id:([a-zA-Z0-9\-]+)/);
+          if (match && match[1]) audioId = match[1];
+        }
+        if (audioId === audioTask.task_id && v.stream_audio_url && v.stream_audio_url.includes('musicfile.kie.ai/')) {
+          try {
+            const b64 = v.stream_audio_url.split('musicfile.kie.ai/').pop().split('?')[0];
+            const decoded = Buffer.from(b64, 'base64').toString('utf8');
+            if (decoded && decoded.length > 20) audioId = decoded;
+          } catch { /* ignore */ }
+        }
+      }
+    } catch (e) {
+      console.warn('[TEST VIDEO] Error looking up Suno audio ID:', e.message);
     }
+    
+    // Last resort: KIE record-info API
+    if (audioId === audioTask.task_id) {
+      const sunoId = await video.getSunoAudioId(audioTask.task_id);
+      if (sunoId) audioId = sunoId;
+    }
+    
     // 5. Call Kie Video API
     const videoTaskId = await video.generate(audioTask.task_id, audioId, {
       author: 'mojhit.pl',
@@ -1081,11 +1333,36 @@ app.get('/api/tracks/my', requireAuth(), async (req, res) => {
     // Get tracks
     const { data: tracks, error: tracksError } = await supabase
       .from('tracks')
-      .select('id, title, description, audio_url, cover_image_url, created_at, producer_id, producers(name)')
+      .select('id, title, description, audio_url, cover_image_url, created_at, producer_id, kie_task_id, producers(name)')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
     if (tracksError) throw tracksError;
+
+    // Map video info to tracks
+    try {
+      const { data: videos } = await supabase
+        .from('video_tasks')
+        .select('audio_task_id, video_url, thumbnail_url, status')
+        .eq('user_id', user.id)
+        .in('status', ['completed', 'pending', 'processing']);
+        
+      if (videos && videos.length > 0) {
+        tracks.forEach(t => {
+           if (t.kie_task_id) {
+             // Find video for this track's kie_task_id
+             const vid = videos.find(v => v.audio_task_id === t.kie_task_id);
+             if (vid) {
+               t.video_url = vid.video_url;
+               t.video_thumbnail_url = vid.thumbnail_url;
+               t.video_status = vid.status;
+             }
+           }
+        });
+      }
+    } catch (videoErr) {
+      console.warn('Error fetching video_tasks for my tracks:', videoErr);
+    }
 
     res.json(tracks);
   } catch (err) {
@@ -1290,6 +1567,7 @@ app.put('/api/admin/producers/:id', requireAuth(), requireAdmin, async (req, res
   try {
     const { id } = req.params;
     const updates = req.body;
+    delete updates.stats;  // virtual field from GET enrichment, not a DB column
 
     const { data, error } = await supabase
       .from('producers')
@@ -1450,8 +1728,27 @@ app.get('/api/user-producers', requireAuth(), async (req, res) => {
 
 app.post('/api/suno/generate', async (req, res) => {
   try {
-    const { prompt, tags, title, instrumental = false, model = 'V4', currency_type = 'notes', customMode = false, personaId, personaModel, email } = req.body;
-    console.log('[SUNO GENERATE] Received personaId:', personaId, 'personaModel:', personaModel);
+    let { prompt, tags, title, instrumental = false, model = 'V4_5', currency_type = 'notes', customMode = false, personaId, personaModel, email } = req.body;
+    console.log('[SUNO GENERATE] Received initial personaId:', personaId, 'model:', model);
+
+    // If personaId is provided, we must fetch the actual suno_persona_id and its configured model
+    let dbPersonaId = personaId;
+    let finalModel = model;
+    
+    if (personaId) {
+      const { data: producer } = await supabase
+        .from('producers')
+        .select('suno_persona_id, suno_persona_model')
+        .eq('id', personaId)
+        .single();
+        
+      if (producer && producer.suno_persona_id) {
+        personaId = producer.suno_persona_id;
+        personaModel = producer.suno_persona_model || 'V4_5ALL';
+        finalModel = producer.suno_persona_model || 'V4_5ALL';
+        console.log('[SUNO GENERATE] Resolved to suno_persona_id:', personaId, 'finalModel:', finalModel);
+      }
+    }
 
     // 1. ĐźĐľĐ»ŃƒŃ‡Đ¸Ń‚ŃŚ user_id Đ¸Đ· Clerk
     const authData = typeof req.auth === 'function' ? req.auth() : req.auth;
@@ -1558,8 +1855,8 @@ app.post('/api/suno/generate', async (req, res) => {
         guest_session_id: guestSessionId,
         guest_email: email || null,
         prompt,
-        model,
-        persona_id: personaId || null,
+        model: finalModel,
+        persona_id: dbPersonaId || null, // Keep the DB UUID for reference in the database
         status: 'pending'
       })
       .select()
@@ -1595,7 +1892,7 @@ app.post('/api/suno/generate', async (req, res) => {
 
     try {
       if (activeProvider === 'kie') {
-        taskId = await kie.generate(prompt, tags, title, instrumental, model, customMode, personaId, personaModel);
+        taskId = await kie.generate(prompt, tags, title, instrumental, finalModel, customMode, personaId, personaModel);
       } else if (activeProvider === 'suno') {
         // Use Suno API via sunoapi.org
         // Set environment variables for API key and base URL
@@ -1604,7 +1901,7 @@ app.post('/api/suno/generate', async (req, res) => {
           process.env.SUNO_API_KEY = sunoProvider.apiKey || '';
           process.env.SUNO_API_BASE_URL = sunoProvider.baseUrl || 'https://api.sunoapi.org/api/v1';
         }
-        taskId = await suno.generate(prompt, tags, title, instrumental, model, customMode, personaId, personaModel);
+        taskId = await suno.generate(prompt, tags, title, instrumental, finalModel, customMode, personaId, personaModel);
       } else {
         // Fallback to suno_direct (Local Python API)
         throw new Error("Local Suno API not fully implemented yet");
@@ -1640,10 +1937,10 @@ app.post('/api/suno/generate', async (req, res) => {
       }
     }
 
-    // 6. ĐžĐ±Đ˝ĐľĐ˛Đ¸Ń‚ŃŚ task_id
+    // 6. Обновить task_id
     await supabase
       .from('kie_tasks')
-      .update({ task_id: taskId, provider: usedProvider }) // Assuming provider column might exist, or just ignored if not
+      .update({ task_id: taskId })
       .eq('id', task.id);
 
     res.json({ taskId, dbId: task.id, provider: usedProvider });
@@ -1747,7 +2044,7 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
             image_url: track.imageUrl || track.image_url || null,
             stream_audio_url: track.streamAudioUrl || track.stream_audio_url || null,
             title: track.title || null,
-            tags: track.tags || null,
+            tags: (track.id ? `suno_id:${track.id}` : '') + (track.tags ? (track.id ? '|' : '') + track.tags : ''),
             prompt: track.prompt || null,
             duration: track.duration || null
           }));
@@ -1789,7 +2086,7 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
               is_unlocked: !!taskRecord.user_id,
               title: trackTitle,
               description: variant.prompt || '',
-              audio_url: variant.audio_url,
+              audio_url: variant.audio_url || variant.stream_audio_url,
               cover_image_url: variant.image_url,
               kie_task_id: taskRecord.id,
               variant_index: index,
@@ -1828,11 +2125,20 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
                 if (index === 0) {
                   try {
                     // Get user email
-                    const { data: userData } = await supabase
-                      .from('users')
-                      .select('email')
-                      .eq('clerk_id', taskRecord.user_id)
-                      .single();
+                    let targetEmail = null;
+                    if (taskRecord.user_id) {
+                      const { data: userData } = await supabase
+                        .from('users')
+                        .select('email')
+                        .eq('clerk_id', taskRecord.user_id)
+                        .single();
+                      if (userData && userData.email) {
+                        targetEmail = userData.email;
+                      }
+                    }
+                    if (!targetEmail && taskRecord.guest_email) {
+                      targetEmail = taskRecord.guest_email;
+                    }
                     
                     // Get producer name
                     let producerName = 'AI Wykonawca';
@@ -1845,7 +2151,7 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
                       if (producerData) producerName = producerData.name;
                     }
                     
-                    if (userData && userData.email) {
+                    if (targetEmail) {
                       const trackTitle = variant.title || 'Twój hit';
                       const trackData = {
                         title: trackTitle,
@@ -1854,18 +2160,18 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
                         cover_image_url: variant.image_url || null,
                       };
                       
-                      const userName = userData.email.split('@')[0];
+                      const userName = targetEmail.split('@')[0];
                       const emailSent = await sendTrackEmail(
-                        userData.email,
+                        targetEmail,
                         trackData,
                         producerName,
                         userName
                       );
                       
                       if (emailSent) {
-                        console.log(`[KIE WEBHOOK] Track notification email sent to ${userData.email}`);
+                        console.log(`[KIE WEBHOOK] Track notification email sent to ${targetEmail}`);
                       } else {
-                        console.warn(`[KIE WEBHOOK] Failed to send email to ${userData.email}`);
+                        console.warn(`[KIE WEBHOOK] Failed to send email to ${targetEmail}`);
                       }
                     }
                   } catch (emailError) {
@@ -1894,6 +2200,47 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
               console.log(`[KIE WEBHOOK] Deleted obsolete track variant ${track.variant_index} (ID: ${track.id})`);
             }
           }
+        }
+        
+        // Auto-generate video for first variant on complete
+        if (callbackType === 'complete' && taskRecord?.id && variantsToInsert?.length > 0) {
+          const v0 = variantsToInsert[0];
+          let autoAudioId = v0.tags?.match(/suno_id:([a-zA-Z0-9\-]+)/)?.[1];
+          if (!autoAudioId && v0.stream_audio_url?.includes('musicfile.kie.ai/')) {
+            try {
+              const b64 = v0.stream_audio_url.split('musicfile.kie.ai/').pop().split('?')[0];
+              const d = Buffer.from(b64, 'base64').toString('utf8');
+              if (d?.length > 20) autoAudioId = d;
+            } catch {}
+          }
+          const fbTaskId = taskRecord.task_id || taskId;
+          console.log('[AUTO VIDEO] Triggering for task:', fbTaskId?.substring(0,20), 'id:', taskRecord.id);
+          (async () => {
+            try {
+              const { data: u } = await supabase.from('users').select('id, subscription_tier').eq('id', taskRecord.user_id).single();
+              if (!u) return;
+              let vid = taskRecord.id;
+              const { data: vr } = await supabase.from('kie_track_variants').select('id').eq('task_id', taskRecord.id).eq('variant_index', 0).limit(1);
+              if (vr?.[0]) vid = vr[0].id;
+              const { data: ex } = await supabase.from('video_tasks').select('id').eq('audio_task_id', vid).limit(1);
+              if (ex?.length) { console.log('[AUTO VIDEO] Exists, skip'); return; }
+              let aid = autoAudioId || fbTaskId;
+              if (!autoAudioId) {
+                const vm = require('./video');
+                const si = await vm.getSunoAudioId(fbTaskId);
+                if (si) aid = si;
+              }
+              const wm = (u.subscription_tier||'free').toLowerCase() === 'free';
+              const opts = { callbackUrl: (process.env.KIE_CALLBACK_BASE_URL||'http://localhost:3000') + '/api/webhooks/kie/video' };
+              if (wm) { opts.author = 'mojhit.pl'; opts.domainName = 'mojhit.pl'; }
+              const { data: vt, error: ve } = await supabase.from('video_tasks').insert({ user_id: taskRecord.user_id, audio_task_id: vid, status: 'pending' }).select().single();
+              if (ve || !vt) return;
+              const vm = require('./video');
+              const vti = await vm.generate(fbTaskId, aid, opts);
+              await supabase.from('video_tasks').update({ video_task_id: vti }).eq('id', vt.id);
+              console.log('[AUTO VIDEO] Started:', vti);
+            } catch(e) { console.warn('[AUTO VIDEO] Err:', e.message); }
+          })();
         }
       }
     }
@@ -1986,7 +2333,7 @@ app.get('/api/suno/status/:id', requireAuth(), async (req, res) => {
               image_url: track.imageUrl || track.image_url || null,
               stream_audio_url: track.streamAudioUrl || track.stream_audio_url || null,
               title: track.title || null,
-              tags: track.tags || null,
+              tags: (track.id ? `suno_id:${track.id}` : '') + (track.tags ? (track.id ? '|' : '') + track.tags : ''),
               duration: track.duration || null
             }));
 
@@ -2049,13 +2396,48 @@ app.get('/api/suno/status/:id', requireAuth(), async (req, res) => {
   }
 });
 
+// Audio proxy — serves audio from external CDN with proper CORS headers
+app.get('/api/proxy/audio', async (req, res) => {
+  const { url } = req.query;
+  if (!url) return res.status(400).json({ error: 'url query param required' });
+  
+  try {
+    // Only allow known CDNs for security
+    const allowedHosts = ['musicfile.kie.ai', 'tempfile.aiquickdraw.com', 'cdn1.suno.ai', 'cdn2.suno.ai'];
+    const parsedUrl = new URL(url);
+    if (!allowedHosts.includes(parsedUrl.hostname)) {
+      return res.status(403).json({ error: 'Host not allowed' });
+    }
+    
+    const fetch = (await import('node-fetch')).default;
+    const response = await fetch(url, { timeout: 30000 });
+    
+    if (!response.ok) return res.status(response.status).json({ error: 'Upstream error' });
+    
+    // Set CORS and forward content
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.set('Content-Type', response.headers.get('content-type') || 'audio/mpeg');
+    
+    if (response.body) {
+      response.body.pipe(res);
+    } else {
+      const buffer = await response.arrayBuffer();
+      res.send(Buffer.from(buffer));
+    }
+  } catch (error) {
+    console.error('[PROXY] Audio fetch error:', error.message);
+    res.status(502).json({ error: 'Failed to fetch audio' });
+  }
+});
+
 // ----------------------------------------
-// Video Generation Endpoints (PRO Tier Only)
+// Video Generation Endpoints
 // ----------------------------------------
 
 app.post('/api/video/generate', requireAuth(), async (req, res) => {
   try {
-    const { audioTaskId } = req.body; // kie_tasks.id (database ID) or kie_tasks.task_id
+    const { audioTaskId, variantIndex = 0 } = req.body; // kie_tasks.id + optional variant index
     
     if (!audioTaskId) {
       return res.status(400).json({ error: 'audioTaskId is required' });
@@ -2069,17 +2451,16 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
       return res.status(401).json({ error: 'NieprawidĹ‚owa autoryzacja Clerk.' });
     }
     
-    // 2. Find or create user and check subscription tier
+    // 2. Find or create user (include subscription_tier for watermark logic)
     let { data: user, error: userError } = await supabase
       .from('users')
       .select('id, subscription_tier')
       .eq('clerk_id', clerk_id)
       .single();
     
-    // If user not found but is admin, create user with pro tier
+    // If user not found but is admin, create user
     if (userError || !user) {
       if (ADMIN_USER_IDS.includes(clerk_id)) {
-        // Create admin user with legend tier
         const { data: newUser, error: createError } = await supabase
           .from('users')
           .insert({
@@ -2102,13 +2483,6 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
       }
     }
     
-    // VIP/Legend tier check (skip for admin users)
-    if (!ADMIN_USER_IDS.includes(clerk_id) && user.subscription_tier !== 'vip' && user.subscription_tier !== 'legend') {
-      return res.status(403).json({ 
-        error: 'Video generation is available only for PRO and Enterprise subscribers. Upgrade your account.' 
-      });
-    }
-    
     // 3. Find audio task (kie_tasks) and ensure it belongs to user and is completed
     const { data: audioTask, error: audioTaskError } = await supabase
       .from('kie_tasks')
@@ -2122,18 +2496,104 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
       return res.status(404).json({ error: 'Completed audio task not found or does not belong to you' });
     }
     
-    // Extract audioId from audio_url or task_id
-    // audioId is the Suno audio ID (e.g., 0ca0deac-8584-457b-9768-577c7c05b7cb)
-    // We can extract from audio_url or use task_id as audioId? Kie expects audioId from their system.
-    // For now, we'll use task_id as audioId (Kie task ID)
-    const audioId = audioTask.task_id;
+    // Check if a video already exists for this audio task (Kie doesn't allow duplicates)
+    const { data: existingVideo } = await supabase
+      .from('video_tasks')
+      .select('id, status, video_url')
+      .eq('audio_task_id', audioTask.id)
+      .eq('user_id', user.id)
+      .eq('status', 'completed')
+      .order('created_at', { ascending: false })
+      .limit(1);
     
-    // 4. Create video task record
+    if (existingVideo && existingVideo.length > 0 && existingVideo[0].video_url) {
+      console.log('[VIDEO] Found existing completed video, reusing:', existingVideo[0].id);
+      return res.json({
+        success: true,
+        existing: true,
+        videoTaskId: existingVideo[0].id,
+        video_url: existingVideo[0].video_url,
+        message: 'Video already generated.'
+      });
+    }
+    
+    // Determine Suno audio ID for Kie video API
+    // Sources (in priority order):
+    //   1. suno_id from kie_track_variants.tags (new tasks via webhook)
+    //   2. base64-decode from musicfile.kie.ai/<base64> URL (existing tasks)
+    //   3. KIE record-info API (calls back to Kie for Suno data)
+    //   4. task_id as last resort fallback
+    let audioId = audioTask.task_id;
+    try {
+      const { data: variants } = await supabase
+        .from('kie_track_variants')
+        .select('tags, stream_audio_url')
+        .eq('task_id', audioTask.id)
+        .eq('variant_index', variantIndex)
+        .limit(1);
+      
+      if (variants && variants.length > 0) {
+        const v = variants[0];
+        
+        // 1. Check tags for suno_id:
+        if (v.tags) {
+          const match = v.tags.match(/suno_id:([a-zA-Z0-9\-]+)/);
+          if (match && match[1]) audioId = match[1];
+        }
+        
+        // 2. Fallback: base64-decode from musicfile.kie.ai URL
+        if (audioId === audioTask.task_id && v.stream_audio_url && v.stream_audio_url.includes('musicfile.kie.ai/')) {
+          try {
+            const b64 = v.stream_audio_url.split('musicfile.kie.ai/').pop().split('?')[0];
+            const decoded = Buffer.from(b64, 'base64').toString('utf8');
+            if (decoded && decoded.length > 20) audioId = decoded;
+          } catch { /* ignore base64 decode errors */ }
+        }
+      }
+    } catch (e) {
+      console.warn('[VIDEO] Error looking up Suno audio ID from DB:', e.message);
+    }
+    
+    // 3. Last resort: call KIE API to get Suno audio ID for variant 0
+    if (audioId === audioTask.task_id) {
+      console.log('[VIDEO] Falling back to KIE record-info API for task:', audioTask.task_id);
+      const sunoId = await video.getSunoAudioId(audioTask.task_id);
+      if (sunoId) audioId = sunoId;
+    }
+    console.log('[VIDEO] Using audioId:', audioId, 'for task:', audioTask.task_id, 'variant:', variantIndex);
+    
+    // Look up variant-specific ID for unique video per variant
+    let variantDbId = audioTask.id; // fallback to kie_tasks.id
+    try {
+      const { data: variantRow } = await supabase
+        .from('kie_track_variants')
+        .select('id')
+        .eq('task_id', audioTask.id)
+        .eq('variant_index', variantIndex)
+        .limit(1);
+      if (variantRow && variantRow.length > 0) variantDbId = variantRow[0].id;
+    } catch { /* use fallback */ }
+    
+    // Check existing video for this specific variant
+    const { data: existingVids } = await supabase
+      .from('video_tasks')
+      .select('id, status, video_url')
+      .eq('audio_task_id', variantDbId)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(1);
+    
+    if (existingVids && existingVids.length > 0 && existingVids[0].status === 'completed' && existingVids[0].video_url) {
+      console.log('[VIDEO] Reusing existing video for variant', variantIndex, ':', existingVids[0].id);
+      return res.json({ success: true, existing: true, video_url: existingVids[0].video_url });
+    }
+    
+    // 4. Create video task record (keyed by variant ID for uniqueness)
     const { data: videoTask, error: videoTaskError } = await supabase
       .from('video_tasks')
       .insert({
         user_id: user.id,
-        audio_task_id: audioTask.id,
+        audio_task_id: variantDbId,
         status: 'pending'
       })
       .select()
@@ -2144,14 +2604,26 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
       return res.status(500).json({ error: 'Nie udaĹ‚o siÄ™ utworzyÄ‡ zadania generacji wideo.' });
     }
     
-    // 5. Call Kie Video API
-    const videoTaskId = await video.generate(audioTask.task_id, audioId, {
-      author: 'mojhit.pl',
-      domainName: 'mojhit.pl',
+    // 5. Determine watermark params based on subscription tier
+    // Free tier → with watermark (mojhit.pl branding)
+    // VIP / Legend → clean video, no watermark
+    const tier = (user.subscription_tier || 'free').toLowerCase();
+    const hasWatermark = tier === 'free' || tier === '' || !tier;
+    const videoOptions = {
       callbackUrl: `${process.env.KIE_CALLBACK_BASE_URL || 'http://localhost:3000'}/api/webhooks/kie/video`
-    });
+    };
+    if (hasWatermark) {
+      videoOptions.author = 'mojhit.pl';
+      videoOptions.domainName = 'mojhit.pl';
+      console.log('[VIDEO] Watermark enabled for tier:', tier);
+    } else {
+      console.log('[VIDEO] Clean video (no watermark) for tier:', tier);
+    }
     
-    // 6. Update video task with video_task_id
+    // 6. Call Kie Video API
+    const videoTaskId = await video.generate(audioTask.task_id, audioId, videoOptions);
+    
+    // 7. Update video task with video_task_id
     await supabase
       .from('video_tasks')
       .update({ video_task_id: videoTaskId })
@@ -2165,6 +2637,52 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
     });
   } catch (error) {
     console.error('Video generate error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Check if a completed video exists for a given audio task
+app.get('/api/video/check', requireAuth(), async (req, res) => {
+  try {
+    let { audio_task_id, variant_index } = req.query;
+    if (!audio_task_id) return res.status(400).json({ error: 'audio_task_id query param required' });
+    
+    const { data: user } = await supabase
+      .from('users')
+      .select('id')
+      .eq('clerk_id', (typeof req.auth === 'function' ? req.auth() : req.auth)?.userId)
+      .single();
+    
+    if (!user) return res.status(401).json({ error: 'Not authenticated' });
+    
+    // If variant_index is provided, look up the specific variant's ID
+    let lookupId = audio_task_id;
+    if (variant_index !== undefined) {
+      const { data: variantRow } = await supabase
+        .from('kie_track_variants')
+        .select('id')
+        .eq('task_id', audio_task_id)
+        .eq('variant_index', parseInt(variant_index))
+        .limit(1);
+      if (variantRow && variantRow.length > 0) lookupId = variantRow[0].id;
+    }
+    
+    const { data: tasks } = await supabase
+      .from('video_tasks')
+      .select('status, video_url')
+      .eq('user_id', user.id)
+      .eq('audio_task_id', lookupId)
+      .eq('status', 'completed')
+      .order('created_at', { ascending: false })
+      .limit(1);
+    
+    if (tasks && tasks.length > 0) {
+      res.json({ status: 'completed', video_url: tasks[0].video_url });
+    } else {
+      res.json({ status: 'none' });
+    }
+  } catch (error) {
+    console.error('Video check error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -3130,9 +3648,146 @@ app.post('/api/tracks/:id/delete', requireAuth(), async (req, res) => {
 // ----------------------------------------
 const { OpenAI } = require('openai');
 
-app.post('/api/chat-composer', requireAuth(), async (req, res) => {
+
+
+// ----------------------------------------
+// TTS Generation
+// ----------------------------------------
+app.post('/api/tts/generate', requireAuth(), async (req, res) => {
   try {
-    const { messages, agent = 'cj_remi', regenerate = false } = req.body;
+    const { text, voice = 'River' } = req.body;
+    if (!text) {
+      return res.status(400).json({ error: 'Text is required' });
+    }
+
+    if (process.env.KIE_API_KEY) {
+      const fetch = require('node-fetch');
+      const baseUrl = process.env.KIE_API_BASE_URL || 'https://api.kie.ai';
+      
+      const payload = {
+        model: 'elevenlabs/text-to-speech-multilingual-v2',
+        input: {
+          text: text,
+          voice: voice,
+          stability: 0.5,
+          similarity_boost: 0.75,
+          style: 0,
+          speed: 1
+        }
+      };
+
+      const resCreate = await fetch(`${baseUrl}/api/v1/jobs/createTask`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.KIE_API_KEY}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const dataCreate = await resCreate.json();
+      if (dataCreate.code !== 200 || !dataCreate.data?.taskId) {
+         throw new Error('Kie.ai createTask failed: ' + JSON.stringify(dataCreate));
+      }
+
+      const taskId = dataCreate.data.taskId;
+      
+      // Poll for completion (up to ~30s)
+      for (let i = 0; i < 15; i++) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        const resPoll = await fetch(`${baseUrl}/api/v1/jobs/recordInfo?taskId=${taskId}`, {
+          headers: { 'Authorization': `Bearer ${process.env.KIE_API_KEY}` }
+        });
+        const dataPoll = await resPoll.json();
+        
+        if (dataPoll?.data?.state === 'success') {
+          try {
+            let resultJson = dataPoll.data.resultJson;
+            if (typeof resultJson === 'string') {
+              resultJson = JSON.parse(resultJson);
+            }
+            if (resultJson.resultUrls && resultJson.resultUrls.length > 0) {
+              return res.json({ audioUrl: resultJson.resultUrls[0] });
+            } else if (resultJson.audioUrl) {
+              return res.json({ audioUrl: resultJson.audioUrl });
+            }
+          } catch (e) {
+            console.error('Failed to parse resultJson:', e);
+          }
+          return res.status(500).json({ error: 'Invalid TTS result format' });
+        }
+        if (dataPoll?.data?.state === 'fail') {
+           throw new Error('Kie.ai TTS task failed: ' + dataPoll.data.failMsg);
+        }
+      }
+      throw new Error('Kie.ai TTS task timed out');
+    } else if (process.env.ELEVENLABS_API_KEY) {
+      const fetch = require('node-fetch');
+      
+      // 1. Fetch available voices to resolve name to ID
+      let voiceId = 'pNInz6obpgDQGcFmaJcg'; // Fallback to Adam if not found
+      try {
+        const voicesRes = await fetch('https://api.elevenlabs.io/v1/voices', {
+          headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY }
+        });
+        if (voicesRes.ok) {
+          const voicesData = await voicesRes.json();
+          const matchedVoice = voicesData.voices.find(v => v.name.toLowerCase() === voice.toLowerCase());
+          if (matchedVoice) {
+            voiceId = matchedVoice.voice_id;
+          }
+        }
+      } catch (e) {
+        console.error('Failed to resolve ElevenLabs voice ID:', e);
+      }
+
+      // 2. Generate TTS
+      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'audio/mpeg',
+          'xi-api-key': process.env.ELEVENLABS_API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text: text,
+          model_id: "eleven_multilingual_v2"
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('ElevenLabs API error: ' + await response.text());
+      }
+      
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      return res.json({ audioUrl: `data:audio/mpeg;base64,${buffer.toString('base64')}` });
+    } else if (process.env.OPENAI_API_KEY) {
+      const { OpenAI } = require('openai');
+      const openaiTTS = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const validOpenAIVoices = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+      const mappedVoice = validOpenAIVoices.includes(voice.toLowerCase()) ? voice.toLowerCase() : 'nova';
+      
+      const mp3 = await openaiTTS.audio.speech.create({
+        model: "tts-1",
+        voice: mappedVoice,
+        input: text,
+      });
+      const arrayBuffer = await mp3.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      return res.json({ audioUrl: `data:audio/mpeg;base64,${buffer.toString('base64')}` });
+    } else {
+      return res.status(500).json({ error: 'No TTS provider configured. Add KIE_API_KEY, ELEVENLABS_API_KEY, or OPENAI_API_KEY.' });
+    }
+  } catch (err) {
+    console.error('[TTS ERROR]', err);
+    return res.status(500).json({ error: 'TTS generation failed', details: err.message });
+  }
+});
+
+app.post('/api/chat-composer', async (req, res) => {
+  try {
+    const { messages, agent = 'cj_remi', regenerate = false, giftTemplate } = req.body;
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: 'Messages array is required' });
     }
@@ -3179,12 +3834,24 @@ app.post('/api/chat-composer', requireAuth(), async (req, res) => {
         systemPrompt = fallback.systemPrompt;
         modelSlug = fallback.modelSlug;
       } catch (e) {
-        systemPrompt = 'JesteĹ› DJ Markiem, asystentem AI. Generujesz piosenki. (Awaryjny fallback)';
+        systemPrompt = 'Jesteś DJ Markiem, asystentem AI. Generujesz piosenki. (Awaryjny fallback)';
         modelSlug = 'google/gemini-2.5-flash';
       }
     } else {
       systemPrompt = producer.system_prompt;
       modelSlug = producer.model_name || 'google/gemini-2.5-flash';
+    }
+
+    // Inject giftTemplate context if provided
+    if (giftTemplate) {
+      systemPrompt += `\n\n[TRYB UPOMINKU]
+Użytkownik wybrał szablon utworu: "${giftTemplate.title}".
+Twoim zadaniem jest zebranie informacji (np. imię, hobby) i ZWROT GOTOWEGO TEKSTU w blokach.
+Użyj dokładnie tych tagów: ---TAGS--- ${giftTemplate.style_tags.join(', ')} ---END_TAGS---.
+Użyj tego szkieletu tekstu i podmień zmienne (w klamrach) w miarę możliwości. Jeśli użytkownik podał mało danych, wymyśl resztę kreatywnie. Szkielet:
+"""
+${giftTemplate.base_lyrics}
+"""`;
     }
 
     // If regenerate flag is set, add instruction to generate alternative variant
@@ -3206,7 +3873,7 @@ app.post('/api/chat-composer', requireAuth(), async (req, res) => {
     const response = await openai.chat.completions.create({
       model: modelSlug,
       messages: [{ role: 'system', content: systemPrompt }, ...finalMessages],
-      max_tokens: 1500
+      max_tokens: 4000
     });
 
     // --- OCHRONA PRAW AUTORSKICH (warstwa serwerowa) ---
@@ -3226,7 +3893,7 @@ app.post('/api/chat-composer', requireAuth(), async (req, res) => {
     res.json(reply);
   } catch (error) {
     console.error('[CHAT COMPOSER] Error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message, stack: error.stack });
   }
 });
 
@@ -3499,14 +4166,15 @@ app.post('/api/webhooks/kie/video', express.json(), async (req, res) => {
   try {
     const { code, msg, data } = req.body;
 
-    if (code !== 200) {
-      console.error('Kie video callback error:', msg);
+    // Kie returns code 0 for success in callbacks (not 200 like in regular API responses)
+    if (code !== 0 && code !== 200) {
+      console.error('Kie video callback error: code=' + code + ' msg=' + msg);
       // Update video task as failed
       await supabase
         .from('video_tasks')
         .update({
           status: 'failed',
-          error_message: msg,
+          error_message: msg || 'Unknown error (code: ' + code + ')',
           updated_at: new Date()
         })
         .eq('video_task_id', data?.task_id);
@@ -3660,10 +4328,10 @@ app.post('/api/referrals/claim', requireAuth(), async (req, res) => {
     if (updateErr) throw updateErr;
 
     const { data: referrerUser } = await supabase.from('users').select('notes').eq('id', referrer.id).single();
-    await supabase.from('users').update({ notes: (referrerUser.notes || 0) + 5 }).eq('id', referrer.id);
+    await supabase.from('users').update({ notes: (referrerUser.notes || 0) + 10 }).eq('id', referrer.id);
 
     const { data: refereeUser } = await supabase.from('users').select('notes').eq('id', currentUser.id).single();
-    await supabase.from('users').update({ notes: (refereeUser.notes || 0) + 5 }).eq('id', currentUser.id);
+    await supabase.from('users').update({ notes: (refereeUser.notes || 0) + 10 }).eq('id', currentUser.id);
 
     await supabase.from('referral_rewards').insert({
       referrer_id: referrer.id,
@@ -3679,8 +4347,103 @@ app.post('/api/referrals/claim', requireAuth(), async (req, res) => {
 });
 
 // ----------------------------------------
+// Affiliate Application Endpoints
+// ----------------------------------------
+app.post('/api/affiliates/apply', requireAuth(), async (req, res) => {
+  try {
+    const { website, plan, model } = req.body;
+    
+    // Create VIP application
+    const { error } = await supabase
+      .from('vip_applications')
+      .insert({
+        user_id: req.user.id,
+        website,
+        plan,
+        model,
+        status: 'pending'
+      });
+
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error submitting VIP application:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ----------------------------------------
 // Admin Affiliate Endpoints
 // ----------------------------------------
+
+app.get('/api/admin/vip_applications', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('vip_applications')
+      .select(`
+        *,
+        users (email)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching VIP applications:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/admin/vip_applications/:id/:action', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { id, action } = req.params; // action can be 'approve' or 'reject'
+    
+    const { data: application, error: appError } = await supabase
+      .from('vip_applications')
+      .select('*')
+      .eq('id', id)
+      .single();
+      
+    if (appError) throw appError;
+
+    if (action === 'approve') {
+      // 1. Update user to be an affiliate with chosen model
+      const { error: userErr } = await supabase
+        .from('users')
+        .update({ 
+          is_affiliate: true, 
+          affiliate_model: application.model 
+        })
+        .eq('id', application.user_id);
+        
+      if (userErr) throw userErr;
+      
+      // 2. Mark application as approved
+      const { error: updErr } = await supabase
+        .from('vip_applications')
+        .update({ status: 'approved' })
+        .eq('id', id);
+        
+      if (updErr) throw updErr;
+      
+    } else if (action === 'reject') {
+      // 1. Mark application as rejected
+      const { error: updErr } = await supabase
+        .from('vip_applications')
+        .update({ status: 'rejected' })
+        .eq('id', id);
+        
+      if (updErr) throw updErr;
+    } else {
+      return res.status(400).json({ error: 'Invalid action' });
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(`Error processing VIP application (${req.params.action}):`, error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.get('/api/admin/affiliates/users', requireAuth(), requireAdmin, async (req, res) => {
   try {
@@ -3908,7 +4671,7 @@ app.put('/api/admin/settings/site', requireAdmin, async (req, res) => {
 
 app.get('/api/admin/promo-codes', async (req, res) => {
   try {
-    const promotionCodes = await stripe.promotionCodes.list({ limit: 100, expand: ['data.coupon'] });
+    const promotionCodes = await stripe.promotionCodes.list({ limit: 100, expand: ['data.promotion.coupon'] });
     res.json({ promoCodes: promotionCodes.data });
   } catch (err) {
     console.error('Error fetching promo codes:', err);
@@ -3979,7 +4742,7 @@ app.post('/api/promo/validate', async (req, res) => {
     const promotionCodes = await stripe.promotionCodes.list({
       code: code.toUpperCase(),
       active: true,
-      expand: ['data.coupon']
+      expand: ['data.promotion.coupon']
     });
     
     if (promotionCodes.data.length === 0) {
@@ -3987,7 +4750,11 @@ app.post('/api/promo/validate', async (req, res) => {
     }
     
     const promo = promotionCodes.data[0];
-    const coupon = promo.coupon;
+    const coupon = promo.promotion?.coupon;
+    
+    if (!coupon) {
+      return res.status(400).json({ error: 'Nieprawidłowa struktura kodu promocyjnego.' });
+    }
     
     res.json({
       valid: true,
@@ -3998,6 +4765,187 @@ app.post('/api/promo/validate', async (req, res) => {
     });
   } catch (err) {
     console.error('Error validating promo code:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ----------------------------------------
+// Contests API
+// ----------------------------------------
+
+app.get('/api/admin/contests', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('contests')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    console.error('Error fetching contests:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/admin/contests', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { title, description, image_url, start_date, end_date, status } = req.body;
+    const { data, error } = await supabase
+      .from('contests')
+      .insert([{ title, description, image_url, start_date, end_date, status }])
+      .select()
+      .single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error('Error creating contest:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/admin/contests/:id', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { title, description, image_url, start_date, end_date, status } = req.body;
+    const { data, error } = await supabase
+      .from('contests')
+      .update({ title, description, image_url, start_date, end_date, status })
+      .eq('id', req.params.id)
+      .select()
+      .single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error('Error updating contest:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/admin/contests/:id', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { error } = await supabase
+      .from('contests')
+      .delete()
+      .eq('id', req.params.id);
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error deleting contest:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/contests', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('contests')
+      .select('*')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ----------------------------------------
+// Reviews API
+// ----------------------------------------
+
+app.get('/api/admin/reviews', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    console.error('Error fetching reviews:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/admin/reviews', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { author_name, rating, content, is_published, avatar_url } = req.body;
+    const { data, error } = await supabase
+      .from('reviews')
+      .insert([{ author_name, rating, content, is_published, avatar_url }])
+      .select()
+      .single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/admin/reviews/:id', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { author_name, rating, content, is_published, avatar_url } = req.body;
+    const { data, error } = await supabase
+      .from('reviews')
+      .update({ author_name, rating, content, is_published, avatar_url })
+      .eq('id', req.params.id)
+      .select()
+      .single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/admin/reviews/:id', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { error } = await supabase
+      .from('reviews')
+      .delete()
+      .eq('id', req.params.id);
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/reviews', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('*')
+      .eq('is_published', true)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/reviews', requireAuth(), async (req, res) => {
+  try {
+    const { rating, content, author_name, avatar_url } = req.body;
+    const user_id = req.auth.userId;
+
+    const { data, error } = await supabase
+      .from('reviews')
+      .insert([{ 
+        author_name, 
+        rating, 
+        content, 
+        avatar_url, 
+        user_id, 
+        is_published: false 
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error('Error posting user review:', err);
     res.status(500).json({ error: err.message });
   }
 });

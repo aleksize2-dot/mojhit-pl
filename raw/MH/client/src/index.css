@@ -69,6 +69,16 @@ body {
   color: var(--color-on-surface);
   -webkit-font-smoothing: antialiased;
   min-height: max(884px, 100dvh);
+  overflow-x: hidden;
+}
+
+.full-bleed {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }
 
 /* ═══ Light Theme ═══ */

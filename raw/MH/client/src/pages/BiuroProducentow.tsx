@@ -22,7 +22,8 @@ export function BiuroProducentow() {
 
       if (prodRes.ok) {
         const pData = await prodRes.json();
-        setProducers(pData);
+        const fetchTime = Date.now();
+        setProducers(pData.map((p: any) => ({...p, img: p.img ? `${p.img}${p.img.includes('?') ? '&' : '?'}v=${fetchTime}` : p.img})));
       }
       if (userProdRes.ok) {
         const upData = await userProdRes.json();
