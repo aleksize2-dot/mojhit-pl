@@ -663,7 +663,7 @@ app.post('/api/test-generate-audio', async (req, res) => {
 
       if (insertError || !newUser) {
         console.error('Failed to create admin user:', insertError);
-        return res.status(500).json({ error: 'Nie udaĹ‚o siÄ™ utworzyÄ‡ uĹĽytkownika.' });
+        return res.status(500).json({ error: 'Nie udało się utworzyć użytkownika.' });
       }
       user = newUser;
     }
@@ -685,7 +685,7 @@ app.post('/api/test-generate-audio', async (req, res) => {
 
     if (taskError || !task) {
       console.error('Failed to create kie_task:', taskError);
-      return res.status(500).json({ error: 'Nie udaĹ‚o siÄ™ utworzyÄ‡ zadania generacji.' });
+      return res.status(500).json({ error: 'Nie udało się utworzyć zadania generacji.' });
     }
 
     // 4. Call Kie API
@@ -764,7 +764,7 @@ app.post('/api/test-generate-video', async (req, res) => {
       
       if (insertError || !newUser) {
         console.error('Failed to create admin user:', insertError);
-        return res.status(500).json({ error: 'Nie udaĹ‚o siÄ™ utworzyÄ‡ uĹĽytkownika administracyjnego.' });
+        return res.status(500).json({ error: 'Nie udało się utworzyć użytkownika administracyjnego.' });
       }
       user = newUser;
     }
@@ -794,7 +794,7 @@ app.post('/api/test-generate-video', async (req, res) => {
     
     if (videoTaskError || !videoTask) {
       console.error('Failed to create video_task:', videoTaskError);
-      return res.status(500).json({ error: 'Nie udaĹ‚o siÄ™ utworzyÄ‡ zadania generacji wideo.' });
+      return res.status(500).json({ error: 'Nie udało się utworzyć zadania generacji wideo.' });
     }
     
     // 4. Determine audioId (Suno audio ID)
@@ -1864,7 +1864,7 @@ app.post('/api/suno/generate', async (req, res) => {
 
     if (taskError || !task) {
       console.error('Failed to create kie_task:', taskError);
-      return res.status(500).json({ error: 'Nie udaĹ‚o siÄ™ utworzyÄ‡ zadania generacji.' });
+      return res.status(500).json({ error: 'Nie udało się utworzyć zadania generacji.' });
     }
 
     // 5. Đ’Ń‹Đ·Đ˛Đ°Ń‚ŃŚ API Ń ŃŃ‡ĐµŃ‚ĐľĐĽ fallback
@@ -2475,7 +2475,7 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
         
         if (createError || !newUser) {
           console.error('Failed to create admin user:', createError);
-          return res.status(500).json({ error: 'Nie udaĹ‚o siÄ™ utworzyÄ‡ uĹĽytkownika administracyjnego.' });
+          return res.status(500).json({ error: 'Nie udało się utworzyć użytkownika administracyjnego.' });
         }
         user = newUser;
       } else {
@@ -2601,7 +2601,7 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
     
     if (videoTaskError || !videoTask) {
       console.error('Failed to create video_task:', videoTaskError);
-      return res.status(500).json({ error: 'Nie udaĹ‚o siÄ™ utworzyÄ‡ zadania generacji wideo.' });
+      return res.status(500).json({ error: 'Nie udało się utworzyć zadania generacji wideo.' });
     }
     
     // 5. Determine watermark params based on subscription tier
