@@ -34,14 +34,22 @@
 - [[dj-marek-copyright|DJ Marek Copyright & Ownership]] - AI composer rights and user ownership
 - [[regulamin|Regulamin (Terms of Service)]] - Legal terms for mojhit.pl
 - [[dj-marek-ai-composer|DJ Marek AI Composer Architecture]] - Technical architecture of the AI composer chat and backend
-- [[video-generation|Video Generation (PRO Tier)]] - API, database schema, frontend integration for PRO tier video generation
+- [[video-generation|Video Generation (All Tiers)]] - API, database schema, frontend integration for video generation (all tiers, watermark for free)
+- [[gift-funnel-architecture|Gift Funnel "Podaruj Muzykę"]] - Template-based gift track flow: ad → landing → chat → email → upsell
 - [[mojhit-referral|Referral & Affiliate Program]] - Polecaj.tsx, AffiliateManager.tsx, reward mechanics
 - [[mojhit-prompt-editing|Prompt Regeneration & Editing]] - "Nowa wersja" / "Edytuj" buttons in performer chat
 - [[mojhit-email-service|Email Notification Service]] - nodemailer template for track-ready notifications
 
+### 🚀 Future Projects
+- [[project-5|Project 5 — Telegram Farm 2.0]] — 5 уникальных механик (Prediction Market, Geo-Mining, AI Arena, Creator Strike, Skill-to-Earn). Prediction Market 🥇. Отложен до запуска mojhit.pl.
+
+### 🔍 SEO & GEO
+- [[mojhit-seo-geo-strategy|SEO/GEO Strategy for mojhit.pl]] — Full strategy (keywords, technical, GEO, content calendar, competitive analysis) for Polish market
+
 ### ⚙️ System & Infrastructure
-- [[system-resilience|System Resilience & Limits]] - Fallback models, Gemini & DeepSeek API strategy
+- [[system-resilience|System Resilience & Limits]] - Fallback models, Gemini & DeepSeek API strategy, Agentmemory
 - [[memory-architecture|Memory Architecture]] - LLM Wiki / Karpathy‑style setup details
+- [[social-media-automation|Social Media Automation]] - CloakBrowser + Composio for Facebook/TikTok automation
 - [[karpathy-llm-knowledge-bases|Karpathy's LLM Knowledge Bases]] - Core philosophy & validation of our approach
 - [[claude-strengths|Claude Strengths & Project Concepts]] - Empathy, nuanced prose, AI psychologist/writer applications
 - [[telegram-bot-guidelines|Telegram Bot Guidelines]] - Message length limits, interactive buttons, user onboarding patterns
@@ -51,3 +59,8 @@
 ---
 *Note to self: Keep this file small. It is an index, not a database. Actual content goes into `memory/wiki/` files.*
 *Obsidian Rule: ALWAYS use `[[wikilinks]]` to connect concepts so the Graph View remains intact.*
+### ?? Producers v2 (2026-05-15)
+- **9 producers live:** Kosa, VENA, CJ Remi, MELO MC, La Luz, 2ImPULS, SOLANA, POPIӣ, BLIXX
+- All on FREE tier for launch � phasing to premium after data analysis
+- See [[mojhit-monetization-2026]] for full launch strategy
+- See [[mojhit-agents]] for producer details
