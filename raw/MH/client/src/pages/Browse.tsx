@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@clerk/clerk-react';
 import { type Track, TrackCard } from '../components/RecentTracks';
-import { Helmet } from 'react-helmet-async';
+import { SEO } from '../components/SEO';
 
 export function Browse() {
   const [tracks, setTracks] = useState<Track[]>([]);
@@ -86,45 +86,15 @@ export function Browse() {
 
   return (
     <>
-      <Helmet>
-        <title>{sortMode === 'top' ? 'Popularne Hity AI 2026' : 'Ostatnie Hity AI'} | mojhit.pl</title>
-        <meta name="description" content={sortMode === 'top' 
-          ? 'Najpopularniejsze utwory wygenerowane przez sztuczną inteligencję w 2026 roku. Odkryj najlepsze AI hity na mojhit.pl!' 
-          : 'Odkrywaj najnowsze utwory wygenerowane przez AI. Słuchaj i oceniaj hity stworzone przez społeczność mojhit.pl.'} />
-        <meta name="keywords" content="muzyka AI, wygenerowane piosenki, AI hits, darmowa muzyka, generator muzyki AI, sztuczna inteligencja muzyka, polskie hity AI" />
-        <meta name="robots" content="index, follow" />
-        
-        {/* Open Graph */}
-        <meta property="og:title" content={sortMode === 'top' ? 'Popularne Hity AI 2026' : 'Ostatnie Hity AI'} />
-        <meta property="og:description" content="Odkrywaj utwory wygenerowane przez sztuczną inteligencję. Najlepsza darmowa muzyka AI w Polsce." />
-        <meta property="og:image" content="/og-browse.png" />
-        <meta property="og:url" content="/browse" />
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="mojhit.pl" />
-        
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={sortMode === 'top' ? 'Popularne Hity AI 2026' : 'Ostatnie Hity AI'} />
-        
-        {/* Canonical */}
-        <link rel="canonical" href="/browse" />
-        
-        {/* Schema.org for collection page */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            "name": sortMode === 'top' ? "Popularne Hity AI" : "Ostatnie Hity AI",
-            "description": "Kolekcja utworów wygenerowanych przez AI",
-            "url": "/browse",
-            "inLanguage": "pl",
-            "publisher": {
-              "@type": "Organization",
-              "name": "mojhit.pl"
-            }
-          })}
-        </script>
-      </Helmet>
+      <SEO
+        title={sortMode === 'top' ? 'Popularne Hity AI 2026' : 'Ostatnie Hity AI'}
+        description={sortMode === 'top' 
+          ? 'Najpopularniejsze utwory wygenerowane przez AI w 2026 roku. Odkryj najlepsze hity na mojhit.pl!' 
+          : 'Odkrywaj najnowsze utwory wygenerowane przez AI. Słuchaj i oceniaj hity stworzone przez społeczność mojhit.pl.'}
+        canonical="/browse"
+        keywords="muzyka AI, wygenerowane piosenki, AI hits, darmowa muzyka, generator muzyki AI, polskie hity AI"
+        ogImage="/og-browse.png"
+      />
 
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-6">

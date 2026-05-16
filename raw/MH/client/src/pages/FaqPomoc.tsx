@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { SEO, schemas } from '../components/SEO';
 
 const faqData = [
   {
@@ -46,37 +46,13 @@ export function FaqPomoc() {
 
   return (
     <>
-      <Helmet>
-        <title>FAQ & Pomoc - Najczęściej Zadawane Pytania | mojhit.pl</title>
-        <meta name="description" content="Masz pytania? Odpowiadamy na wszystko! Jak stworzyć piosenkę AI? Ile kosztuje generacja? Jak działają monety i noty? Sprawdź FAQ." />
-        <meta name="keywords" content="FAQ, pomoc, pytania, generator muzyki AI, jak stworzyć piosenkę, monety, noty, Giełda Talentów, kurs" />
-        <meta name="robots" content="index, follow" />
-        
-        {/* Open Graph */}
-        <meta property="og:title" content="FAQ & Pomoc - mojhit.pl" />
-        <meta property="og:description" content="Najczęściej zadawane pytania o generatorze muzyki AI" />
-        <meta property="og:url" content="/faq-pomoc" />
-        <meta property="og:type" content="website" />
-        
-        {/* Canonical */}
-        <link rel="canonical" href="/faq-pomoc" />
-        
-        {/* FAQ Schema for Google Rich Results */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": faqData.map(faq => ({
-              "@type": "Question",
-              "name": faq.question,
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": faq.answer
-              }
-            }))
-          })}
-        </script>
-      </Helmet>
+      <SEO
+        title="FAQ i Pomoc"
+        description="Masz pytania? Odpowiadamy! Jak stworzyć piosenkę AI? Ile kosztuje generacja? Jak działają monety i noty? Sprawdź FAQ mojhit.pl."
+        canonical="/faq-pomoc"
+        keywords="FAQ, pomoc, pytania, generator muzyki AI, jak stworzyć piosenkę, monety, noty, producenci AI, kurs"
+        schema={schemas.faq(faqData)}
+      />
 
       <div className="max-w-3xl mx-auto py-6 space-y-6">
         <div className="text-center mb-10">

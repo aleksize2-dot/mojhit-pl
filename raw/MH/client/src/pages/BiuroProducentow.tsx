@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
-import { Helmet } from 'react-helmet-async';
+import { SEO, schemas } from '../components/SEO';
 
 export function BiuroProducentow() {
   const { isLoaded, isSignedIn } = useUser();
@@ -11,6 +11,7 @@ export function BiuroProducentow() {
   const [userPlan, setUserPlan] = useState<string>('Free');
   const [loading, setLoading] = useState(true);
   const [buyingId, setBuyingId] = useState<string | null>(null);
+  const [infoProducer, setInfoProducer] = useState<any | null>(null);
 
   const fetchData = async () => {
     try {
@@ -114,45 +115,14 @@ export function BiuroProducentow() {
 
   return (
     <>
-      <Helmet>
-        <title>Giełda Talentów AI - Najlepsi Producenci Muzyki Sztucznej Inteligencji | mojhit.pl</title>
-        <meta name="description" content="Odkryj naszych ekskluzywnych producentów AI! Wybierz swojego dream producera - od Hip-Hoppo po Discolo. Stwórz profesjonalną muzykę z AI w sekundy." />
-        <meta name="keywords" content="giełda talentów, producenci AI, AI producenci, sztuczna inteligencja muzyka, generator muzyki AI, wykonawcy AI, Hip-Hop AI, Disco Polo AI, producent muzyczny AI, mojhit" />
-        <meta name="robots" content="index, follow" />
-        <meta name="author" content="mojhit.pl" />
-        
-        {/* Open Graph */}
-        <meta property="og:title" content="Giełda Talentów AI - Wybierz Swojego Producenta" />
-        <meta property="og:description" content="Ekskluzywni producenci AI do Twojej muzyki. Wybierz najlepszego producenta i stwórz swój hit!" />
-        <meta property="og:image" content="/og-producenci.png" />
-        <meta property="og:url" content="/biuro-producentow" />
-        <meta property="og:type" content="website" />
-        
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Giełda Talentów AI" />
-        
-        {/* Canonical */}
-        <link rel="canonical" href="/biuro-producentow" />
-        
-        {/* Schema.org for talent/experts */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            "name": "Giełda Talentów AI",
-            "description": "Nasi ekskluzywni producenci muzyki AI",
-            "url": "/biuro-producentow",
-            "inLanguage": "pl",
-            "numberOfItems": producers.length,
-            "itemListOrder": "https://schema.org/ItemListOrderUnordered",
-            "publisher": {
-              "@type": "Organization",
-              "name": "mojhit.pl"
-            }
-          })}
-        </script>
-      </Helmet>
+      <SEO
+        title="Biuro Producentów — Producenci AI"
+        description="Poznaj polskich producentów AI mojhit.pl: Kosa, CJ Remi, MELO MC, VENA, La Luz i inni. Każdy z unikalnym stylem — od Hip-Hopu po Disco Polo. Wybierz producenta i stwórz hit!"
+        canonical="/biuro-producentow"
+        keywords="producenci AI, polski producent muzyki AI, giełda talentów AI, wykonawcy AI, Hip-Hop AI, Disco Polo AI, generator muzyki AI"
+        ogImage="/og-producenci.png"
+        schema={schemas.producers}
+      />
 
       <div className="p-8 md:p-12 bg-surface-container-lowest rounded-3xl border border-outline-variant/20 max-w-6xl mx-auto my-10 shadow-xl relative overflow-hidden">
       
@@ -210,7 +180,6 @@ export function BiuroProducentow() {
                       {p.tier === 'legend' && <div className="mt-2 inline-block bg-primary text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm border border-white/10 uppercase">LEGEND</div>}
                       <p className={`text-xs font-bold uppercase tracking-widest mt-1 ${theme.colorText || 'text-primary'}`}>{p.badge}</p>
                     </div>
-                    <p className="text-sm text-on-surface-variant/80 italic font-body max-w-xs min-h-[60px] pt-1">"{p.init_msg}"</p>
                     
                     <div className="mt-auto pt-4 w-full">
                       {isUnlocked ? (
@@ -235,14 +204,76 @@ export function BiuroProducentow() {
                           )}
                         </button>
                       )}
+                      <button 
+                        onClick={() => setInfoProducer(p)}
+                        className="w-full mt-3 py-2.5 rounded-xl font-bold text-sm bg-transparent border border-outline-variant/30 text-on-surface hover:bg-surface-variant/50 transition-all flex items-center justify-center gap-2"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">info</span>
+                        Profil i Historia
+                      </button>
                     </div>
                  </div>
                );
              })}
           </div>
         )}
-</div>
       </div>
+      </div>
+
+      {/* Info Modal */}
+      {infoProducer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-surface-container rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl border border-outline-variant/20 relative overflow-hidden flex flex-col max-h-[90vh]">
+            <button 
+              onClick={() => setInfoProducer(null)}
+              className="absolute top-4 right-4 w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center hover:bg-surface-bright transition-colors text-on-surface z-10"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+            
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-20 h-20 rounded-full border-4 shadow-inner overflow-hidden flex-shrink-0 border-surface-container-lowest">
+                <img src={infoProducer.img} alt={infoProducer.name} className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black headline-font text-on-surface">{infoProducer.name}</h2>
+                <p className="text-primary font-bold text-xs uppercase tracking-widest">{infoProducer.badge}</p>
+              </div>
+            </div>
+
+            <div className="overflow-y-auto pr-2 custom-scrollbar flex-1">
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-on-surface mb-2 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[20px]">history_edu</span>
+                  Historia
+                </h3>
+                <p className="text-on-surface-variant font-body leading-relaxed text-sm whitespace-pre-wrap">
+                  {infoProducer.description || infoProducer.history_desc || "Oto miejsce na historię wykonawcy. Możesz dodać ją w panelu lub bazie danych (kolumna 'description' lub 'history_desc')."}
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-on-surface mb-2 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-tertiary text-[20px]">bolt</span>
+                  W czym jest silny?
+                </h3>
+                <p className="text-on-surface-variant font-body leading-relaxed text-sm whitespace-pre-wrap">
+                  {infoProducer.strengths || "Tutaj opiszesz jego mocne strony (dodaj kolumnę 'strengths' w bazie). Na przykład: Świetny w tworzeniu mocnych refrenów, idealny do dynamicznych utworów disco."}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-outline-variant/20">
+              <button 
+                onClick={() => setInfoProducer(null)}
+                className="w-full py-3 rounded-xl bg-surface-variant hover:bg-surface-bright text-on-surface font-bold transition-all"
+              >
+                Zamknij
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

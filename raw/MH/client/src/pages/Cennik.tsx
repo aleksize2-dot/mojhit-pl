@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
+import { SEO, schemas } from '../components/SEO';
 
 const HitIcon = () => (
   <span className="material-symbols-outlined text-primary" style={{ fontSize: '1em', verticalAlign: 'middle' }}>stars</span>
@@ -246,6 +247,14 @@ export function Cennik() {
   };
 
   return (
+    <>
+      <SEO
+        title="Cennik — Plany subskrypcji"
+        description="Sprawdź plany mojhit.pl: Free, Basic, VIP i Legend. Twórz muzykę AI z polskimi producentami. Monety, nuty, personalizowane piosenki. BLIK, Stripe."
+        canonical="/cennik"
+        keywords="cennik generator muzyki AI, plany subskrypcji, monety AI muzyka, kup monety, generator piosenek cena"
+        schema={schemas.cennik}
+      />
     <div className="p-4 md:p-10 max-w-6xl mx-auto my-6 space-y-12">
 
       {/* Promo Banner */}
@@ -563,5 +572,6 @@ export function Cennik() {
       {/* Packages omitted here... Free plan section removed */}
 
     </div>
+    </>
   );
 }
