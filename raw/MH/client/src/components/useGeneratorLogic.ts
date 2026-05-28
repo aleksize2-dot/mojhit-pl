@@ -54,6 +54,8 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
   const [showGuestLimitModal, setShowGuestLimitModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [generationError, setGenerationError] = useState<string | null>(null);
+  const [videoRenderStatus, setVideoRenderStatus] = useState<'rendering' | 'ready' | null>(null);
+  const videoCheckTaskIdRef = useRef<string | null>(null);
 
   // ── Computed ──
   const activeProducer = producers.find(p => p.id === activeAgent) || producers[0];
@@ -94,7 +96,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
           if (saved) {
             try {
               firedList = JSON.parse(saved);
-            } catch (e) {}
+            } catch (e) { }
           }
 
           // De-duplicate data by ID
@@ -151,7 +153,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
               colorBg10: theme.colorBg10 || 'bg-primary/10',
               colorBg5: theme.colorBg5 || 'bg-primary/5',
               colorBorder20: theme.colorBorder20 || 'border-primary/20',
-              initMsg: found.init_msg || 'Cześć! O czym robimy hit?',
+              initMsg: (() => { const raw = found.init_msg || 'Cześć! O czym robimy hit?'; return raw.includes('|||') ? raw.split('|||').map((s: string) => s.trim()) : [raw.trim()]; })(),
               headerTitle: found.header_title || found.name,
               headerStatus: found.header_status || 'Gotowy do pracy',
               typingMsg:
@@ -202,7 +204,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
   // 2. Set initial message when active producer changes
   useEffect(() => {
     if (activeProducer && messages.length === 0) {
-      setMessages([{ role: 'assistant', content: activeProducer.initMsg }]);
+      const greetings = activeProducer.initMsg; const greeting = Array.isArray(greetings) ? greetings[Math.floor(Math.random() * greetings.length)] : greetings; setMessages([{ role: 'assistant', content: greeting }]);
     }
   }, [activeProducer]);
 
@@ -293,6 +295,38 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
     return () => document.removeEventListener('mousedown', handler);
   }, [isProducerPanelOpen]);
 
+  // 8. Poll video rendering status after audio generation succeeds
+  useEffect(() => {
+    if (videoRenderStatus !== 'rendering' || !videoCheckTaskIdRef.current) return;
+    let cancelled = false;
+    let attempts = 0;
+    const maxAttempts = 60;
+
+    const poll = async () => {
+      while (!cancelled && attempts < maxAttempts) {
+        await new Promise(r => setTimeout(r, 5000));
+        if (cancelled) break;
+        attempts++;
+        try {
+          const [r0, r1] = await Promise.all([
+            fetch(`/api/video/check?audio_task_id=${videoCheckTaskIdRef.current}&variant_index=0`, { credentials: 'include' }).then(r => r.json()).catch(() => ({ status: 'none' })),
+            fetch(`/api/video/check?audio_task_id=${videoCheckTaskIdRef.current}&variant_index=1`, { credentials: 'include' }).then(r => r.json()).catch(() => ({ status: 'none' })),
+          ]);
+          const v0Done = r0.status === 'completed' && r0.video_url;
+          const v1Done = r1.status === 'completed' && r1.video_url;
+          if (v0Done || v1Done) {
+            if (!cancelled) setVideoRenderStatus('ready');
+            break;
+          }
+        } catch {
+          // ignore polling errors
+        }
+      }
+    };
+    poll();
+    return () => { cancelled = true; };
+  }, [videoRenderStatus]);
+
   // ═══════════════════════════════════════════
   //  Handlers
   // ═══════════════════════════════════════════
@@ -300,7 +334,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
   const handleProducerSelect = useCallback((p: any) => {
     setActiveAgent(p.id);
     localStorage.setItem('active_agent', p.id);
-    setMessages([{ role: 'assistant', content: p.initMsg }]);
+    const greetings = p.initMsg; const greeting = Array.isArray(greetings) ? greetings[Math.floor(Math.random() * greetings.length)] : greetings; setMessages([{ role: 'assistant', content: greeting }]);
     setFinalAiPrompt(null);
     setChatInput('');
     // Scroll down to chat area only on mobile
@@ -346,7 +380,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
       if ((window as any).globalAudio) {
         try {
           (window as any).globalAudio.pause();
-        } catch (e) {}
+        } catch (e) { }
       }
     }
     setIsVoiceResponseEnabled(prev => !prev);
@@ -501,7 +535,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
                 if ((window as any).globalAudio) {
                   try {
                     (window as any).globalAudio.pause();
-                  } catch (e) {}
+                  } catch (e) { }
                 }
                 const audio = new Audio(ttsData.audioUrl);
                 (window as any).globalAudio = audio;
@@ -533,7 +567,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
               if ((window as any).globalAudio) {
                 try {
                   (window as any).globalAudio.pause();
-                } catch (e) {}
+                } catch (e) { }
               }
               const audio = new Audio(ttsData.audioUrl);
               (window as any).globalAudio = audio;
@@ -710,18 +744,18 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
           setIsLoading(false);
           return;
         }
-        
+
         // Handle insufficient funds nicely
         if (sunoRes.status === 402 || sunoData.error?.toLowerCase().includes('niewystarczaj')) {
-           if (currencyType === 'coins') {
-             throw new Error('Niewystarczająca ilość Hitów! Zmień metodę płatności na noty, BLIK lub doładuj konto.');
-           } else {
-             throw new Error('Niewystarczająca ilość not! Zmień metodę płatności na Hity (Gwiazdki) lub doładuj konto.');
-           }
+          if (currencyType === 'coins') {
+            throw new Error('Niewystarczająca ilość Hitów! Zmień metodę płatności na noty, BLIK lub doładuj konto.');
+          } else {
+            throw new Error('Niewystarczająca ilość not! Zmień metodę płatności na Hity (Gwiazdki) lub doładuj konto.');
+          }
         }
 
         throw new Error(
-          sunoData.error || 'Błąd API Kie.ai'
+          sunoData.message || sunoData.error || 'Błąd API Kie.ai'
         );
       }
       if (!sunoData.taskId)
@@ -730,7 +764,6 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
       // ──────────────────────────────────────────────────────────
       // ✅ SUCCESSFUL START: Hide prompt panel & send chat message
       // ──────────────────────────────────────────────────────────
-      const promptLyricsToGenerate = finalAiPrompt.lyrics;
       setFinalAiPrompt(null);
       setTitle('');
 
@@ -738,7 +771,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
         ...prev,
         {
           role: 'assistant',
-          content: `Zaczynamy magię w studiu! 🎛️ Twój utwór właśnie się generuje i zajmie to około 1-3 minuty.\n\nW międzyczasie, może zrobimy kolejny hit? Jaka okazja jest następna: Urodziny? Rocznica? A może piosenka do auta? 😎`
+          content: `Zaczynamy magię w studiu! 🎛️ Twój utwór właśnie się generuje i zajmie to około 1-3 minuty.\n\nGotowy kawałek znajdziesz w zakładce 📂 Moje Utwory — tam wylądują wszystkie wersje.\n\nW międzyczasie… może zrobisz komuś muzyczny prezent? 🎁 Albo hit dla siebie? 😎`
         }
       ]);
 
@@ -763,27 +796,32 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
           `/api/suno/status/${queryId}`,
           { credentials: 'include' }
         );
-        const statusData = await statusRes.json();
+        let statusData;
+        try {
+          statusData = await statusRes.json();
+        } catch (jsonErr: any) {
+          console.warn('[POLL] Invalid JSON from status, retrying...', jsonErr?.message || jsonErr);
+          attempts++;
+          continue; // skip this attempt, retry
+        }
         lastStatusData = statusData;
 
         if (!statusRes.ok)
           throw new Error(
             statusData.error ||
-              'Błąd statusu zadania'
+            'Błąd statusu zadania'
           );
 
         if (
           statusData.status === 'completed' ||
-          statusData.status === 'complete' ||
-          statusData.audio_url ||
-          (statusData.variants && statusData.variants.length > 0)
+          statusData.status === 'complete'
         ) {
           audio_url =
             statusData.audio_url ||
             (statusData.variants
               ? statusData.variants[0].audio_url
               : '');
-          if (audio_url || statusData.variants) break;
+          break;
         } else if (
           statusData.status === 'error' ||
           statusData.status === 'failed'
@@ -804,44 +842,14 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
         );
       }
 
-      const payload = {
-        title: finalTitle,
-        description: promptLyricsToGenerate,
-        currency_type: currencyType,
-        audio_url: audio_url,
-        variants: lastStatusData?.variants || [],
-        kie_task_id: sunoData.dbId || null,
-      };
-
-      const res = await fetch('/api/tracks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(
-          data.error ||
-            'Wystąpił nieznany błąd serwera'
-        );
-      }
+      // Zapisujemy sukces — запускаем мониторинг видео
+      videoCheckTaskIdRef.current = queryId;
+      setVideoRenderStatus('rendering');
 
       setShowSuccessModal(true);
       window.dispatchEvent(new Event('updateBalance'));
-      
-      // Auto-trigger video generation for first variant
-      console.log('[AUTO VIDEO] Triggering for task:', payload.kie_task_id);
-      if (payload.kie_task_id) {
-        fetch('/api/video/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ audioTaskId: payload.kie_task_id, variantIndex: 0 })
-        }).then(r => r.json().then(d => console.log('[AUTO VIDEO] Response:', d))).catch(e => console.warn('[AUTO VIDEO] Error:', e));
-      }
-      
+
+
       setMessages(prev => [
         ...prev,
         {
@@ -887,6 +895,7 @@ export function useGeneratorLogic(props: UseGeneratorLogicProps = {}) {
     guestEmail,
     showGuestLimitModal,
     showSuccessModal,
+    videoRenderStatus,
     generationError,
     isActionMenuOpen,
     // Computed

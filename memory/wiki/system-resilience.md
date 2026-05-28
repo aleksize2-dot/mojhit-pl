@@ -1,14 +1,14 @@
 # System Resilience & Limits
 
-## Model Providers & Fallbacks
-- **Primary Model:** `deepseek/deepseek-reasoner` (via DeepSeek API) with thinking mode.
+## Model Providers & Fallbacks (as of 2026-05-26)
+- **Primary Model:** `deepseek/deepseek-v4-pro` (via DeepSeek API).
 - **Fallback Models:**
-  - `gemini/gemini-3.1-pro` (original heavy token consumption, hit 2M daily limits).
-  - `gemini/gemini-2.5-flash` (faster, cheaper).
-  - `qwen/qwen3.6-plus` (via OpenRouter).
-  - `nvidia/nemotron-3-super-120b-a12b:free` (free via OpenRouter).
+  - `anthropic/claude-opus-4.7` (via OpenRouter) — verified real Opus 4.7, reliable.
+  - `gemini/gemini-3.1-pro` — rate-limited (free tier, 5 RPM). Used sparingly.
+  - `minimax/minimax-m2.7` (via OpenRouter).
+- ~~`qwen/qwen3.6-plus`~~ — **Removed 2026-05-13:** provider, API key, aliases, and fallbacks completely purged from config.
 - **Vision Model:** `ernie-4.5-vl-424b-a47b` (via OpenRouter) for image analysis.
-- **2026‑04‑20 Configuration Fix:** Updated `openclaw.json` to add Gemini and Qwen as fallback models for main agent; previously only deepseek/deepseek-reasoner was in fallbacks.
+- **Remaining providers:** DeepSeek (primary), OpenRouter (Claude Opus 4.7 + Minimax), CloseRouter (Gemini 3.5 Flash, резерв), Gemini (fallback).
 
 ## API Keys & Configuration
 - **DeepSeek API Key:** stored in `openclaw.json` (models.providers.deepseek).
@@ -72,5 +72,48 @@
 - `config.patch` for `skills.entries` causes `size-drop` error (28K→9.6K).
 - **Workaround:** Use env variables for sensitive data instead of config patch.
 
+## Gemini API Status (2026-05-13)
+- **Old key leaked** (403) — first replacement expired immediately (400), second replacement working
+- **Rate limit:** Free tier 5 RPM (429 errors frequent)
+- **Embedding model switched:** `gemini-embedding-001` → `gemini-embedding-2` (8192 token context)
+- **Memory search** currently impaired by rate limit — waits for reset or plan upgrade
+
+## CloseRouter — Tested Provider (2026-05-26)
+- **URL:** `https://api.closerouter.dev/v1` — OpenAI-compatible
+- **Auth:** `x-api-key` header (NOT `Authorization: Bearer` — broken)
+- **Test credits:** $2 received
+- **Models configured:**
+  - `google/gemini-3.5-flash` — reasoning model (148 reasoning tokens on simple query) ✅
+  - `anthropic/claude-opus-4.7` — verified real Opus 4.7 (parallel tests vs OpenRouter) ✅
+  - `anthropic/claude-sonnet` — configured, not tested
+  - `anthropic/claude-haiku` — configured, not tested
+- **Config aliases:** `claude-opus-cr`, `claude-sonnet-cr`, `claude-haiku-cr`, `gemini-3.5-flash`
+- **Cost:** Comparable to OpenRouter (~$0.04/response with 138k SOC)
+
+### Verdict
+| Metric | CloseRouter | OpenRouter |
+|---|---:|
+| Model authenticity | Opus 4.7 ✅ | Opus 4.7 ✅ |
+| Speed | 15-23 sec ⚠️ | 10-11 sec ✅ |
+| Reliability | "No deployments" errors ❌ | 0 errors ✅ |
+| Gemini 3.5 Flash | ✅ Available | ❌ Not available |
+| **Role** | **Резерв / Gemini tasks** | **Основной** |
+
+**Decision:** CloseRouter → on pause. Opus via OpenRouter, daily via DeepSeek V4 Pro. `gemini-3.5-flash` kept on CloseRouter for isolated tasks.
+
+### Lessons
+- SOC (Session Occupancy Context) is the main token consumer (138k/request), not the model
+- CloseRouter uses `x-api-key` — `Authorization: Bearer` breaks
+- Run provider tests in isolated sessions for clean cost measurements
+
+## Agentmemory Integration (2026-05-13)
+- **Engine:** agentmemory v0.9.12 (rohitg00/agentmemory) via Docker (iii-engine)
+- **Search:** BM25 + Graph (LLM embedding disabled)
+- **Plugin path:** `~/.openclaw/extensions/agentmemory/`
+- **Config:** `plugins.slots.memory = "agentmemory"`, `plugins.allow = ["agentmemory"]`
+- **Auto-start:** `start-agentmemory.ps1` + shortcut in Windows Startup
+- **Status:** Running, but search limited by Gemini free-tier rate cap
+
 ## Semantic Search Embeddings
 - Currently uses Gemini embeddings via `memory_search`; can be switched if needed.
+- Agentmemory provides file-based fallback with BM25+Graph (no embeddings required).

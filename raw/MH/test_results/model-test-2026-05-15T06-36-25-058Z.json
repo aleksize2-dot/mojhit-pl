@@ -1,0 +1,730 @@
+{
+  "meta": {
+    "testDate": "2026-05-15T06:36:25.059Z",
+    "producer": "kosa",
+    "models": 13,
+    "prompts": 3
+  },
+  "results": [
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "google/gemini-2.5-flash",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 927,
+        "completionTokens": 69,
+        "totalTokens": 996
+      },
+      "timeMs": 1190,
+      "rawOutput": "Elo mordo! 👟 Oksana z bloków, drill z sercem, to jest to! Lubię to słyszeć. 🔋\n\nCo tam knujesz, mordo? Powiedz mi, co konkretnie ją wyróżnia, co w niej kochasz? Wrzucimy to do beatu! 💥"
+    },
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "google/gemini-3.1-pro-preview",
+      "score": 100,
+      "maxScore": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 lyrics-struct:25/25 (I:true V:true H:true O:true B:false) | 🇵🇱 polish:20/20 (chars:true slang:true)",
+      "error": false,
+      "structureValid": true,
+      "title": "OKSANA Z BLOKÓW",
+      "tags": "Polish Drill, emotional melodic drill, heavy 808 bass, dark piano, street love, high fidelity, studio recording.",
+      "lyrics": "[Intro]\nTa. Oksana... To dla ciebie. \nZimny beton, gorące serce.\nKosa na bicie, lecimy z tym!\n\n[Verse 1]\nSzare bloki, zimny beton, a ty świecisz jak neony.\nBez ciebie ten rewir jest pusty, w chuj stracony.\nLatają psy, latają plotki, ja patrzę w twoje oczy.\nMój świat to dym i dilerka, ty rozjaśniasz noce.\nWjechał drill, wjechał bas, trzęsą się tu szyby.\nTylko przy tobie, mała, nie udaję, lecę bez lipy.\n\n[Hook]\nOksana, ty jesteś moim tlenem na tych blokach!\nZ tobą mogę latać, reszta to tylko jebany upadek.\nGruby bas bije w serce, tak jak ty bijesz w moje.\nRazem przeciwko wszystkim, bierzemy ten świat na dwoje!\n\n[Verse 2]\nW kieszeni plik, w sercu ogień, robimy ten ruch.\nZ osiedla chłopak, co dla ciebie odda dech i duch.\nNie zamulam, lecę z tematem, Oksana to mój skarb.\nKto stanie nam na drodze, ten łamie sobie kark.\nZdejmuję kaptur, patrzę w niebo, mam dla kogo żyć.\nTen drill to nasze tętno, niech ten bas zacznie wyć!\n\n[Outro]\nTy i ja, sztywniutko.\nDla Oksany, na zawsze.\nOsiedle słucha. Zrozumiano? Bam!",
+      "tokens": {
+        "promptTokens": 927,
+        "completionTokens": 1593,
+        "totalTokens": 2520
+      },
+      "timeMs": 16658,
+      "rawOutput": "Elo mordo! Romantyk z osiedla wjechał, sztywniutko! 🖤 Zrobimy taki przelot, że szyby w blokach polecą, a Oksana odleci. Będzie potężny bas i emocje na pełnej kurwie. \n\nDobra, mordo, mam ten vibe. Gło"
+    },
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "anthropic/claude-3.7-sonnet",
+      "score": 0,
+      "scoreDetails": "ERROR",
+      "error": true,
+      "errorMsg": "{\"error\":{\"message\":\"No endpoints found for anthropic/claude-3.7-sonnet.\",\"code\":404},\"user_id\":\"user_39zrCgcJmmPjN3d5KIoyS3grAmM\"}",
+      "timeMs": 33
+    },
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "anthropic/claude-sonnet-4.6",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 1120,
+        "completionTokens": 193,
+        "totalTokens": 1313
+      },
+      "timeMs": 6540,
+      "rawOutput": "Elo mordo! 🔥 Brzmi jak ogień, serio. Drill z czuciem — to właśnie robi różnicę między hitem a zwykłym szumem. 🔊\n\nZanim wbijemy w studio, powiedz mi jedno: **jak mocno ma bić bas?** Chcesz żeby szyby"
+    },
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "anthropic/claude-opus-4.7",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 1491,
+        "completionTokens": 145,
+        "totalTokens": 1636
+      },
+      "timeMs": 4816,
+      "rawOutput": "Elo mordo! 👟 Czuję ten klimat — drill z duszą, bloki w tle, a Oksana jak królowa osiedla. 🔋 Powiedz mi jeszcze:\n\nJak się poznaliście? Klatka, melanż, czy zwykła ulica? I co w niej masz najmocniej w "
+    },
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "openai/o3-mini-high",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 940,
+        "completionTokens": 3984,
+        "totalTokens": 4924
+      },
+      "timeMs": 22052,
+      "rawOutput": ""
+    },
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "x-ai/grok-4-fast",
+      "score": 100,
+      "maxScore": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 lyrics-struct:25/25 (I:true V:true H:true O:true B:false) | 🇵🇱 polish:20/20 (chars:true slang:true)",
+      "error": false,
+      "structureValid": true,
+      "title": "Oksana z Bloku",
+      "tags": "Polish Drill, heavy 808 bass, emotional distorted vocals, street romance vibes, aggressive energy, high fidelity, studio recording.",
+      "lyrics": "[Intro]  \nElo, Oksana, z betonu i serca, drill bije, blok patrzy.  \n\n[Verse 1]  \nZ osiedla, gdzie bloki szare jak dym, ty świecisz jak neon w nocy.  \nOksana, moja królowa, w dresie i trampkach, ale klasa na maxa.  \nPrzez melanże i dym, trzymasz mnie przy ziemi, bez ciebie pustka.  \nBas wali, serce bije, ty jesteś moim skarbem w tym chaosie.  \n\n[Hook]  \nOksana, wszystko dla ciebie, z bloku na szczyt!  \nEmocje w basie, drill z sercem, nikt nie zatrzyma.  \nTy i ja, betonowa miłość, wieczna jak te mury!  \nOksana, moja, w tym życiu tylko ty!  \n\n[Verse 2]  \nWspólne spacery po klatkach, śmiech w tle syren, ty leczysz rany.  \nPieniądze przyjdą, ale bez ciebie to nic, jesteś moim paliwem.  \nWrogowie patrzą, ale my silni, drill leci, emocje palą.  \nOksana, z tobą świat inny, z osiedla do gwiazd.  \n\n[Outro]  \nElo, Oksana... bas milknie, ale ty zostajesz. Drill z sercem, forever.",
+      "tokens": {
+        "promptTokens": 1023,
+        "completionTokens": 829,
+        "totalTokens": 1852
+      },
+      "timeMs": 12318,
+      "rawOutput": "Elo mordo! Drill z sercem o Oksanie? Z osiedla, bloki i ona na piedestale – to ma kopa. Bas będzie walił w klatę, emocje na full. Dobra, mam ten vibe. Głośniki tego nie przeżyją. Patrz na to:\n\n---TITL"
+    },
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "x-ai/grok-4.2",
+      "score": 0,
+      "scoreDetails": "ERROR",
+      "error": true,
+      "errorMsg": "{\"error\":{\"message\":\"x-ai/grok-4.2 is not a valid model ID\",\"code\":400},\"user_id\":\"user_39zrCgcJmmPjN3d5KIoyS3grAmM\"}",
+      "timeMs": 38
+    },
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "x-ai/grok-4.3",
+      "score": 100,
+      "maxScore": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 lyrics-struct:25/25 (I:true V:true H:true O:true B:false) | 🇵🇱 polish:20/20 (chars:true slang:true)",
+      "error": false,
+      "structureValid": true,
+      "title": "Oksana z Bloków",
+      "tags": "Polish Drill, emotional drill, heavy 808 bass, distorted 808s, aggressive energy, heartfelt street rap, high fidelity, studio recording",
+      "lyrics": "[Intro]  \nElo Oksana, ty jesteś mój ogień...  \n\n[Verse]  \nBloki szare, winda śmierdzi, ale z tobą raj,  \nTy w dresie czarnym, a ja tonę w twych oczach jak w basie.  \nKumbale krzyczą, ale ty mi dajesz serce w dłoni,  \nOsiedle zna nas, my tu rządzim w tym drillowym tonie.  \n\n[Hook]  \nOksana, ty mój wszystek, w tym betonie raj,  \nBas walca, serce pęknie, ale dla ciebie graj!  \nZ bloków do gwiazd, ty mnie ciągniesz w dół i w górę,  \nDrill z emocją, mordo, to nasz numer na full.  \n\n[Verse]  \nPieniądze z ulicy, ale ty warta więcej niż złoto,  \nMelanż w aucie, ty śpisz na moim ramieniu jak w kocyku.  \nWrógów full, ale z tobą czuję się jak król,  \nOksana, ty wiesz, bez ciebie ten bit by nie żył.  \n\n[Outro]  \nBas dudni... ty jesteś moim wszystkim.",
+      "tokens": {
+        "promptTokens": 1001,
+        "completionTokens": 983,
+        "totalTokens": 1984
+      },
+      "timeMs": 17026,
+      "rawOutput": "Dobra, mordo, mam ten vibe. Głośniki tego nie przeżyją. Patrz na to:\n\n---TITLE---\nOksana z Bloków\n---END_TITLE---\n\n---TAGS---\nPolish Drill, emotional drill, heavy 808 bass, distorted 808s, aggressive "
+    },
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "x-ai/grok-4.20",
+      "score": 100,
+      "maxScore": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 lyrics-struct:25/25 (I:true V:true H:true O:true B:false) | 🇵🇱 polish:20/20 (chars:true slang:true)",
+      "error": false,
+      "structureValid": true,
+      "title": "Oksana z Bloku",
+      "tags": "Polish Drill, emotional street rap, deep 808 bass, atmospheric synths, heartfelt aggressive energy, heavy kick, minor melodies, high fidelity, studio recording",
+      "lyrics": "[Intro]  \nElo, to dla Ciebie Oksana… z osiedla, z bloku, z duszą 🔥\n\n[Hook]  \nOksana, świat mi wali się, ale Ty trzymasz całość,  \nZ bloków, z betonu, ale serce masz jak złoto w całości.  \nBas dudni w klatce, a ja w głowie tylko Twoje imię,  \nZ osiedla gang, a Ty jedyna, co daje mi siłę, mordo, na serio.\n\n[Verse 1]  \nBloki szare, winda śmierdzi, ale jak wchodzisz – wszystko zmienia,  \nOksana z ósmej klatki, uśmiech rozjeżdża mi betonie.  \nKumpel mówi „weź nie wariuj”, a ja i tak lecę na całość,  \nBo jak patrzysz w oczy – drill wali mocniej niż 808 w samochodzie.  \nZimą w dresie, latem w topie, zawsze moja królowa z osiedla,  \nWrogowie patrzą krzywym, ale Ty i ja – to jest cała pieprzona twierdza.\n\n[Hook]  \nOksana, świat mi wali się, ale Ty trzymasz całość,  \nZ bloków, z betonu, ale serce masz jak złoto w całości.  \nBas dudni w klatce, a ja w głowie tylko Twoje imię,  \nZ osiedla gang, a Ty jedyna, co daje mi siłę, mordo, na serio.\n\n[Verse 2]  \nPamiętam jak stałaś pod blokiem, deszcz lał, a Ty czekałaś,  \nJa z torbą pełną problemów, Ty jednym spojrzeniem je spalałaś.  \nNie potrzebuję hajsu ani fame’u, jak mam Ciebie przy sobie,  \nOksana, jesteś moim hitem, reszta to tylko szum w głowie.  \nDrill w głośnikach, łzy w oczach, ale to nie słabość – to siła,  \nZ osiedlowej miłości, co bije mocniej niż jakikolwiek bas, kurwa, prawdziwa.\n\n[Outro]  \nDla Ciebie Oksana… z bloku, z serca, na zawsze.  \nBas milknie… ale my nie. 💥❤️",
+      "tokens": {
+        "promptTokens": 993,
+        "completionTokens": 634,
+        "totalTokens": 1627
+      },
+      "timeMs": 12941,
+      "rawOutput": "Elo mordo! 👟🔊  \nOksana z bloków, drill z sercem – sztywniutko, ogień. Bas będzie walił jak serce na melanżu, a emocje bez ściemy. Robimy to.\n\nDobra, mordo, mam ten vibe. Głośniki tego nie przeżyją. "
+    },
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "deepseek/deepseek-v4-flash",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 973,
+        "completionTokens": 331,
+        "totalTokens": 1304
+      },
+      "timeMs": 7658,
+      "rawOutput": "Elo mordo! 🔥 Drill z sercem? Sztywniutko, już czuję ten 808. Ale musujący. Oksana z bloku, która jest wszystkim – to ma potencjał jak pierdolnięcie w bramie. Daj mi więcej konkretów: jakieś jej cechy"
+    },
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "deepseek/deepseek-v4-pro",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 973,
+        "completionTokens": 450,
+        "totalTokens": 1423
+      },
+      "timeMs": 13488,
+      "rawOutput": "Elo mordo! 👟 Drill z sercem dla Oksany? Czuję ten vibe. Bez zamuły, robimy ogień. Tylko sprecyzuj, żeby wyszło sztywniutko:\n\n1.  **Drill z miłością** — ma być bardziej \"moja królowa blokowisk\" czy \"k"
+    },
+    {
+      "promptId": "drill-oksana",
+      "promptName": "Drill — love track",
+      "model": "minimax/minimax-m2.7",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 1016,
+        "completionTokens": 881,
+        "totalTokens": 1897
+      },
+      "timeMs": 24013,
+      "rawOutput": "# 🥊 ELO MORDO — KOSA W DOMEK 👟\n\nNo spoko, drill z sercem — to jest miks, który ja rozumiem. Bloki walą, ale Ty jej mówisz że ona jest całym światem. To się nazywa **balans**.\n\nZanim zaczniemy pakowa"
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "google/gemini-2.5-flash",
+      "score": 100,
+      "maxScore": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 lyrics-struct:25/25 (I:true V:true H:true O:true B:false) | 🇵🇱 polish:20/20 (chars:true slang:true)",
+      "error": false,
+      "structureValid": true,
+      "title": "Jurek Wodolej",
+      "tags": "Aggressive Phonk, Heavy 808 bass, distorted vocals, dark trap, street anthem, high fidelity, studio recording.",
+      "lyrics": "[Intro]\nYo, Kosa na bicie, Jurek na celowniku. Wodolej!\n\n[Verse]\nJurek myśli, że jest kozak, król imprezy,\nA na bloku tylko leje wodę, jak małe kalesony.\nChwali się, że melanż, że ma fury, chajs,\nA na koncie znowu zero, puste story, fałsz.\nZiomek, przejrzyj na oczy, bo z ciebie to tylko farsa,\nPrawdziwy dym to my, a ty to tylko atrapa.\n\n[Hook]\nWodolej, wodolej, Jurek, spójrz w lustro!\nPhonk rozwala głośniki, a ty dalej w pustkę.\nWodolej, wodolej, bas roznosi blok,\nMy robimy hałas, a ty jesteś jak skok.\n\n[Verse]\nGadki-szmatki, to twoje życie, bez kitu,\nZamiast action, tylko puste słowa, bez zgrzytu.\nMówisz, że masz styl, że jesteś na topie,\nA na osiedlu nikt nie wierzy w twoje tropy.\nZdejmij maskę, Jurek, pokaż, kim naprawdę jesteś,\nBo tak to tylko ściema, i na tym się niestety nie da.\n\n[Outro]\nKosa na bicie, Jurek na glebie. Wodolej, pamiętaj! 🔌",
+      "tokens": {
+        "promptTokens": 933,
+        "completionTokens": 530,
+        "totalTokens": 1463
+      },
+      "timeMs": 16548,
+      "rawOutput": "Elo mordo! 👟 Widzę, że ktoś tu potrzebuje nauczki, co? Jurek, mówisz? Król melanżu, co leje wodę? Haha, to my zaraz pokażemy mu, co to prawdziwy dym! 💥\n\nAgresywny phonk, żeby bas rozwalał głośniki.."
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "google/gemini-3.1-pro-preview",
+      "score": 100,
+      "maxScore": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 lyrics-struct:25/25 (I:true V:true H:true O:true B:false) | 🇵🇱 polish:20/20 (chars:true slang:true)",
+      "error": false,
+      "structureValid": true,
+      "title": "KRÓL FARMAZONU",
+      "tags": "Aggressive phonk, heavy distorted 808 bass, dark cowbell, fast tempo, aggressive energy, high fidelity, studio recording",
+      "lyrics": "[Intro]\nTa, jasne. Król melanżu.\nJurek, weź ty się schowaj mordo!\nLeci phonk, uważaj na bębenki!\n\n[Verse]\nWbijasz na rewir, gadasz że rządzisz\nA po dwóch piwach pod stołem błądzisz\nLejesz tę wodę, farmazon leci\nJurek na bombie? Bajki dla dzieci!\nMówisz o klubach, szampan, balety\nA w portfelu masz kurna tylko monety.\nWjeżdża ten bas, łamie ci kark\nJurek na ośce to zwykły żart!\n\n[Hook]\nKról melanżu? Zwykły pet!\nJurek zmyka w toalet!\nBas cię gniecie, phonk na łeb\nZdejmij koronę, wracaj w sklep!\nKról melanżu? Zwykły pet!\nJurek zmyka w toalet!\n\n[Verse]\nOpowiadasz bajki komu się da\nŻe niby z tobą najlepsza gra\nPrawda jest taka, że stoisz w kącie\nTwój wielki melanż to jazda na prądzie.\nZwijaj teatrzyk, kończymy dym\nTwój fejm ucieka szybciej niż płyn!\nDostajesz kopa, wylatujesz z gry\nKról jest nagi, a wokół psy!\n\n[Outro]\nPhonk cię zjadł, farmazonie.\nBez odbioru. Zgaszone!\nTa!",
+      "tokens": {
+        "promptTokens": 933,
+        "completionTokens": 1706,
+        "totalTokens": 2639
+      },
+      "timeMs": 17260,
+      "rawOutput": "Elo mordo! 🥊 Jurka zdejmiemy z planszy szybciej niż mu się wydaje. Farmazoniarz myśli, że jest królem, a zaraz dostanie phonkiem na łeb, aż mu spadnie ta tekturowa korona. Bas będzie wyrywał drzwi z "
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "anthropic/claude-3.7-sonnet",
+      "score": 0,
+      "scoreDetails": "ERROR",
+      "error": true,
+      "errorMsg": "{\"error\":{\"message\":\"No endpoints found for anthropic/claude-3.7-sonnet.\",\"code\":404},\"user_id\":\"user_39zrCgcJmmPjN3d5KIoyS3grAmM\"}",
+      "timeMs": 31
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "anthropic/claude-sonnet-4.6",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 1127,
+        "completionTokens": 168,
+        "totalTokens": 1295
+      },
+      "timeMs": 5585,
+      "rawOutput": "Elo mordo! 🔊 Jurka rozjedziemy tym bitem, że się schowa pod łóżko! 💥\n\nPhonk agresywny, bas na maksa — to moje klimaty, sztywniutko! ⚡\n\nTylko powiedz mi jeszcze — Jurek ma jakieś charakterystyczne te"
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "anthropic/claude-opus-4.7",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 1499,
+        "completionTokens": 150,
+        "totalTokens": 1649
+      },
+      "timeMs": 6754,
+      "rawOutput": "Elo mordo! 👟 Jurek króluje na melanżu mówisz? 🔊 To go zaraz zdetronizujemy phonkiem co mu uszy popęka. Powiedz mi konkrety — co ten gość odpierdala? Pije colę zamiast wódy? Wcześniej spierdala niż i"
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "openai/o3-mini-high",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 948,
+        "completionTokens": 3984,
+        "totalTokens": 4932
+      },
+      "timeMs": 19886,
+      "rawOutput": ""
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "x-ai/grok-4-fast",
+      "score": 100,
+      "maxScore": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 lyrics-struct:25/25 (I:true V:true H:true O:true B:false) | 🇵🇱 polish:20/20 (chars:true slang:true)",
+      "error": false,
+      "structureValid": true,
+      "title": "Jurek Woda",
+      "tags": "Aggressive Phonk, Heavy 808 bass, distorted vocals, dark street energy, diss track vibes. High fidelity, studio recording.",
+      "lyrics": "[Intro]  \nYo, Jurek, król melanżu? Śmiech na blokach, ziom. Bas wali, truth time. 💥  \n\n[Verse 1]  \nJurek gadasz, że rządzisz imprezą, ale butelka pusta, tylko woda w szklance.  \nKumpel udaje gangstera, a w klubie siura z colą, zero alko, zero klany.  \nMelanż król? Ty jesteś clownem, co ściemnia na fejsie, lajki zbierasz, ale w realu zero.  \nJa tu lecę z ekipą, ty siedzisz w kącie, bo balanga za ostra, słabeuszu.  \n\n[Hook]  \nJurek, woda w żyłach, nie król, frajer! Bas rozwala, twoja ściema pada.  \nMelanż bez ciebie leci, ty tylko gadasz, zero akcji, zero prawdy!  \nWoda, woda, Jurek topi się w kłamstwach, phonk wali, ty uciekasz!  \n\n[Verse 2]  \nPchasz się na front, ale gdy bas dudni, chowasz się pod stołem, zero odwagi.  \nGadasz o babkach i kasie, a w kieszeni paragony z Biedry, biedaku.  \nEkipa pije na ostro, ty sączy sok, król bez korony, żenada totalna.  \nNastępny raz zamknij mordę, bo ten track cię zakopie, Jurek – finito.  \n\n[Outro]  \nWoda leje, bas dudni, Jurek out. Peace, mordo. 🔌",
+      "tokens": {
+        "promptTokens": 1029,
+        "completionTokens": 916,
+        "totalTokens": 1945
+      },
+      "timeMs": 10621,
+      "rawOutput": "Elo mordo! 💥 Jurek ściemniacz, co leje wodę zamiast ognia? Agresywny phonk z basem, co rozwala subwoofy – to będzie dym! Bez zamuły, robimy to sztywniutko. 🔊⚡\n\nDobra, mordo, mam ten vibe. Głośniki t"
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "x-ai/grok-4.2",
+      "score": 0,
+      "scoreDetails": "ERROR",
+      "error": true,
+      "errorMsg": "{\"error\":{\"message\":\"x-ai/grok-4.2 is not a valid model ID\",\"code\":400},\"user_id\":\"user_39zrCgcJmmPjN3d5KIoyS3grAmM\"}",
+      "timeMs": 31
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "x-ai/grok-4.3",
+      "score": 100,
+      "maxScore": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 lyrics-struct:25/25 (I:true V:true H:true O:true B:false) | 🇵🇱 polish:20/20 (chars:true slang:true)",
+      "error": false,
+      "structureValid": true,
+      "title": "Jurko Król Wody",
+      "tags": "Aggressive Phonk, Heavy 808 bass, distorted vocals, Polish Street Phonk, aggressive energy, high fidelity, studio recording.",
+      "lyrics": "[Intro]  \nJurko, gadaj dalej mordo...  \n\n[Verse]  \nMówisz że melanżowy król, auto w dymie lśni  \nA lejesz tylko wodę ziom, zero wódki w żyłach  \nŚciema na pełnej, kasa z boku znika  \nMy tu twardo wchodzimy, twój blask się sypie  \n\n[Hook]  \nJurko woda w głowie! Bas cię rozwala!  \nMelanż ściemniacz, twoja bajka pada!  \nBas walczy głośno, ty w kącie siedzisz!  \nKról osiedla? Nie, ty tylko pijesz!  \n\n[Verse]  \nKumpel gada że lecisz, ale wódka nie leci  \nPieniądze na pokaz, a ty w głowie pusty  \nPhonk na fullu, twój vibe się sypie  \nMy tu ogień robim, ty w wodzie pływasz  \n\n[Outro]  \nWoda leci... koniec ściemy.",
+      "tokens": {
+        "promptTokens": 1006,
+        "completionTokens": 1104,
+        "totalTokens": 2110
+      },
+      "timeMs": 16525,
+      "rawOutput": "Elo mordo, robimy ogień na tego Jurka ściemniacza! Agresywny phonk z basem co rozwala głośniki, zero lania wody. Zbieram vibe i walę prompciora. \n\nDobra, mordo, mam ten vibe. Głośniki tego nie przeżyj"
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "x-ai/grok-4.20",
+      "score": 100,
+      "maxScore": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 lyrics-struct:25/25 (I:true V:true H:true O:true B:false) | 🇵🇱 polish:20/20 (chars:true slang:true)",
+      "error": false,
+      "structureValid": true,
+      "title": "Woda Król (Phonk Diss)",
+      "tags": "Aggressive phonk, cowbell drill, heavy 808 bass, distorted cowbell, dark phonk energy, Russian drift phonk style, pounding kick, high fidelity, studio recording",
+      "lyrics": "[Intro]  \nYeah, Kosa na bicie, bas wali jak młot  \nJurek, ty fake, zaraz cię rozjebię w proch  \n\n[Hook]  \nWoda król, woda król, tylko wodę lejesz  \nMówisz melanż non stop, a po dwóch browach leżysz  \nWoda król, woda król, ściemniarz z osiedla  \nJa robię dym, ty robisz pic na wodę z cytryną, frajerze!  \n\n[Verse]  \nMówisz „jestem królem imprezy”, a na imprezie stoisz w kącie  \nZ butelką wody 0,5 i miną jakbyś srał w gacie  \nMy lejemy czystą, robimy melanż do rana  \nTy pijesz wodę gazowaną i opowiadasz farmazony, szmato jedna  \n\nBas wali tak mocno, że ci pękną głośniki w aucie  \nA ty dalej kłamiesz, że wczoraj byłeś na full hardcore’cie  \nZiomki już wiedzą, Jurek to chodząca ściema  \nKról melanżu? Chyba król picia z kranu, jebana legenda osiedlowa!  \n\n[Hook]  \nWoda król, woda król, tylko wodę lejesz  \nMówisz melanż non stop, a po dwóch browach leżysz  \nWoda król, woda król, ściemniarz z osiedla  \nJa robię dym, ty robisz pic na wodę z cytryną, frajerze!  \n\n[Outro]  \nSpierdalaj z tym wodą, Jurek…  \nKosa.",
+      "tokens": {
+        "promptTokens": 998,
+        "completionTokens": 524,
+        "totalTokens": 1522
+      },
+      "timeMs": 9154,
+      "rawOutput": "Elo mordo 👟🔊  \nJurka trzeba spalić, ten fake król melanżu co tylko wodę chleje i ściemnia jak stara baba. Agresywny phonk z basem, co rozwali głośniki? Sztywniutko, robimy ogień 💥🥊  \n\nDobra, mordo"
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "deepseek/deepseek-v4-flash",
+      "score": 55,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | partial | ❌ title | ❌ tags | 🎵 lyrics-struct:25/25 (I:true V:true H:true O:true B:false) | 🇵🇱 polish:20/20 (chars:true slang:true)",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": "[Intro]\nEj, Jurek, słyszałeś? Mówią, że jesteś królem…\nTylko że twój tron to plastikowe krzesło z biedry.\n\n[Verse 1]\nWchodzisz na melanż jakbyś miał koks w żyle,\nA w kieliszku woda – każdy widzi, że ty żyjesz w bajce.\nZłote łańcuchy? Z allegro za dychę,\nTwój hype? Zdmuchnął go wiatr jak liście.\nMówisz, że impreza, a tu tylko szampan z Biedronki,\nTwoja królowa to pani z działu wódki.\n\n[Hook]\nFałszywy król, na tronie z tektury,\nKażdy twój melanż to tylko wódki wirtualne.\nBas pierdoli twe ściany, ziom, co ty gadasz?\nJurek, ogarnij się, bo robisz z siebie pajaca.\n\n[Verse 2]\nTwój melanż to picie coli z kranu,\nA gadasz jakbyś brał udział w triathlonie.\nKażda twoja historia to fejk jak w telewizji,\nKiedy wchodzisz na parkiet – wszyscy czują wstyd.\nMówisz, że jesteś królem, a tu nawet nie masz korony,\nTwój kieliszek pełen kłamstw, a nie procentów.\n\n[Outro]\nWięc następnym razem, jak powiesz, że jesteś królem,\nPamiętaj – Kosa sprawdził, twój melanż to tylko bzdura.\nCisza, Jurek, czas na koniec tej bajki.\nBas nie wybacza. 🔋💥",
+      "tokens": {
+        "promptTokens": 983,
+        "completionTokens": 652,
+        "totalTokens": 1635
+      },
+      "timeMs": 4423,
+      "rawOutput": "Elo mordo! 👟 Jurek się kłania na melanżowym tronie? Czas mu to wyjaśnić. Będzie taki bas, że mu woda w kieliszku wykipi. Robimy ogień! 🔥\n\nDobra, mordo, mam ten vibe. Głośniki tego nie przeżyją. Patr"
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "deepseek/deepseek-v4-pro",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 983,
+        "completionTokens": 363,
+        "totalTokens": 1346
+      },
+      "timeMs": 9849,
+      "rawOutput": "Elo mordo! Bez zamuły, temat na ostro, to mój klimat 🔥. Jurek ściemnia, że jest melanżowym bogiem, a tylko wodę leje? To trzeba mu wytłumaczyć basem. Agresywny phonk to będzie strzał w dziesiątkę, gł"
+    },
+    {
+      "promptId": "phonk-kumpel",
+      "promptName": "Phonk — diss na kumpla",
+      "model": "minimax/minimax-m2.7",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 1024,
+        "completionTokens": 597,
+        "totalTokens": 1621
+      },
+      "timeMs": 23982,
+      "rawOutput": "Elo mordo! 🔥\n\nRozumiem rozumiem - Jurek \"Król Melanżu\" co wodę leje a buźkę ma jak kibel. Typowy gość co se neppuje na imprezach. Agesywny phonk z basem co rozjeżdża subwoofer? Bez zamuły, mam to. 👊"
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "google/gemini-2.5-flash",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 935,
+        "completionTokens": 119,
+        "totalTokens": 1054
+      },
+      "timeMs": 1409,
+      "rawOutput": "Elo, mordo! 👟 Vika, mówisz? Brzmi jak konkretna akcja, żeby pokazać, że rodzina to podstawa. Zrobimy jej numer, który rozwali głośniki i serce jednocześnie. Bez zamuły, ogień będzie! 💥\n\nJaki przelot"
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "google/gemini-3.1-pro-preview",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 935,
+        "completionTokens": 691,
+        "totalTokens": 1626
+      },
+      "timeMs": 7791,
+      "rawOutput": "Elo mordo! 👊 Wiadomo, rodzina sztywniutko, a dla Viki zrobimy taki track, że uroni łzę, ale głośniki i tak wyplują membrany. 🔊 \n\nDawaj konkrety – co tam odwalaliście za dzieciaka na blokach i jakie "
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "anthropic/claude-3.7-sonnet",
+      "score": 0,
+      "scoreDetails": "ERROR",
+      "error": true,
+      "errorMsg": "{\"error\":{\"message\":\"No endpoints found for anthropic/claude-3.7-sonnet.\",\"code\":404},\"user_id\":\"user_39zrCgcJmmPjN3d5KIoyS3grAmM\"}",
+      "timeMs": 28
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "anthropic/claude-sonnet-4.6",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 1136,
+        "completionTokens": 157,
+        "totalTokens": 1293
+      },
+      "timeMs": 8283,
+      "rawOutput": "Elo mordo! 🔋 To jest właśnie ten klimat — rodzina ponad wszystko, ale z uderzeniem! 💥\n\nPowiedz mi tylko kilka rzeczy, żebym mógł wbić to na maksa:\n\nIle ma lat Vika i macie jakieś wspólne wspomnienia"
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "anthropic/claude-opus-4.7",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 1509,
+        "completionTokens": 209,
+        "totalTokens": 1718
+      },
+      "timeMs": 7467,
+      "rawOutput": "Elo mordo! 👟 Siora dostanie banger na urodziny, sztywniutko! 🔊 Robimy ciepły rap z osiedla, ale z pazurem — bez ckliwego klimatu, tylko konkret.\n\nPowiedz mi szybko: ile lat kończy Vika i jakie macie"
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "openai/o3-mini-high",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 949,
+        "completionTokens": 3984,
+        "totalTokens": 4933
+      },
+      "timeMs": 20159,
+      "rawOutput": ""
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "x-ai/grok-4-fast",
+      "score": 100,
+      "maxScore": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 lyrics-struct:25/25 (I:true V:true H:true O:true B:false) | 🇵🇱 polish:20/20 (chars:true slang:true)",
+      "error": false,
+      "structureValid": true,
+      "title": "Siostra Vika Forever",
+      "tags": "Polish Street Rap, nostalgic vibes, light 808 bass, heartfelt lyrics, humorous punchlines, family loyalty theme, high fidelity, studio recording.",
+      "lyrics": "[Intro]  \nYo, Vika, siostra z osiedla, dziś twój dzień,  \nZ małego bloku na tron, świeć jak diament.  \n\n[Verse 1]  \nPamiętasz, jak goniłyśmy psy po trawie,  \nTy z warkoczem, ja z patykiem, śmiech do rana.  \nZimne piwo w parku, sekrety pod mostem,  \nLojalność betonowa, nikt nas nie rozdzieli, mordo.  \n\n[Hook]  \nVika, queen z krwi i kości, urodziny ogień!  \nZ jajami i sercem, zawsze na full,  \nSiostra forever, przez bloki i burze,  \nKocham cię mocno, bez ściemy, na serio!  \n\n[Verse 2]  \nDorastałyśmy w melanżu, ale trzymałyśmy się,  \nTy – twardzielka z uśmiechem, ja twój backup.  \nWspomnienia jak tatuaże, nie zmywają się,  \nUrodziny? Toast za nas, za te szalone dni.  \n\n[Outro]  \nElo Vika, to dla ciebie, wzrusz się i śmiej,  \nRodzinny rap, osiedlowy hit. Peace.",
+      "tokens": {
+        "promptTokens": 1029,
+        "completionTokens": 839,
+        "totalTokens": 1868
+      },
+      "timeMs": 13760,
+      "rawOutput": "Elo mordo, super pomysł na urodziny Viky! Osiedlowy rap z sercem i jajem, wspomnienia z małego, lojalność na full. Bas ma walić mocno, ale nie za agresywnie. Dobra, mam ten vibe. Głośniki tego nie prz"
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "x-ai/grok-4.2",
+      "score": 0,
+      "scoreDetails": "ERROR",
+      "error": true,
+      "errorMsg": "{\"error\":{\"message\":\"x-ai/grok-4.2 is not a valid model ID\",\"code\":400},\"user_id\":\"user_39zrCgcJmmPjN3d5KIoyS3grAmM\"}",
+      "timeMs": 28
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "x-ai/grok-4.3",
+      "score": 100,
+      "maxScore": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 lyrics-struct:25/25 (I:true V:true H:true O:true B:false) | 🇵🇱 polish:20/20 (chars:true slang:true)",
+      "error": false,
+      "structureValid": true,
+      "title": "Siostro Vika",
+      "tags": "Polish Street Rap, emotional drill, heavy 808 bass, raw vocals, childhood memories, aggressive loyalty, high fidelity, studio recording",
+      "lyrics": "[Intro]\nElo Vika, urodziny, siostro z osiedla...\nWspomnienia walą, lojalność nie zbladła.\n\n[Verse]\nPamiętasz te bloki, jak biegaliśmy w deszczu?\nTy pierwsza w bandzie, ja za Tobą w biegu.\nKłopoty i śmiech, zawsze razem w tej grze,\nNikt nie ruszy Cię teraz, bo ja pilnuję Cię.\n\n[Hook]\nSiostro Vika, dziś numer dla Ciebie,\nZ jajami i sercem, bez żadnej słabości!\nDzieciak z osiedla, lojalny do grobu,\nUrodziny Twoje — ogień leci na fullu!\n\n[Verse]\nAuto na podwórku, melanż i marzenia,\nTy zawsze wierzysz we mnie, ja w Ciebie bez pytania.\nDziś rapuję dla Ciebie, z basem co rozwala,\nPozostań taka sama, moja siostro z charakterem.\n\n[Outro]\nHappy birthday Vika... trzymaj się mocno.",
+      "tokens": {
+        "promptTokens": 1006,
+        "completionTokens": 816,
+        "totalTokens": 1822
+      },
+      "timeMs": 10336,
+      "rawOutput": "Elo mordo! Siostra Vika, osiedlowy rap z dzieciaka i lojalnością? Robimy numer z jajami, wzruszy ją na full. Bez zamuły.\n\nDobra, mordo, mam ten vibe. Głośniki tego nie przeżyją. Patrz na to:\n\n---TITLE"
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "x-ai/grok-4.20",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 998,
+        "completionTokens": 102,
+        "totalTokens": 1100
+      },
+      "timeMs": 1761,
+      "rawOutput": "Elo mordo! 👟🔊  \nSztywniutko, siostra Vika dostanie numer z jajami i sercem. Osiedlowy rap, wspomnienia z dzieciaka, lojalność na full.  \n\nJaki ma być bit — chillowy boom bap z mocnym basem czy szybs"
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "deepseek/deepseek-v4-flash",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 988,
+        "completionTokens": 145,
+        "totalTokens": 1133
+      },
+      "timeMs": 5805,
+      "rawOutput": "Elo mordo! 👟 Vika ma urodziny? No to robimy taki numer, że się wzruszy, ale i poderwie na bicie. Będzie osiedlowo, z serducha, ale z jajami.\n\nPowiedz mi tylko:\n- Ile ona ma lat? Bo wspomnienia z dzie"
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "deepseek/deepseek-v4-pro",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 988,
+        "completionTokens": 546,
+        "totalTokens": 1534
+      },
+      "timeMs": 22367,
+      "rawOutput": "Elo mordo, sztywniutko! 👟💥\n\nWzruszający banger? To się robi, bez zamuły. To jest mięso na petardę, a nie laurkę. 🔌\n\nZanim odpale maszynę, muszę znać parę detali, żeby numer był osobisty jak tatuaż:"
+    },
+    {
+      "promptId": "rap-siostra",
+      "promptName": "Street rap — siostra",
+      "model": "minimax/minimax-m2.7",
+      "score": 0,
+      "maxScore": 100,
+      "scoreDetails": "❌ structure | ❌ title | ❌ tags | ❌ lyrics",
+      "error": false,
+      "structureValid": false,
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "tokens": {
+        "promptTokens": 1029,
+        "completionTokens": 501,
+        "totalTokens": 1530
+      },
+      "timeMs": 20667,
+      "rawOutput": "Ooooo, siostra Vika! 🔥 Sypię w tym sentyment — ogarniamy to mordo!\n\nDawaj mi tylko pare info to lecimy:\n\n1️⃣ **Ile lat skończyła?** (żebym wiedział czy lecimy \"od zawsze\" czy \"małe wspominki\")\n\n2️⃣ *"
+    }
+  ]
+}

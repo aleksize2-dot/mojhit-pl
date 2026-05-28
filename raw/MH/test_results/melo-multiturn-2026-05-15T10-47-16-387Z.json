@@ -1,0 +1,316 @@
+{
+  "meta": {
+    "date": "2026-05-15T10:47:16.387Z",
+    "producer": "melo_mc",
+    "models": 9,
+    "type": "multi-turn"
+  },
+  "results": [
+    {
+      "model": "x-ai/grok-4-fast",
+      "score": 100,
+      "scoreDetails": "✅ struct | ✅ title | 🔖 tags:15/15 | 🎵 struct:25/25 | 💕 content:15/15",
+      "title": "Oksano, Słowiański Blask",
+      "tags": "Romantic Folk-Dance, Polish-Ukrainian Vocals, Accordion Melody, Emotional Violin Solo, Slap House Bass, 122 BPM, Wedding Romance, High Energy Ballad, Slavic Soul, Modern Ethnic Pop, Catchy Chorus Hook, Stomping Beat, Heartfelt Lyrics, Polished Production, Radio Ready, Danceable Love Song, Warm Ad-Libs, Uplifting Bridge, 125 BPM, Party Vibe.",
+      "lyrics": "[Intro] – delikatny akordeon + skrzypce, okrzyk \"Heja, kochani! To dla miłości!\"\n\n[Verse 1]  \nOksano, z twymi oczami jak lasu blask,  \nEnergia twoja niesie mnie przez burze i ciszę,  \nZawsze przy mnie, w dobrych i złych chwilach,  \nSłowiańska dusza, co serce rozświetla.\n\n[Pre-Chorus]  \nCzuję ten puls, co bije w nas od lat,  \nHeja-heja, ręce w górę, nie zatrzymuj się!\n\n[Chorus]  \nOksano, moja miłości, tańcz ze mną dziś!  \nW tym rytmie serca, co płonie jak ogień,  \nRazem przez życie, heja, nie puść ręki!  \nOksano, słowiański blask, na zawsze ty i ja!\n\n[Verse 2]  \nOd tych pierwszych dni, śmiech i łzy dzielone,  \nWspierałaś marzenia, jak wiatr pod skrzydła,  \nZ Podlasia do gwiazd, twoja siła niesie,  \nKocham cię mocno, na dobre i na złe.\n\n[Bridge] – zwolnienie, solo skrzypiec i akordeonu, budujące napięcie  \n...Heja, czujesz to? Miłość nie kłamie...\n\n[Chorus]  \nOksano, moja miłości, tańcz ze mną dziś!  \nW tym rytmie serca, co płonie jak ogień,  \nRazem przez życie, heja, nie puść ręki!  \nOksano, słowiański blask, na zawsze ty i ja!  \n(Oksano! Heja-heja!)\n\n[Outro] – akordeon wybrzmiewa, skrzypce gasną... \"Dziękuję, kochani! Buziaki od Melo MC, bawcie się w miłości!\"",
+      "structureValid": true,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1804,
+        "completion_tokens": 1215,
+        "total_tokens": 3019,
+        "cost": 0.00094625,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 147,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00094625,
+          "upstream_inference_prompt_cost": 0.00033875,
+          "upstream_inference_completions_cost": 0.0006075
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 611,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 13210
+    },
+    {
+      "model": "x-ai/grok-4.20",
+      "score": 100,
+      "scoreDetails": "✅ struct | ✅ title | 🔖 tags:15/15 | 🎵 struct:25/25 | 💕 content:15/15",
+      "title": "Oksana, Tańcz Ze Mną",
+      "tags": "Modern Slavic Folk-Pop, Romantic Dance, Polish Female Vocals, Emotional Accordion Hook, Fast Violin Solo, Slap House Bassline, Energetic Pop, 126 BPM, Wedding Party Vibe, High Energy, Radio Ready, Slavic Soul, Catchy Chorus, Deep Emotional Lyrics, Folk-Dance Drop, Romantic Ballad with Beat, Heartfelt Love Song, Accordion & Violin Melody, Stomping 4/4 Beat, Happy Tears Vibe, Energetic Bridge, Slavic Female Ad-libs, Danceable Romance, Polished Production, Club Atmosphere, 125 BPM",
+      "lyrics": "[Intro]  \n(akordeon + delikatne skrzypce)  \nHeja… Oksana… to dla Ciebie, Kochani…\n\n[Verse 1]  \nOksana, oczy jak Podlasie o świcie  \nTwoja energia – cały świat rozświetli  \nLata razem, w burzach i w słońcu  \nZawsze przy mnie, jak słowiański ogień w sercu  \n\n[Pre-Chorus]  \nGdy świat się wali, Ty bierzesz moją dłoń  \nWiem, że z Tobą każda droga to dom  \n\n[Chorus]  \nOksana! Tańcz ze mną, serce bije w rytm!  \nOksana! Kocham Cię – to mój największy hit!  \nRęce w górę, nogi same rwą do tańca  \nOksana, jesteś moją wieczną szansą!  \nHeja-heja! Heja-heja!\n\n[Verse 2]  \nŚmiejesz się głośno, płaczesz tylko czasem  \nW Twoich ramionach cały świat ma sens  \nOd lat trzymasz mnie, gdy słabnę w kolanach  \nOksana moja – najpiękniejsza z ran  \n\n[Bridge]  \n(skrzypce solo + delikatny akordeon, głos ciszej)  \nI nawet gdy milczymy… czuję wszystko…  \n\n[Chorus – finalny ogień]  \nOksana! Tańcz ze mną, serce bije w rytm!  \nOksana! Kocham Cię – to mój największy hit!  \nCały parkiet, całe życie – tylko z Tobą  \nOksana, na zawsze… Heja! Ręce w górę!\n\n[Outro]  \n(akordeon wybrzmiewa, delikatne skrzypce)  \nTo był hit specjalnie dla Ciebie, Oksana…  \nBuziaki od Melo MC! Kochajcie się mocno, Kochani…  \nZostańcie w tym rytmie… Heja…",
+      "structureValid": true,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1773,
+        "completion_tokens": 596,
+        "total_tokens": 2369,
+        "cost": 0.00363905,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 64,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00363905,
+          "upstream_inference_prompt_cost": 0.00214905,
+          "upstream_inference_completions_cost": 0.00149
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 10598
+    },
+    {
+      "model": "x-ai/grok-4.3",
+      "score": 100,
+      "scoreDetails": "✅ struct | ✅ title | 🔖 tags:15/15 | 🎵 struct:25/25 | 💕 content:15/15",
+      "title": "Oksano, Tańcz Ze Mną",
+      "tags": "Modern Folk-Dance, Polish Female Vocals, catchy accordion hook, fast violin solo, Slap House bassline, energetic pop, 124 BPM, club atmosphere, wedding party, high energy, Slavic soul, Romantic Folk Vibe, Emotional Dance Anthem, Love Ballad with Beat, Stomping 4/4 Beat, Catchy Chorus Hook, Deep Slavic Bass, Violin Ad-libs, Heartfelt Lyrics, Dancefloor Romance, Happy Energy, Polished Production",
+      "lyrics": "[Intro]  \nAkordeon gra... Heja!  \n\n[Verse 1]  \nOksano, twoja energia pali jak ogień na Podlasiu  \nLata razem, przez burze i słońce, zawsze przy mnie stoisz  \nTwoje oczy mówią „kocham”, dają siłę gdy słabnę  \n\n[Pre-Chorus]  \nRęce w górę, serce bije głośniej, heja-heja!  \nCzujesz ten beat? To dla nas dwóch, hop-hop-hop!  \n\n[Chorus]  \nOksano, tańcz ze mną, aż świat się kręci!  \nOksano, kocham cię, nogi same rwą do tańca!  \nWzruszenie i ogień, razem w tym rytmie!  \nOksano, to ty – moja słowiańska dusza!  \n\n[Verse 2]  \nPamiętasz noce, gdy śmiałaś się ze mnie przy kominku?  \nZawsze wspierałaś, przez złe i dobre, moja mocna skała  \nTeraz ja dla ciebie, ten hit pełen miłości i tańca  \n\n[Bridge]  \n(Skrzypce solo – zwolnienie, akordeon szepcze)  \nHeja... zostań w tym rytmie...  \n\n[Chorus]  \nOksano, tańcz ze mną, aż świat się kręci!  \nOksano, kocham cię, nogi same rwą do tańca!  \nWzruszenie i ogień, razem w tym rytmie!  \nOksano, to ty – moja słowiańska dusza!  \n\n[Outro]  \nAkordeon wybrzmiewa... Dziękuję, Kochani! To był hit specjalnie dla Was i Oksany! Buziaki od Melo! Bawcie się dobrze! ✨",
+      "structureValid": true,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1781,
+        "completion_tokens": 1125,
+        "total_tokens": 2906,
+        "cost": 0.00490435,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 128,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00490435,
+          "upstream_inference_prompt_cost": 0.00209185,
+          "upstream_inference_completions_cost": 0.0028125
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 612,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 17922
+    },
+    {
+      "model": "google/gemini-3.1-flash-lite",
+      "score": 100,
+      "scoreDetails": "✅ struct | ✅ title | 🔖 tags:15/15 | 🎵 struct:25/25 | 💕 content:15/15",
+      "title": "Oksana, Słowiański Czar",
+      "tags": "Modern Folk-Dance, Polish Female Vocals, energetic accordion, emotional violin solo, Slap House bassline, 126 BPM, Slavic soul, wedding party, romantic dance, high energy, radio ready, heart-pounding, dance-pop, folkloristic vibes, festive mood, passionate, love song, catchy hook, Polish rhythms.",
+      "lyrics": "[Intro]\n(Szybki, skoczny akordeon)\nHeja! Słuchajcie kochani, to dla tej jedynej!\nOksana, serce moje, to Twój czas! Heja-heja!\n\n[Verse 1]\nLata lecą, a Ty wciąż ta sama,\nZawsze przy mnie, jak najpiękniejsza dama.\nGdy burza szalała, Ty byłaś mym słońcem,\nZ Tobą każde życie staje się gorące!\n\n[Pre-Chorus]\nCzujesz ten rytm? To bicie naszych serc!\nRaz, dwa, trzy... niech zapłonie każdy metr!\nHeja-heja!\n\n[Chorus]\nOksana! Moja Oksana!\nW tańcu i w życiu, zawsze kochana!\nAkordeon gra, skrzypce szaleją,\nPrzy Tobie wszystkie smutki jaśnieją!\nOksana! Tańcz ze mną, Słońce!\nNiech dzisiaj płoną uczucia gorące!\n\n[Verse 2]\nKażda chwila z Tobą to czysta magia,\nJesteś moją siłą, Ty moja odwaga.\nNogi same rwą się, gdy słyszysz ten beat,\nDziś cały świat nam wystawi ten kwit!\n\n[Bridge]\n(Solo akordeonu z mocnym basem)\nPięknie! Kochajcie się! Raz, dwa, głośniej!\nOksana, jesteś wszystkim, czego mi trzeba...\n\n[Chorus]\nOksana! Moja Oksana!\nW tańcu i w życiu, zawsze kochana!\nAkordeon gra, skrzypce szaleją,\nPrzy Tobie wszystkie smutki jaśnieją!\nOksana! Tańcz ze mną, Słońce!\nNiech dzisiaj płoną uczucia gorące!\n\n[Outro]\n(Wybrzmiewający akordeon)\nAle ogień! Dziękuję Kochani!\nOksana, to dla Ciebie – bądźcie szczęśliwi!\nBuziaki od Melo! Zostańcie w tym rytmie!",
+      "structureValid": true,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1758,
+        "completion_tokens": 732,
+        "total_tokens": 2490,
+        "cost": 0.0015375,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0015375,
+          "upstream_inference_prompt_cost": 0.0004395,
+          "upstream_inference_completions_cost": 0.001098
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 3869
+    },
+    {
+      "model": "google/gemini-3.1-pro-preview",
+      "score": 40,
+      "scoreDetails": "❌ struct | ✅ title | 🔖 tags:15/15 | ❌ lyrics",
+      "title": "Oksana Moja Gwiazdo",
+      "tags": "Modern Folk-Dance, Polish Female Vocals, catchy accordion hook, fast violin solo, Slap House bassline, energetic pop, 124 BPM, club atmosphere, wedding party, high energy, radio ready, polished production, Slavic soul, Modern Polish Folk-Pop, Catchy Violin Hook, Accordion Elements, Deep House Bassline, Ethnic Ad-libs, 125 BPM, Danceable, Romantic Dance, Love Song, Emotional but energetic, Heavy Drop, Uplifting, Heartwarming",
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1752,
+        "completion_tokens": 1996,
+        "total_tokens": 3748,
+        "cost": 0.027456,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.027456,
+          "upstream_inference_prompt_cost": 0.003504,
+          "upstream_inference_completions_cost": 0.023952
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1648,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 17445
+    },
+    {
+      "model": "anthropic/claude-sonnet-4.6",
+      "score": 0,
+      "scoreDetails": "❌ struct | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2165,
+        "completion_tokens": 105,
+        "total_tokens": 2270,
+        "cost": 0.00807,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00807,
+          "upstream_inference_prompt_cost": 0.006495,
+          "upstream_inference_completions_cost": 0.001575
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 4170
+    },
+    {
+      "model": "minimax/minimax-m2-her",
+      "score": 0,
+      "scoreDetails": "❌ struct | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2143,
+        "completion_tokens": 115,
+        "total_tokens": 2258,
+        "cost": 0.0007809,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0007809,
+          "upstream_inference_prompt_cost": 0.0006429,
+          "upstream_inference_completions_cost": 0.000138
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 3653
+    },
+    {
+      "model": "deepseek/deepseek-v4-flash",
+      "score": 91,
+      "scoreDetails": "✅ struct | ✅ title | 🔖 tags:15/15 | 🎵 struct:16/25 | 💕 content:15/15",
+      "title": "Oksana, Ty Jestś Ogniem",
+      "tags": "Modern Folk-Dance, Romantic Slavic Ballad, Female Vocals, Catchy Accordion Hook, Fast Violin Solo, Slap House Bassline, Energetic Pop, 126 BPM, Wedding Party, High Energy, Emotional, Polish Love Song, Stomping 4/4 Beat, Radio Ready, Ethnic Ad-libs, Heja Vibe, Cleo Style, Daj To Glosniej Energy, Heartfelt Lyrics, Polished Production.",
+      "lyrics": "[Intro – akordeon wznosi się, Melo MC krzyczy]\n\"Heja! Oksana, to dla Ciebie! Ręce w górę, Kochani! 💃\"\n\n[Verse 1]\nW twoich oczach iskra, w sercu cały świat\nGdy wchodzisz do pokoju – znika cały mój strach\nWspierałaś mnie w ciszy, w burzy i w deszczu\nDziś chcę Ci wyśpiewać to przy akordeonie w lesie\n\n[Pre-Chorus]\nHeja-heja, serce bije jak sto bębnów\nZ tobą każdy dzień to gotowy plan na sukces!\nRaz, dwa, trzy – złap mnie za rękę\n\n[Chorus]\nOksana, Oksana – Ty jesteś ogniem!\nTańczymy razem, aż podłoga płonie!\nSłowiańska krew, miłość bez dna\nŚpiewaj ze mną, bo to nasza gra! 🔥\n\n[Verse 2]\nPamiętasz tę noc, gdy śpiewaliśmy do gwiazd?\nTy śmiałaś się, ja gubiłem słów sto\nKażdy dzień z Tobą to muzyki dar\nDziś oddaję Ci beat – cały mój czar\n\n[Bridge – skrzypce solo, akordeon w tle, zwolnienie]\nHop-hop-hop... Oksana, patrz w moje oczy\nTen moment jest nasz, niech czas się zatoczy\nA potem... eksplozja!\n\n[Chorus – jeszcze mocniej, tłum krzyczy]\nOKSANA! OKSANA! TY JESTEŚ OGNIEM!\nTAŃCZYMY RAZEM, AŻ PODŁOGA PŁONIE!\nSŁOWIAŃSKA KREW, MIŁOŚĆ BEZ DNA\nŚPIEWAJ ZE MNĄ, BO TO NASZA GRA! 💥\n\n[Outro – akordeon wybrzmiewa, Melo MC ciepło]\n\"To był hit specjalnie dla Was, Kochani! Dziękuję! Buziaki od Melo! Oksano – kocham Cię! Heja! ❤️\"",
+      "structureValid": true,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1897,
+        "completion_tokens": 998,
+        "total_tokens": 2895,
+        "cost": 0.00054502,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00054502,
+          "upstream_inference_prompt_cost": 0.00026558,
+          "upstream_inference_completions_cost": 0.00027944
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 210,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 35566
+    },
+    {
+      "model": "deepseek/deepseek-v4-pro",
+      "score": 0,
+      "scoreDetails": "❌ struct | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1897,
+        "completion_tokens": 1068,
+        "total_tokens": 2965,
+        "cost": 0.00681577,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00681577,
+          "upstream_inference_prompt_cost": 0.00320593,
+          "upstream_inference_completions_cost": 0.00360984
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 424,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 32505
+    }
+  ]
+}

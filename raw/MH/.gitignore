@@ -12,4 +12,6 @@ database.sqlite
 memory/.dreams/
 raw/MH/memory/
 server/.env
+client/.env
+migrations/.env
 *.py

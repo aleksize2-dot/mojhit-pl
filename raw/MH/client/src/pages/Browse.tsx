@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth } from '@clerk/react';
 import { type Track, TrackCard } from '../components/RecentTracks';
 import { SEO } from '../components/SEO';
 

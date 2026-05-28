@@ -121,7 +121,7 @@ export function SupportAgentManager() {
               onChange={(e) => setConfig({...config, model: e.target.value})}
               placeholder="np. google/gemini-2.5-flash"
             />
-            <p className="text-xs text-on-surface-variant mt-1">Dostępne: anthropic/claude-3.5-sonnet, google/gemini-2.5-flash, openai/gpt-4o-mini</p>
+            <p className="text-xs text-on-surface-variant mt-1">Dostępne: google/gemini-2.5-flash, anthropic/claude-sonnet-4.6, x-ai/grok-4.3, deepseek/deepseek-v4-flash, openai/o3-mini-high</p>
           </div>
 
           <div>

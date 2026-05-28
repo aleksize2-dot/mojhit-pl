@@ -1,4 +1,4 @@
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth } from '@clerk/react';
 import { SEO, schemas } from '../components/SEO';
 import { Generator } from '../components/Generator';
 import { RecentTracks } from '../components/RecentTracks';

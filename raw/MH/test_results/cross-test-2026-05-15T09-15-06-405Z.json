@@ -1,0 +1,1678 @@
+{
+  "meta": {
+    "date": "2026-05-15T09:15:06.405Z",
+    "producers": 4,
+    "models": 12,
+    "scenario": "love-track-oksana"
+  },
+  "producers": [
+    {
+      "id": "melo_mc",
+      "name": "Melo MC",
+      "currentModel": "anthropic/claude-sonnet-4.6"
+    },
+    {
+      "id": "kosa",
+      "name": "Kosa",
+      "currentModel": "x-ai/grok-4.20"
+    },
+    {
+      "id": "la_luz",
+      "name": "La Luz",
+      "currentModel": "anthropic/claude-sonnet-4.6"
+    },
+    {
+      "id": "cj_remi",
+      "name": "CJ Remi",
+      "currentModel": "x-ai/grok-4.20"
+    }
+  ],
+  "results": [
+    {
+      "producerId": "melo_mc",
+      "producerName": "Melo MC",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "x-ai/grok-4-fast",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1617,
+        "completion_tokens": 637,
+        "total_tokens": 2254,
+        "cost": 0.0006197,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 148,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0006197,
+          "upstream_inference_prompt_cost": 0.0003012,
+          "upstream_inference_completions_cost": 0.0003185
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 505,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 10407
+    },
+    {
+      "producerId": "melo_mc",
+      "producerName": "Melo MC",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "x-ai/grok-4.20",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1586,
+        "completion_tokens": 124,
+        "total_tokens": 1710,
+        "cost": 0.0022253,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 64,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0022253,
+          "upstream_inference_prompt_cost": 0.0019153,
+          "upstream_inference_completions_cost": 0.00031
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 3770
+    },
+    {
+      "producerId": "melo_mc",
+      "producerName": "Melo MC",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "x-ai/grok-4.3",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1594,
+        "completion_tokens": 573,
+        "total_tokens": 2167,
+        "cost": 0.0032906,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 128,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0032906,
+          "upstream_inference_prompt_cost": 0.0018581,
+          "upstream_inference_completions_cost": 0.0014325
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 498,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 10989
+    },
+    {
+      "producerId": "melo_mc",
+      "producerName": "Melo MC",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "google/gemini-3.1-pro-preview",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1573,
+        "completion_tokens": 1996,
+        "total_tokens": 3569,
+        "cost": 0.027098,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.027098,
+          "upstream_inference_prompt_cost": 0.003146,
+          "upstream_inference_completions_cost": 0.023952
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1921,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 18213
+    },
+    {
+      "producerId": "melo_mc",
+      "producerName": "Melo MC",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "google/gemini-3.1-flash-lite",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1575,
+        "completion_tokens": 194,
+        "total_tokens": 1769,
+        "cost": 0.00068475,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00068475,
+          "upstream_inference_prompt_cost": 0.00039375,
+          "upstream_inference_completions_cost": 0.000291
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 1341
+    },
+    {
+      "producerId": "melo_mc",
+      "producerName": "Melo MC",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "deepseek/deepseek-v4-flash",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1682,
+        "completion_tokens": 181,
+        "total_tokens": 1863,
+        "cost": 0.00028616,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00028616,
+          "upstream_inference_prompt_cost": 0.00023548,
+          "upstream_inference_completions_cost": 0.00005068
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 17866
+    },
+    {
+      "producerId": "melo_mc",
+      "producerName": "Melo MC",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "deepseek/deepseek-v4-pro",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1682,
+        "completion_tokens": 559,
+        "total_tokens": 2241,
+        "cost": 0.0059918,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0059918,
+          "upstream_inference_prompt_cost": 0.0035322,
+          "upstream_inference_completions_cost": 0.0024596
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 286,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 12234
+    },
+    {
+      "producerId": "melo_mc",
+      "producerName": "Melo MC",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "anthropic/claude-sonnet-4.6",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1921,
+        "completion_tokens": 215,
+        "total_tokens": 2136,
+        "cost": 0.008988,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.008988,
+          "upstream_inference_prompt_cost": 0.005763,
+          "upstream_inference_completions_cost": 0.003225
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 7797
+    },
+    {
+      "producerId": "melo_mc",
+      "producerName": "Melo MC",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "minimax/minimax-m2-her",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1892,
+        "completion_tokens": 2000,
+        "total_tokens": 3892,
+        "cost": 0.0029676,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0029676,
+          "upstream_inference_prompt_cost": 0.0005676,
+          "upstream_inference_completions_cost": 0.0024
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 16016
+    },
+    {
+      "producerId": "melo_mc",
+      "producerName": "Melo MC",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "openrouter/owl-alpha",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2041,
+        "completion_tokens": 284,
+        "total_tokens": 2325,
+        "cost": 0,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 22716
+    },
+    {
+      "producerId": "melo_mc",
+      "producerName": "Melo MC",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "mistral/mistral-medium-3.5",
+      "score": 0,
+      "scoreDetails": "ERROR",
+      "error": true,
+      "errorMsg": "{\"error\":{\"message\":\"mistral/mistral-medium-3.5 is not a valid model ID\",\"code\":400},\"user_id\":\"user_39zrCgcJmmPjN3d5KIoyS3grAmM\"}",
+      "timeMs": 48
+    },
+    {
+      "producerId": "melo_mc",
+      "producerName": "Melo MC",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "inclusionai/ring-2.6-1t:free",
+      "score": 0,
+      "scoreDetails": "ERROR",
+      "error": true,
+      "errorMsg": "{\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"inclusionai/ring-2.6-1t:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Novita\",\"is_byok\":fal",
+      "timeMs": 424
+    },
+    {
+      "producerId": "kosa",
+      "producerName": "Kosa",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "x-ai/grok-4-fast",
+      "score": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 struct:25/25 | 💕 content:15/15",
+      "title": "Oksana Z Pazurem",
+      "tags": "Polish Romantic Rap, Energetic Love Song, Smooth 808 Bass, Passionate Male Vocals, Urban Romance Vibe, high fidelity, studio recording.",
+      "lyrics": "[Intro]  \nElo, Oksano, to dla Ciebie, skarbie...  \n\n[Verse 1]  \nOd lat razem, przez burze i słońce,  \nTwoja energia jak prąd w żyłach, nie do zatrzymania.  \nWspierasz mnie zawsze, w osiedlowym dymie,  \nJesteś moją siłą, moją tarczą, moją pasją.  \n\n[Hook]  \nOksana, kocham Cię nad życie, z pazurem w sercu,  \nJesteś moją królową, w tym świecie pełnym ognia.  \nRazem rozwalamy bariery, ty i ja, na full,  \nMoja energiczna laska, bez Ciebie świat pusty.  \n\n[Verse 2]  \nTwoje oczy błyszczą jak diamenty w nocy,  \nŚmiejesz się głośno, rozwiewasz moje chmury.  \nW aucie z basem, ręka w ręce, jedziemy dalej,  \nJesteś wsparciem, co mnie napędza, jak turbo.  \n\n[Outro]  \nOksana, na zawsze moja, z miłością i siłą...  \nKoniec, ale to dopiero początek.",
+      "structureValid": true,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1754,
+        "completion_tokens": 1051,
+        "total_tokens": 2805,
+        "cost": 0.00085425,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 147,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00085425,
+          "upstream_inference_prompt_cost": 0.00032875,
+          "upstream_inference_completions_cost": 0.0005255
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 555,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 35876
+    },
+    {
+      "producerId": "kosa",
+      "producerName": "Kosa",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "x-ai/grok-4.20",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1723,
+        "completion_tokens": 141,
+        "total_tokens": 1864,
+        "cost": 0.00243905,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 64,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00243905,
+          "upstream_inference_prompt_cost": 0.00208655,
+          "upstream_inference_completions_cost": 0.0003525
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 5843
+    },
+    {
+      "producerId": "kosa",
+      "producerName": "Kosa",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "x-ai/grok-4.3",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1731,
+        "completion_tokens": 960,
+        "total_tokens": 2691,
+        "cost": 0.00442935,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 128,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00442935,
+          "upstream_inference_prompt_cost": 0.00202935,
+          "upstream_inference_completions_cost": 0.0024
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 634,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 10246
+    },
+    {
+      "producerId": "kosa",
+      "producerName": "Kosa",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "google/gemini-3.1-pro-preview",
+      "score": 40,
+      "scoreDetails": "❌ structure | partial | ✅ title | 🔖 tags:15/15 | ❌ lyrics",
+      "title": "Oksana (Mój Ogień)",
+      "tags": "Polish Melodic Trap, R&B infusion, romantic but edgy, Heavy 808 bass, soulful male vocals, smooth electric guitar, energetic hip-hop beat, passionate delivery, deep sub-bass, emotional rising build-up, 105 BPM, high fidelity, studio recording",
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1719,
+        "completion_tokens": 1996,
+        "total_tokens": 3715,
+        "cost": 0.02739,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.02739,
+          "upstream_inference_prompt_cost": 0.003438,
+          "upstream_inference_completions_cost": 0.023952
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1633,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 21230
+    },
+    {
+      "producerId": "kosa",
+      "producerName": "Kosa",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "google/gemini-3.1-flash-lite",
+      "score": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 struct:25/25 | 💕 content:15/15",
+      "title": "Oksana – Mój Cały Świat",
+      "tags": "[Atmospheric Pop, R&B Polish, smooth male vocals, deep sub-bass, melodic synth chords, romantic but edgy vibe, modern production, soulful energy, 90 BPM, high fidelity, studio recording]",
+      "lyrics": "[Intro]\nYeah\nTo dla niej\nOksana\nSłuchaj\n\n[Verse 1]\nWchodzisz do pokoju i światło się zmienia\nMasz w sobie ogień, który nie potrzebuje cienia\nLata mijają, a ja wciąż patrzę jak w obraz\nJesteś moją siłą, mój najpiękniejszy wybór, Oksana\nKiedy cały świat wali się na głowę, Ty dajesz mi spokój\nJesteś moją przystanią i największym dowodem na to, że warto\n\n[Hook]\nOksana, jesteś jak tlen, jak puls w mojej głowie\nNikt nie zrozumie tego, co jest między nami, niech świat się dowie\nMasz ten pazur, masz to ciepło, masz wszystko co kocham\nDla Ciebie góry przeniosę, dla Ciebie nawet w ogień skoczę\nMój cały świat, moja jedyna, na zawsze razem\n\n[Verse 2]\nNie potrzebuję luksusów, kiedy Ty jesteś obok\nKażda chwila z Tobą to czysty zysk, nie żadna strata\nWspierasz mnie w każdej walce, nie pytasz o cenę\nJesteś moją królową, Oksana, to Twój numer, Twoje imię\nZostajemy tu, gdzie nam dobrze, gdzie bije nasze serce\n\n[Outro]\nNa zawsze, skarbie\nTylko Ty\nMoja Oksana\n[Fade Out]",
+      "structureValid": true,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1719,
+        "completion_tokens": 579,
+        "total_tokens": 2298,
+        "cost": 0.00129825,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00129825,
+          "upstream_inference_prompt_cost": 0.00042975,
+          "upstream_inference_completions_cost": 0.0008685
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 3736
+    },
+    {
+      "producerId": "kosa",
+      "producerName": "Kosa",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "deepseek/deepseek-v4-flash",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1823,
+        "completion_tokens": 225,
+        "total_tokens": 2048,
+        "cost": 0.00031822,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00031822,
+          "upstream_inference_prompt_cost": 0.00025522,
+          "upstream_inference_completions_cost": 0.000063
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 26212
+    },
+    {
+      "producerId": "kosa",
+      "producerName": "Kosa",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "deepseek/deepseek-v4-pro",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1823,
+        "completion_tokens": 708,
+        "total_tokens": 2531,
+        "cost": 0.00563586,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00563586,
+          "upstream_inference_prompt_cost": 0.00317202,
+          "upstream_inference_completions_cost": 0.00246384
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 528,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 28746
+    },
+    {
+      "producerId": "kosa",
+      "producerName": "Kosa",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "anthropic/claude-sonnet-4.6",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2055,
+        "completion_tokens": 179,
+        "total_tokens": 2234,
+        "cost": 0.00885,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00885,
+          "upstream_inference_prompt_cost": 0.006165,
+          "upstream_inference_completions_cost": 0.002685
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 5164
+    },
+    {
+      "producerId": "kosa",
+      "producerName": "Kosa",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "minimax/minimax-m2-her",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2048,
+        "completion_tokens": 2000,
+        "total_tokens": 4048,
+        "cost": 0.0030144,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0030144,
+          "upstream_inference_prompt_cost": 0.0006144,
+          "upstream_inference_completions_cost": 0.0024
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 14779
+    },
+    {
+      "producerId": "kosa",
+      "producerName": "Kosa",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "openrouter/owl-alpha",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2167,
+        "completion_tokens": 304,
+        "total_tokens": 2471,
+        "cost": 0,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 25656
+    },
+    {
+      "producerId": "kosa",
+      "producerName": "Kosa",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "mistral/mistral-medium-3.5",
+      "score": 0,
+      "scoreDetails": "ERROR",
+      "error": true,
+      "errorMsg": "{\"error\":{\"message\":\"mistral/mistral-medium-3.5 is not a valid model ID\",\"code\":400},\"user_id\":\"user_39zrCgcJmmPjN3d5KIoyS3grAmM\"}",
+      "timeMs": 52
+    },
+    {
+      "producerId": "kosa",
+      "producerName": "Kosa",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "inclusionai/ring-2.6-1t:free",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1935,
+        "completion_tokens": 2000,
+        "total_tokens": 3935,
+        "cost": 0,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1581,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 24645
+    },
+    {
+      "producerId": "la_luz",
+      "producerName": "La Luz",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "x-ai/grok-4-fast",
+      "score": 95,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:10/15 | 🎵 struct:25/25 | 💕 content:15/15",
+      "title": "Oksana Mi Fuego",
+      "tags": "Polish Latino, Bachata, Romantic Latin Pop, Male Vocals, Polish male vocals, Spanish nylon guitar, Sensual synth melodies, Romantic dance vibe, High energy chorus, Autotune hooks, 90-95 BPM, Emotional ballad build-up, Acoustic guitar fingerstyle, Dem Bow rhythm accents, Summer romance, Polished production, Heartfelt lyrics, Catchy vocal ad-libs, Modern Latino fusion, Warm bassline, Intimate vocals",
+      "lyrics": "[Intro]\n(¡Ole! Oksana, mi amor)\n[Instrumental Hook: Soft Spanish Guitar Strum]\n\n[Verse 1]\nOd lat razem, jak gwiazdy na niebie,\nTwoja energia budzi we mnie ogień,\nZawsze wspierasz, w burzy i w ciszy,\nKocham cię nad życie, Oksana, moja siostro.\n\n[Pre-Chorus]\nCzuję twój rytm w sercu, ¡fuego! w spojrzeniu,\nRazem tańczymy przez noce i dni,\nJesteś moją siłą, moją pasją bez granic.\n\n[Chorus]\nOksana, mi fuego, ty jesteś moim światem,\nW twoich oczach widzę wieczną miłość,\n¡Vamos! Razem na zawsze, w rytmie serca bije,\nKocham cię, Oksana, ¡Dios mío!, na zawsze moja!\n\n[Verse 2]\nTwoja śmiech jak salsa, rozgrzewa duszę,\nWspierasz marzenia, nigdy nie poddajesz się,\nZ tobą świat jest jaśniejszy, pełen barw i blasku,\nJesteś moją muzą, Oksana, w każdym takcie.\n\n[Bridge]\n[Soft Guitar Solo: Romantic Fingerstyle Melody]\nZwolnijmy chwilę, tylko ty i ja,\nW ramionach twoich znajdę spokój i żar.\n\n[Chorus]\nOksana, mi fuego, ty jesteś moim światem,\nW twoich oczach widzę wieczną miłość,\n¡Vamos! Razem na zawsze, w rytmie serca bije,\nKocham cię, Oksana, ¡Dios mío!, na zawsze moja!\n\n[Outro]\n(¡Fuego! Mi amor, Oksana...)\n[ fading Spanish Guitar and Echoing Vocals: To był La Luz, dale! ]",
+      "structureValid": true,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1329,
+        "completion_tokens": 1055,
+        "total_tokens": 2384,
+        "cost": 0.0007711,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 148,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0007711,
+          "upstream_inference_prompt_cost": 0.0002436,
+          "upstream_inference_completions_cost": 0.0005275
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 477,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 26284
+    },
+    {
+      "producerId": "la_luz",
+      "producerName": "La Luz",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "x-ai/grok-4.20",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1298,
+        "completion_tokens": 156,
+        "total_tokens": 1454,
+        "cost": 0.0019453,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 64,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0019453,
+          "upstream_inference_prompt_cost": 0.0015553,
+          "upstream_inference_completions_cost": 0.00039
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 3494
+    },
+    {
+      "producerId": "la_luz",
+      "producerName": "La Luz",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "x-ai/grok-4.3",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1306,
+        "completion_tokens": 652,
+        "total_tokens": 1958,
+        "cost": 0.0031281,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 128,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0031281,
+          "upstream_inference_prompt_cost": 0.0014981,
+          "upstream_inference_completions_cost": 0.00163
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 580,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 7505
+    },
+    {
+      "producerId": "la_luz",
+      "producerName": "La Luz",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "google/gemini-3.1-pro-preview",
+      "score": 35,
+      "scoreDetails": "❌ structure | partial | ✅ title | 🔖 tags:10/15 | ❌ lyrics",
+      "title": "Oksana, Moja Królowa",
+      "tags": "Polish Latino, Reggaeton, romantic bachata intro, sensual, passionate, Male Vocals, Polish male vocals, Spanish acoustic guitar, catchy synth trumpet hook, danceable, summer party vibe, autotune pop, high energy, Polish Latino Pop, Modern Disco Polo, Autotune, Catchy Slap House bassline, Spanish nylon guitar melodies, Summer Club vibe, High-pitched synth trumpet hooks, 105-110 BPM, Danceable, Party atmosphere, 4/4 drum beat, Clean production, Polished sound",
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1295,
+        "completion_tokens": 1996,
+        "total_tokens": 3291,
+        "cost": 0.026542,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.026542,
+          "upstream_inference_prompt_cost": 0.00259,
+          "upstream_inference_completions_cost": 0.023952
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1517,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 19334
+    },
+    {
+      "producerId": "la_luz",
+      "producerName": "La Luz",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "google/gemini-3.1-flash-lite",
+      "score": 95,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:10/15 | 🎵 struct:25/25 | 💕 content:15/15",
+      "title": "Oksana, Moja Fuego",
+      "tags": "Polish Latino, Reggaeton, Male Vocals, Spanish acoustic guitar, catchy synth trumpet hook, danceable, summer party vibe, autotune pop, high energy, Romantic Latin Pop, Modern Dance, Passionate, Energetic, Club hit, Polished production, 105 BPM",
+      "lyrics": "[Intro]\n(¡Dale, Oksana!)\n(¡Que bonita eres, mi amor!)\n[Instrumental Hook: Catchy Brass Interlude]\n\n[Verse 1]\nWchodzisz do pokoju i świat staje w miejscu\nMasz w sobie ogień, który nie zna kresu\nTyle lat za nami, a ty wciąż jak nowa\nDla ciebie, skarbie, mam te wszystkie słowa\nWspierasz mnie zawsze, gdy gubię swój szlak\nJesteś moim niebem, jesteś mój znak\n\n[Pre-Chorus]\n(¡Vámonos!)\nTwoje oczy to ocean, w którym tonę\nJesteś jak słońce, w każdą stronę\n(¡Baila, baila!)\n\n[Chorus]\nOksana, tyś moja jedyna, moja dama\nW sercu mym płonie miłość nieznana\nOksana, z tobą każda chwila to fiesta\nJesteś najpiękniejsza, to prawda szczera, przestań!\n(¡Fuego, fuego!)\nOksana, mój ogień, mój cały świat!\n\n[Verse 2]\nNie potrzebuję innych, mam wszystko co chcę\nJesteś moją muzą, gdy budzę się w dzień\nRazem przez życie, przez burze i słońce\nTrzymaj mnie mocno za ręce gorące\n(¡Así, así!)\n\n[Bridge]\n[Spanish Guitar Solo]\nTwoja energia, twój śmiech, twój styl\nDla takich chwil warto żyć, co by nie było, co by nie śnił\n\n[Chorus]\nOksana, tyś moja jedyna, moja dama\nW sercu mym płonie miłość nieznana\nOksana, z tobą każda chwila to fiesta\nJesteś najpiękniejsza, to prawda szczera, przestań!\n(¡Qué rica!)\nOksana, mój ogień, mój cały świat!\n\n[Outro]\nMoja Oksana...\n(¡Te quiero mucho!)\nTo był La Luz, mami!\n[Instrumental Fade Out]",
+      "structureValid": true,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1297,
+        "completion_tokens": 766,
+        "total_tokens": 2063,
+        "cost": 0.00147325,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00147325,
+          "upstream_inference_prompt_cost": 0.00032425,
+          "upstream_inference_completions_cost": 0.001149
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 5644
+    },
+    {
+      "producerId": "la_luz",
+      "producerName": "La Luz",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "deepseek/deepseek-v4-flash",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1355,
+        "completion_tokens": 409,
+        "total_tokens": 1764,
+        "cost": 0.00039114,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00039114,
+          "upstream_inference_prompt_cost": 0.0002439,
+          "upstream_inference_completions_cost": 0.00014724
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 271,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 2661
+    },
+    {
+      "producerId": "la_luz",
+      "producerName": "La Luz",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "deepseek/deepseek-v4-pro",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1355,
+        "completion_tokens": 404,
+        "total_tokens": 1759,
+        "cost": 0.00467208,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00467208,
+          "upstream_inference_prompt_cost": 0.0029268,
+          "upstream_inference_completions_cost": 0.00174528
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 238,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 7718
+    },
+    {
+      "producerId": "la_luz",
+      "producerName": "La Luz",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "anthropic/claude-sonnet-4.6",
+      "score": 95,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:10/15 | 🎵 struct:25/25 | 💕 content:15/15",
+      "title": "Oksana (Mi Fuego)",
+      "tags": "Polish Latino, Reggaeton, Male Vocals, Polish male vocals, Spanish acoustic guitar fingerstyle, catchy synth trumpet hook, danceable, summer party vibe, autotune pop, high energy, Polish Latino Pop, Skolim style, Autotune, Catchy Slap House bassline, Spanish nylon guitar melodies, Summer Club vibe, High-pitched synth trumpet hooks, 105-110 BPM, Danceable, Party atmosphere, 4/4 drum beat, Clean production, Polished sound, Romantic Reggaeton, Passionate vocals, Dem Bow rhythm, Warm emotional undertone, Latin Pop ballad drop, Cinematic build-up, Lush synth pads",
+      "lyrics": "[Intro]\n(¡Ole! ¡Vamos! ¡Mi amor!)\n[Instrumental Hook: Catchy Brass Interlude with Spanish Guitar]\n\n[Verse 1]\nWstaję rano i widzę Cię\nten uśmiech Twój to najlepszy sen\nNie wiem jak to możliwe jest\nże trafiłem właśnie na Ciebie\nPrzez każdy dzień i każdą noc\njesteś moją największą mocą\nKiedy świat się wali i drży\nTy stajesz przy mnie (siempre aquí)\n\n[Pre-Chorus]\nNie ma drugiej takiej kobiety (no no no)\nco tak moje serce rozgrzewa (fuego fuego)\nOksana — to Twoje imię śpiewam\nbo bez Ciebie — wszystko traci sens (¡Dale!)\n\n[Chorus]\nOksana, Oksana (¡mi fuego!)\nTy jesteś moim ogniem co nie gaśnie nigdy\nOksana, Oksana (¡mi amor!)\nZ Tobą każda chwila to najpiękniejszy film\nTańcz ze mną dziś, bo my jesteśmy stworzeni\ndla siebie, na zawsze — (¡para siempre!) — nie ma wątpliwości\nOksana, Oksana — jesteś moim życiem\n(¡Fuego! ¡Fuego! ¡Ole!)\n\n[Verse 2]\nPamiętam każdy drobny gest\njak śmiejesz się do moich żartów\nJak trzymasz mocno moją dłoń\ngdy wiem że droga jest ciemna\nTwoja energia — to dar dla mnie\nnie każdy ma takiego skarbu\nLata razem — to nie przypadek\nto przeznaczenie (mi destino)\n\n[Pre-Chorus]\nNie ma drugiej takiej kobiety (no no no)\nco tak moje serce rozgrzewa (fuego fuego)\nOksana — to Twoje imię śpiewam\nbo bez Ciebie — wszystko traci sens (¡Dale!)\n\n[Chorus]\nOksana, Oksana (¡mi fuego!)\nTy jesteś moim ogniem co nie gaśnie nigdy\nOksana, Oksana (¡mi amor!)\nZ Tobą każda chwila to najpiękniejszy film\nTańcz ze mną dziś, bo my jesteśmy stworzeni\ndla siebie, na zawsze — (¡para siempre!) — nie ma wątpliwości\nOksana, Oksana — jesteś moim życiem\n(¡Fuego! ¡Fuego! ¡Ole!)\n\n[Bridge]\n[Slow Spanish Guitar Fingerstyle Solo]\nKażdego ranka dziękuję za Ciebie\nkażdej nocy wiem — jesteś moim niebem\nNie szukam więcej — znalazłem już wszystko\nw Twoich oczach — mój dom (mi casa eres tú)\n(¡Ay, Oksana...)\n\n[Chorus]\nOksana, Oksana (¡mi fuego!)\nTy jesteś moim ogniem co nie gaśnie nigdy\nOksana, Oksana (¡mi amor!)\nZ Tobą każda chwila to najpiękniejszy film\nTańcz ze mną dziś, bo my jesteśmy stworzeni\ndla siebie, na zawsze — (¡para siempre!) — nie ma wątpliwości\nOksana, Oksana — jesteś moim życiem\n(¡Fuego! ¡Fuego! ¡Ole!)\n\n[Outro]\n[Fading Spanish Guitar with Synth Trumpet Echo]\nOksana... (siempre, siempre)\nOksana... (mi amor eterno)\nTo był La Luz, mami! Dale!",
+      "structureValid": true,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1532,
+        "completion_tokens": 1485,
+        "total_tokens": 3017,
+        "cost": 0.026871,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.026871,
+          "upstream_inference_prompt_cost": 0.004596,
+          "upstream_inference_completions_cost": 0.022275
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 24939
+    },
+    {
+      "producerId": "la_luz",
+      "producerName": "La Luz",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "minimax/minimax-m2-her",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1525,
+        "completion_tokens": 95,
+        "total_tokens": 1620,
+        "cost": 0.0005715,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0005715,
+          "upstream_inference_prompt_cost": 0.0004575,
+          "upstream_inference_completions_cost": 0.000114
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 1942
+    },
+    {
+      "producerId": "la_luz",
+      "producerName": "La Luz",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "openrouter/owl-alpha",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1591,
+        "completion_tokens": 183,
+        "total_tokens": 1774,
+        "cost": 0,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 14166
+    },
+    {
+      "producerId": "la_luz",
+      "producerName": "La Luz",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "mistral/mistral-medium-3.5",
+      "score": 0,
+      "scoreDetails": "ERROR",
+      "error": true,
+      "errorMsg": "{\"error\":{\"message\":\"mistral/mistral-medium-3.5 is not a valid model ID\",\"code\":400},\"user_id\":\"user_39zrCgcJmmPjN3d5KIoyS3grAmM\"}",
+      "timeMs": 43
+    },
+    {
+      "producerId": "la_luz",
+      "producerName": "La Luz",
+      "producerCurrentModel": "anthropic/claude-sonnet-4.6",
+      "model": "inclusionai/ring-2.6-1t:free",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 1455,
+        "completion_tokens": 2000,
+        "total_tokens": 3455,
+        "cost": 0,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1675,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 17096
+    },
+    {
+      "producerId": "cj_remi",
+      "producerName": "CJ Remi",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "x-ai/grok-4-fast",
+      "score": 100,
+      "scoreDetails": "✅ structure | ✅ title | 🔖 tags:15/15 | 🎵 struct:25/25 | 💕 content:15/15",
+      "title": "Oksana Z Iskrą",
+      "tags": "Modern Polish Synth-pop, 80s nostalgia, analog synths, danceable pop, male vocals, romantic energy, uplifting beats, 122-128 BPM, slap house bassline, rhythmic acoustic guitar, brass accents, summer romance vibe, heartfelt lyrics, energetic female tribute, radio-ready, high fidelity.",
+      "lyrics": "[Intro] – neon synth pad, okrzyk \"Wszystkie iskry na Oksanę!\" (CJ Remi: \"Lecimy z tym ogniem!\")\n\n[Verse 1] – lekkie synthy i gitara, o Waszej historii  \nJesteśmy razem od lat, Ty i ja, w tym szaleństwie dnia,  \nTwoja energia jak piorun, zawsze mnie podnosisz, nie da się zgubić.  \nWspierasz w burzach, w śmiechu, w tym naszym świecie,  \nKocham Cię nad życie, Oksana, jesteś moim blaskiem.\n\n[Pre-Chorus] – budowanie z basem, napięcie rośnie  \nCzuję ten rytm, co nas łączy, nie zatrzymamy się,  \nTwoja siła to mój napęd, dawaj więcej tego pazura!\n\n[Chorus] – eksplozja synthów i trąbek, chwytliwy hook  \nOksana, z iskrą w oku, tańczysz przez mój świat!  \nOksana, miłość z pazurem, jesteś moim hitem, yeah!  \nOksana, na pełnym gazie, kocham Cię na zawsze!\n\n[Verse 2] – anegdoty, lekki beat z echem  \nPamiętasz te noce pełne śmiechu, gdy świat się kręci,  \nTwoje wsparcie jak beat, co nie milknie nigdy.  \nRazem przez wzloty, z tym uśmiechem co rozświetla,  \nJesteś moją muzą, Oksana, w tym tanecznym locie.\n\n[Bridge] – spacey synth pad, build-up z delay  \nWolniej na chwilę, czuję Twój oddech, ten ogień w nas...  \nTeraz wybuchamy, ręce w górę, nie śpimy!\n\n[Chorus] – głośniej, z ad-libami \"Dawaj, Oksana!\"  \nOksana, z iskrą w oku, tańczysz przez mój świat!  \nOksana, miłość z pazurem, jesteś moim hitem, yeah!  \nOksana, na pełnym gazie, kocham Cię na zawsze!\n\n[Post-Chorus] – instrumental: trąbki + gitara, drop na parkiet  \n(Ad-lib: \"Głośniej dla Oksany!\", crowd chant: \"Oksana! Oksana!\")\n\n[Outro] – wybrzmiewający synth, echo fade-out  \nDzięki za ten vibe, Oksana... To Twój hit, Bro! (CJ Remi: \"Do usłyszenia na parkiecie!\")",
+      "structureValid": true,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2214,
+        "completion_tokens": 1423,
+        "total_tokens": 3637,
+        "cost": 0.00113225,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 147,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00113225,
+          "upstream_inference_prompt_cost": 0.00042075,
+          "upstream_inference_completions_cost": 0.0007115
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 685,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 20722
+    },
+    {
+      "producerId": "cj_remi",
+      "producerName": "CJ Remi",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "x-ai/grok-4.20",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2183,
+        "completion_tokens": 157,
+        "total_tokens": 2340,
+        "cost": 0.00305405,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 64,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00305405,
+          "upstream_inference_prompt_cost": 0.00266155,
+          "upstream_inference_completions_cost": 0.0003925
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 5633
+    },
+    {
+      "producerId": "cj_remi",
+      "producerName": "CJ Remi",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "x-ai/grok-4.3",
+      "score": 65,
+      "scoreDetails": "❌ structure | partial | ✅ title | ❌ tags | 🎵 struct:25/25 | 💕 content:15/15",
+      "title": "Oksano, Moja Energia",
+      "tags": null,
+      "lyrics": "[Intro] – neon synth pad, okrzyk \"Wszystkie światła na nas!\"\n[Verse 1] – Oksana, od lat razem w tym szale, Twoja energia pcha mnie do przodu, wspierasz mnie zawsze, gdy walczę z dniem\n[Pre-Chorus] – Muza nas woła, razem bijemy rytm\n[Chorus] – Oksano, moja energia, z pazurem tańczymy w tym życiu, Oksano, kocham Cię nad życie, razem na pełnym gazie!\n[Verse 2] – Twoje wsparcie jak ogień w żyłach, śmiejemy się głośno, gdy świat się przewraca, wspólne przygody, lekki luz i ogień\n[Bridge] – spacey synth pad, build-up\n[Chorus] – Oksano, moja energia, z pazurem tańczymy w tym życiu, Oksano, kocham Cię nad życie, razem na pełnym gazie!\n[Post-Chorus] – instrumentalny przełom: trąbki + gitara, pod co wszyscy skaczą\n[Outro] – wybrzmiewający synth, echo... \"Dzięki za ten vibe!\", \"To był Twój hit, do usłyszenia!\"",
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2191,
+        "completion_tokens": 1391,
+        "total_tokens": 3582,
+        "cost": 0.00608185,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 128,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00608185,
+          "upstream_inference_prompt_cost": 0.00260435,
+          "upstream_inference_completions_cost": 0.0034775
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 983,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 20243
+    },
+    {
+      "producerId": "cj_remi",
+      "producerName": "CJ Remi",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "google/gemini-3.1-pro-preview",
+      "score": 40,
+      "scoreDetails": "❌ structure | partial | ✅ title | 🔖 tags:15/15 | ❌ lyrics",
+      "title": "Oksana, Mój Huragan",
+      "tags": "Modern Polish Dance, Pop-Folk, catchy brass accents, rhythmic acoustic guitar, male vocals, energetic 4/4 beat, slap house bassline, 122-128 BPM, summer party vibe, upbeat love song, 80s nostalgia, analog synths, romantic dance pop, happy, radio-ready, high fidelity",
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2216,
+        "completion_tokens": 1996,
+        "total_tokens": 4212,
+        "cost": 0.028384,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.028384,
+          "upstream_inference_prompt_cost": 0.004432,
+          "upstream_inference_completions_cost": 0.023952
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1406,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 22882
+    },
+    {
+      "producerId": "cj_remi",
+      "producerName": "CJ Remi",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "google/gemini-3.1-flash-lite",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2218,
+        "completion_tokens": 162,
+        "total_tokens": 2380,
+        "cost": 0.0007975,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0007975,
+          "upstream_inference_prompt_cost": 0.0005545,
+          "upstream_inference_completions_cost": 0.000243
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 1314
+    },
+    {
+      "producerId": "cj_remi",
+      "producerName": "CJ Remi",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "deepseek/deepseek-v4-flash",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2364,
+        "completion_tokens": 342,
+        "total_tokens": 2706,
+        "cost": 0.00054864,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00054864,
+          "upstream_inference_prompt_cost": 0.00042552,
+          "upstream_inference_completions_cost": 0.00012312
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 192,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 2649
+    },
+    {
+      "producerId": "cj_remi",
+      "producerName": "CJ Remi",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "deepseek/deepseek-v4-pro",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2364,
+        "completion_tokens": 471,
+        "total_tokens": 2835,
+        "cost": 0.0055635,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0055635,
+          "upstream_inference_prompt_cost": 0.00397152,
+          "upstream_inference_completions_cost": 0.00159198
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 220,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 12055
+    },
+    {
+      "producerId": "cj_remi",
+      "producerName": "CJ Remi",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "anthropic/claude-sonnet-4.6",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2690,
+        "completion_tokens": 170,
+        "total_tokens": 2860,
+        "cost": 0.01062,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.01062,
+          "upstream_inference_prompt_cost": 0.00807,
+          "upstream_inference_completions_cost": 0.00255
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 5322
+    },
+    {
+      "producerId": "cj_remi",
+      "producerName": "CJ Remi",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "minimax/minimax-m2-her",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2632,
+        "completion_tokens": 338,
+        "total_tokens": 2970,
+        "cost": 0.0011952,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0011952,
+          "upstream_inference_prompt_cost": 0.0007896,
+          "upstream_inference_completions_cost": 0.0004056
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 4197
+    },
+    {
+      "producerId": "cj_remi",
+      "producerName": "CJ Remi",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "openrouter/owl-alpha",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2861,
+        "completion_tokens": 242,
+        "total_tokens": 3103,
+        "cost": 0,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 16951
+    },
+    {
+      "producerId": "cj_remi",
+      "producerName": "CJ Remi",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "mistral/mistral-medium-3.5",
+      "score": 0,
+      "scoreDetails": "ERROR",
+      "error": true,
+      "errorMsg": "{\"error\":{\"message\":\"mistral/mistral-medium-3.5 is not a valid model ID\",\"code\":400},\"user_id\":\"user_39zrCgcJmmPjN3d5KIoyS3grAmM\"}",
+      "timeMs": 36
+    },
+    {
+      "producerId": "cj_remi",
+      "producerName": "CJ Remi",
+      "producerCurrentModel": "x-ai/grok-4.20",
+      "model": "inclusionai/ring-2.6-1t:free",
+      "score": 5,
+      "scoreDetails": "❌ structure | ⚠️ title | ❌ tags | ❌ lyrics",
+      "title": null,
+      "tags": null,
+      "lyrics": null,
+      "structureValid": false,
+      "error": false,
+      "tokens": {
+        "prompt_tokens": 2527,
+        "completion_tokens": 1691,
+        "total_tokens": 4218,
+        "cost": 0,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 528,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "timeMs": 18777
+    }
+  ]
+}

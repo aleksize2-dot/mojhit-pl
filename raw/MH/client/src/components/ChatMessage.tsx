@@ -124,21 +124,29 @@ function formatBoldImpl(text: string): React.ReactNode {
 }
 
 export function ChatMessage({ content, isUser = false }: ChatMessageProps) {
+  // Убираем пробелы по краям
+  const cleanContent = content.trim();
+
   if (isUser) {
-    return <span className="whitespace-pre-wrap">{content}</span>;
+    return <span className="whitespace-pre-wrap">{cleanContent}</span>;
   }
 
-  // Разбиваем на строки и обрабатываем каждую
-  const lines = content.split('\n');
+  // Разделяем по двойным (или более) переносам строк для формирования абзацев
+  const paragraphs = cleanContent.split(/\n{2,}/);
 
   return (
-    <span className="whitespace-pre-wrap">
-      {lines.map((line, i) => (
-        <span key={i}>
-          {i > 0 && <br />}
-          {formatBold(line)}
-        </span>
+    <div className="flex flex-col gap-1.5">
+      {paragraphs.map((paragraph, i) => (
+        <div key={i} className="whitespace-pre-wrap">
+          {/* Внутри абзаца одиночные переносы строк конвертируем в <br /> */}
+          {paragraph.split('\n').map((line, j) => (
+            <span key={j}>
+              {j > 0 && <br />}
+              {formatBold(line)}
+            </span>
+          ))}
+        </div>
       ))}
-    </span>
+    </div>
   );
 }

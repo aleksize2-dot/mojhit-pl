@@ -255,8 +255,9 @@ async function sendTrackEmail(to, track, producerName, userName) {
       
       <div class="info-box">
         <div class="info-title">📦 Przechowywanie utworu</div>
-        <p>Wygenerowany utwór jest przechowywany na naszych serwerach przez <strong>14 dni</strong>. Po tym czasie zostanie automatycznie usunięty.</p>
-        <p><strong>Zalecamy pobranie pliku MP3</strong> jeśli chcesz zachować go na dłużej.</p>
+        <p>Darmowe utwory są przechowywane przez <strong>14 dni</strong>. Po tym czasie plik audio zostanie automatycznie usunięty.</p>
+        <p><strong>🔒 Jak zatrzymać utwór na zawsze?</strong> Wykup subskrypcję PRO — wszystkie Twoje tracki będą chronione. Albo zdobądź <strong>ponad 1000 odsłuchań</strong> — viralowe hity chronimy bezterminowo! 🔥</p>
+        <a href="https://mojhit.pl/cennik" style="color: #ff9064; font-weight: 600;">Sprawdź plany PRO →</a>
       </div>
       
       <div class="info-box">
@@ -324,7 +325,10 @@ Wykonawca AI: ${producerName}
 ⬇️ Pobierz plik MP3: ${downloadUrl}
 
 📦 Przechowywanie utworu:
-Wygenerowany utwór jest przechowywany na naszych serwerach przez 14 dni. Po tym czasie zostanie automatycznie usunięty. Zalecamy pobranie pliku MP3 jeśli chcesz zachować go na dłużej.
+Darmowe utwory są przechowywane przez 14 dni. Po tym czasie plik audio zostanie automatycznie usunięty.
+
+🔒 Jak zatrzymać na zawsze? Wykup PRO — wszystkie tracki chronione. Albo zdobądź 1000+ odsłuchań — viralowe hity chronimy bezterminowo! 🔥
+Sprawdź plany: https://mojhit.pl/cennik
 
 🚀 Chcesz więcej? Przejdź na wyższy plan!
 Odkryj pełnię możliwości mojhit.pl z planami PRO i VIP:

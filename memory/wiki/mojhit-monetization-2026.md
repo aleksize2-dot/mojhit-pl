@@ -1,33 +1,131 @@
-# Monetization 2026: Plans, Packages & Economy (mojhit.pl)
+# Monetization 2026: Launch Strategy & Economy (mojhit.pl)
 
-## Core Economy (Soft vs Hard Currency)
-- **Złote Monety (Hard Currency):** Kupowane za pieniądze (BLIK / Stripe), nie przepadają. 1 moneta = 1 piosenka.
-- **Nuty (Soft Currency):** Waluta bonusowa za aktywność (np. logowanie, polecenia, udostępnianie na TikToku). Limitowane czasowo. Używane w pierwszej kolejności.
+## 📅 Phased Launch Plan
 
-## Subscription Tiers (Role w imperium muzycznym)
-1. **Free (Hobbysta):** 5-10 Nót na start. Dostęp tylko do DJ Marka (działającego na modelu Gemini).
-2. **Basic (Twórca):** Pula monet + bonusowe Nuty. Dostęp do Marka i Kuby "Kosy" (Gemini).
-3. **Pro (Producent):** Największa pula monet. Dostęp do wszystkich agentów, w tym ekskluzywnej Mai (Claude 3.7 Sonnet) oraz Kosy (Grok). **Video generation** – możliwość tworzenia wideo z wygenerowanych utworów (optymalizowane pod TikTok/Reels/Shorts). Brak znaków wodnych, priorytetowa generacja.
+### Faza 1: Darmowy Start (Tydzień 1-4)
+- **Wszyscy 9 producentów = FREE (tier: basic, 0 coins)**
+- Cel: zebrać dane — kto generuje najwięcej, co ludzie wybierają
+- Nowy user dostaje N-pięć Nut na start
+- Gdy Nuty się kończą → modal: **"Kup hity i twórz dalej!"**
 
-## Seasonal / Exclusive Packages ("Guest Star" Model)
-Oprócz stałych subskrypcji, użytkownicy mogą wykupić jednorazowe pakiety (np. płatność BLIK), które odblokowują **tymczasowych, specjalistycznych agentów**.
-- **WESELE:** Producentka Pani Basia (styl weselny, toasty).
-- **STORY/REELS:** Producent Viral Victor (dynamiczne tło 15/30/60s pod TikToka).
-- **URODZINY:** Solenizant Sam.
+### Faza 2: Analiza (Tydzień 4-6)
+- Top 3 producentów → FREE (magnesy)
+- Środek → basic tier
+- Reszta → poprawić lub wymienić
 
-Po wykupieniu, nowy awatar pojawia się w panelu wyboru na określony czas (np. 7 dni lub na limit użyć). Gdy czas mija, awatar "szarzeje", zachęcając do ponownego zakupu.
+### Faza 3: Subskrypcje (Tydzień 6+)
+- Wprowadzenie planów subskrypcyjnych
+- Premium producenci za subskrypcją
 
-## LLM Tiering Architecture (Technical)
-- **Free/Basic Users:** Zapytania są kierowane do tańszych, ale szybkich modeli (np. Google Gemini 3.1 Flash Lite) z ograniczonym wyborem agentów.
-- **Pro Users:** Dostęp do premium modeli:
-  - DJ Marek -> Gemini
-  - Maja -> Claude 3.7 Sonnet
-  - Kuba "Kosa" -> Grok 4 Fast
+---
 
-## Payment Gateways
-- **Podskrypcje (MRR):** Stripe (karty) lub Apple/Google Pay.
-- **Pakiety (Jednorazowe "Impulse Buys"):** BLIK (szybkie odblokowanie dostępu).
+## Model Płatności: Subskrypcja + Doładowanie BLIK
 
-## Database Architecture Requirements
-- `user_profile`: `coins_balance`, `notes_balance`, `subscription_tier`, `llm_model_access`.
-- `user_producers`: Relacja użytkownik-producent z polem `expiry_date` dla agentów pakietowych.
+Wzorowane na **openart.ai**: prosty wybór — subskrybujesz lub doładowujesz.
+
+### 🪙 Doładowanie BLIK (Top-Up)
+
+Gdy użytkownik zużyje darmowe Nuty, pojawia się modal z **suwakiem**:
+
+```
+┌──────────────────────────────────────┐
+│  Twoje darmowe hity się skończyły!   │
+│                                      │
+│  Kup teraz przez BLIK:               │
+│  ────────●───────────                │
+│  5            10            20       │
+│                                      │
+│  10 hitów = 29.99 PLN                │
+│           [Zapłać BLIK]              │
+└──────────────────────────────────────┘
+```
+
+| Hity | Cena BLIK | PLN/hit |
+|------|-----------|---------|
+| 5 | 14.99 PLN | 3.00 |
+| 10 | 24.99 PLN | 2.50 |
+| 20 | 39.99 PLN | 2.00 |
+
+### 📆 Subskrypcje (lepsza wartość)
+
+| Plan | Cena/мес | Hity/мес | PLN/hit | Dodatki |
+|------|---------|----------|---------|---------|
+| **Basic** | 29.99 PLN | 10 | 3.00 | 6 producentów |
+| **Pro** | 69.99 PLN | 30 | 2.33 | 9 producentów, priorytet |
+
+### 🧠 Dlaczego to działa
+
+| | Subskrypcja | Doładowanie BLIK |
+|---|---|---|
+| Dla kogo | Stali użytkownicy | Okazjonalni / impuls |
+| Wartość | Lepsza (więcej hitów/PLN) | Szybkie, bez zobowiązań |
+| Psychologia | "Opłaca się być stałym" | "Tylko 15 zł i robię dalej" |
+
+---
+
+## User Flow
+
+```
+NOWY USER
+  → wchodzi na stronę
+  → wybiera producenta (wszyscy free)
+  → generuje pierwszy hit (za darmo)
+  → chce drugi → "Zostały Ci 3 darmowe Nuty"
+  → generuje 2gi, 3ci...
+  → Nuty = 0
+  → ❗ Modal: [Kup 10 hitów za 24.99 BLIK] [Subskrybuj od 29.99/mies]
+  → płaci BLIK → hity dodane → tworzy dalej
+  → albo subskrybuje → stały dostęp
+```
+
+---
+
+## Producer Tier Assignment (Faza 2-3)
+
+| Producent | Faza 1 | Faza 2 | Faza 3 |
+|-----------|--------|--------|--------|
+| Kosa 🧢 | FREE | FREE | FREE (magnes) |
+| MELO MC 💃 | FREE | FREE | FREE (magnes) |
+| CJ Remi 🌃 | FREE | Basic | Basic |
+| La Luz 🌴 | FREE | Basic | Basic |
+| VENA 🩸 | FREE | Basic | Pro |
+| DISCO PULS 💙 | FREE | Basic | Pro |
+| SOLANA ☀️ | FREE | Pro | Pro |
+| POPIÓŁ 🥃 | FREE | Pro | Pro |
+| BLIXX 🖤💗 | FREE | Pro | Pro |
+
+---
+
+## Retention Loop
+
+```
+FREE hit → "Zajebiste!"
+  → więcej hitów → Nuty = 0
+  → BLIK top-up → "Jeszcze jeden..."
+  → uzależnienie → "Subskrybuję, taniej wychodzi"
+  → Pro sub → pełny dostęp → poleca znajomym
+```
+
+---
+
+## Payment
+
+- **Subskrypcje:** Stripe (karty, Apple/Google Pay)
+- **Doładowania:** BLIK (natychmiastowe, polski standard)
+- **Waluta:** PLN
+
+---
+
+## Key Metrics (Faza 1)
+
+| Metryka | Decyzja |
+|---------|---------|
+| Który producent najwięcej tracków | Kto zostaje FREE |
+| Ilu userów wraca po 1szym tracku | Czy produkt trzyma |
+| Ile tracków przed pierwszym BLIK | Cena Nut na start |
+| Konwersja BLIK → subskrypcja | Efektywność lejka |
+
+---
+
+*Ostatnia aktualizacja: 2026-05-15 — Faza 1 (darmowy start, 9 producentów)*
+*Model: Subskrypcja + BLIK doładowanie (wzorowane na openart.ai)*

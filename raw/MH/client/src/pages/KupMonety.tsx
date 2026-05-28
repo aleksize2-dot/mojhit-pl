@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from '@clerk/react';
 
 export function KupMonety() {
   const { user } = useUser();

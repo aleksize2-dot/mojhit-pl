@@ -39,5 +39,24 @@ export function loadGoogleAnalytics() {
 - **Политика приватности:** Раздел 7 "Marketing i Narzędzia Analityczne" содержит информацию о GA4
 - **Основное приложение:** `main.tsx` вызывает `applyConsent()` при старте для проверки предварительного согласия
 
+## Серверный доступ через Service Account (⚠️ ожидает настройки)
+
+**Статус (2026-05-25):** Не настроен. `.env` файл для ga4-analytics skill отсутствует.
+
+### Что нужно сделать:
+1. Создать service account в Google Cloud Console
+2. Включить APIs: Analytics Data API, Search Console API, Indexing API
+3. Дать service account доступ к GA4 Property `G-VNWJYEB4W7`
+4. Создать `skills/ga4-analytics/.env` с переменными:
+   - `GA4_PROPERTY_ID`
+   - `GA4_CLIENT_EMAIL`
+   - `GA4_PRIVATE_KEY`
+   - `SEARCH_CONSOLE_SITE_URL`
+
+### Зачем:
+- Серверная аналитика: отчёты по трафику, поисковым запросам, конверсиям
+- Search Console интеграция: SEO-метрики, позиции ключевых слов
+- Indexing API: ускоренная индексация новых страниц
+
 ---
-*Обновлено: 2026-04-16*
+*Обновлено: 2026-05-25*

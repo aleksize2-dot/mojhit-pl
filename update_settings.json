@@ -1,0 +1,7 @@
+{
+  "kie": { "enabled": true, "priority": 1, "baseUrl": "https://api.kie.ai/api/v1" },
+  "suno": { "enabled": true, "priority": 2, "apiKey": "b2974f2578ec3485abbace6b3505ef64", "baseUrl": "https://api.sunoapi.org/api/v1" },
+  "music": { "active": "suno", "fallback": "kie" },
+  "fallbackEnabled": true,
+  "autoSwitchOnFailure": true
+}

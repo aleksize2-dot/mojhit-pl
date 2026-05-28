@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useAuth, useUser, SignInButton } from '@clerk/clerk-react';
+import { useAuth, useUser, SignInButton } from '@clerk/react';
 
 export interface Review {
   id: string;

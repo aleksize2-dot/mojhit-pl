@@ -6,6 +6,41 @@
 - **Track Playback:** Tracks moderation table includes "Odtwarzaj" column with play button to open audio URL in new window for admin review.
 - **Video Tasks:** Future enhancement: moderation of video generation tasks.
 
+### Admin Panel UI Updates (2026-04-28)
+
+#### Controls Added
+- **"Aktualizuj" button** — Refresh button in Zarządzanie Wykonawcami (producer management) to reload without full page refresh.
+- **Avatar upload** — File picker button in performer edit form to upload custom avatar images.
+
+#### Removed
+- **"Szybkie Szablony" theme picker** — Removed because it overrode performer color configuration (e.g., Melo MC's red gradient was invisible on default white).
+
+#### Color Fixes
+- **Tailwind safelist** — Added `safelist.ts` imported in `App.tsx` to prevent Tailwind from purging dynamic color classes (`red-800`, `lime`, `yellow`).
+- **Melo MC colors** — Fixed white-on-invisible issue; changed to red gradient (`red-800`, `red-600`).
+- **La Luz button_gradient** — Fixed typo: `linear` → `linear` (missing 'l' in CSS gradient function).
+
+### Admin Panel Updates (2026-05-17)
+
+#### Vocal Gender Options
+- Added **Duet (Ż+Ż)** and **Duet (M+M)** to the `vocal_gender` dropdown
+- **BLIXX** `vocal_gender` changed: `duet` → `duet_f` (female duet)
+
+#### Generator UI
+- **Hidden:** "Wirtualny Wykonawca - Tagi Suno" (Suno tags section) — no longer exposed to users
+- **Text area height:** `max-h-180px` → `max-h-400px` for better prompt readability
+- **Error messages:** user-friendly error modal instead of raw API error dump
+
+#### Track Detail Page
+- **`cleanLyrics()` function** — strips `[Intro]`, `(Vocal:...)`, instrument descriptions from lyrics display
+
+#### Refund Handling
+- **KIE failure → auto-refund:** When KIE generation fails, user gets:
+  - Coins refunded via Stripe/balance
+  - Refund transaction recorded in DB
+  - Task marked as `failed`
+  - User-friendly failure modal shown
+
 ### Roles & Permissions (Role i Uprawnienia)
 
 **Added 2026-04-23** — Full role-based access control (RBAC) for the admin panel.

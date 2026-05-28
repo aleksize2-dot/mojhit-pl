@@ -1,4 +1,4 @@
-# MEMORY.md - Black's LLM Wiki (Schema & Index)
+﻿# MEMORY.md - Black's LLM Wiki (Schema & Index)
 
 ## 🧠 Schema: How I manage my memory
 1. **Ingest (Поглощение):** When learning something new, I don't just say "understood". I read it, extract key facts, update relevant files in `memory/wiki/*.md` (or create new ones), update cross-references, and append a note to today's log (`memory/YYYY-MM-DD.md`).
@@ -10,7 +10,7 @@
 
 ### 👤 Core Identity
 - **Master:** Blacksize (Alex)
-- **Lead Agent:** Black (Gemini-3.1-Pro)
+- **Lead Agent:** Black (DeepSeek V4 Pro)
 - *Identity details: see `IDENTITY.md` and `USER.md`*
 
 ### 👥 Contacts
@@ -42,12 +42,16 @@
 
 ### 🚀 Future Projects
 - [[project-5|Project 5 — Telegram Farm 2.0]] — 5 уникальных механик (Prediction Market, Geo-Mining, AI Arena, Creator Strike, Skill-to-Earn). Prediction Market 🥇. Отложен до запуска mojhit.pl.
+- [[open-generative-ai-kie|Open Generative AI + Kie.ai]] — Форк AI-студии (200+ моделей) с Kie.ai интеграцией. Установлен на ASUSAL, запуск: `npm run dev` из `C:\Users\Admin\open-generative-ai-kie` → `localhost:3001/studio`. Основные модели работают, Seedance 2.0 нестабилен.
 
 ### 🔍 SEO & GEO
 - [[mojhit-seo-geo-strategy|SEO/GEO Strategy for mojhit.pl]] — Full strategy (keywords, technical, GEO, content calendar, competitive analysis) for Polish market
 
 ### ⚙️ System & Infrastructure
-- [[system-resilience|System Resilience & Limits]] - Fallback models, Gemini & DeepSeek API strategy, Agentmemory
+- [[multi-agent-team-patterns|Multi-Agent Team Patterns]] — OpenClaw multi-agent kit patterns, scaling rules, skills system, templates
+- [[system-resilience|System Resilience & Limits]] - Fallback models, CloseRouter, Gemini & DeepSeek API strategy, Agentmemory
+- [[hermes-agent|Hermes Agent]] — Self-learning AI agent (Nous Research, MIT v0.14.0), installed on ASUSAL, **active team member** (2 completed delegations + 1 active SEC-001, 80+ skills confirmed, security auditing capability)
+- [[../AGENT-COMMS|AGENT-COMMS.md]] — Доска связи Black ↔ Hermes (REQUEST/ACK/DONE/BLOCKED), общие задачи, координация
 - [[memory-architecture|Memory Architecture]] - LLM Wiki / Karpathy‑style setup details
 - [[social-media-automation|Social Media Automation]] - CloakBrowser + Composio for Facebook/TikTok automation
 - [[karpathy-llm-knowledge-bases|Karpathy's LLM Knowledge Bases]] - Core philosophy & validation of our approach
@@ -55,12 +59,8 @@
 - [[telegram-bot-guidelines|Telegram Bot Guidelines]] - Message length limits, interactive buttons, user onboarding patterns
 - [[cookie-rodo|Cookie & RODO Compliance]] - Consent management system for analytics (GA4, Clarity)
 - [[brevo-email|Brevo Email Marketing]] - Transactional and marketing email integration via Brevo skill
+- **MOSS-TTS-Nano** — Local CPU-only TTS (0.1B params), 20 languages incl. PL/RU. Skill: `skills/moss-tts/`. See [[mojhit-devops#MOSS-TTS-Nano (Local TTS — 2026-05-17)|DevOps]].
 
 ---
 *Note to self: Keep this file small. It is an index, not a database. Actual content goes into `memory/wiki/` files.*
 *Obsidian Rule: ALWAYS use `[[wikilinks]]` to connect concepts so the Graph View remains intact.*
-### ?? Producers v2 (2026-05-15)
-- **9 producers live:** Kosa, VENA, CJ Remi, MELO MC, La Luz, 2ImPULS, SOLANA, POPIӣ, BLIXX
-- All on FREE tier for launch � phasing to premium after data analysis
-- See [[mojhit-monetization-2026]] for full launch strategy
-- See [[mojhit-agents]] for producer details

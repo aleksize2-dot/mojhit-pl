@@ -143,10 +143,12 @@ export function ProducerManager() {
                         if (res.ok && data.url) {
                           setEditing({...editing, img: data.url});
                         } else {
-                          alert(data.error || 'Błąd zapisu avatara');
+                          console.error('Upload failed:', res.status, data);
+                          alert(data.error || 'Błąd zapisu avatara (status: ' + res.status + ')');
                         }
                       } catch (err) {
-                        alert('Błąd wysyłania pliku');
+                        console.error('Upload error:', err);
+                        alert('Błąd wysyłania pliku: ' + (err instanceof Error ? err.message : String(err)));
                       }
                     };
                     reader.readAsDataURL(file);
@@ -193,6 +195,16 @@ export function ProducerManager() {
             />
           </div>
           
+          <div className="col-span-1 md:col-span-2">
+            <label className="block text-xs font-bold mb-1 text-on-surface-variant">Opis / Historia (Giełda Talentów)</label>
+            <textarea className="w-full bg-surface-container-low border border-outline-variant/20 focus:border-primary p-3 rounded-xl outline-none custom-scrollbar" rows={3} value={editing.description || ''} onChange={e => setEditing({...editing, description: e.target.value})} placeholder="Historia wykonawcy — skąd pochodzi, co go inspiruje, jaka jest jego misja..." />
+          </div>
+
+          <div className="col-span-1 md:col-span-2">
+            <label className="block text-xs font-bold mb-1 text-on-surface-variant">Mocne strony (Giełda Talentów)</label>
+            <textarea className="w-full bg-surface-container-low border border-outline-variant/20 focus:border-primary p-3 rounded-xl outline-none custom-scrollbar" rows={3} value={editing.strengths || ''} onChange={e => setEditing({...editing, strengths: e.target.value})} placeholder="W czym jest najlepszy? Gatunki, style, specjalności — każda w nowej linii..." />
+          </div>
+
           <div>
             <label className="block text-xs font-bold mb-1 text-on-surface-variant">Tytuł w nagłówku (header_title)</label>
             <input type="text" className="w-full bg-surface-container-low border border-outline-variant/20 focus:border-primary p-3 rounded-xl outline-none" value={editing.header_title || ''} onChange={e => setEditing({...editing, header_title: e.target.value})} />
@@ -224,28 +236,127 @@ export function ProducerManager() {
           
           <div>
             <label className="block text-xs font-bold mb-1 text-on-surface-variant">Model AI</label>
-            <select className="w-full bg-surface-container-low border border-outline-variant/20 focus:border-primary p-3 rounded-xl outline-none" value={editing.model_name || 'google/gemini-2.5-flash'} onChange={e => setEditing({...editing, model_name: e.target.value})}>
-              <option value="google/gemini-2.5-flash">Gemini 2.5 Flash</option>
-              <option value="google/gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
-              <option value="anthropic/claude-3.7-sonnet">Claude 3.7 Sonnet</option>
-              <option value="x-ai/grok-2-vision-1212">Grok Fast</option>
-              <option value="openai/o3-mini-high">OpenAI o3-mini-high</option>
+            <select className="w-full bg-surface-container-low border border-outline-variant/20 focus:border-primary p-3 rounded-xl outline-none" value={editing.model_name || 'x-ai/grok-4.20'} onChange={e => setEditing({...editing, model_name: e.target.value})}>
+              <option value="x-ai/grok-4-fast">🏆 Grok 4 Fast</option>
+              <option value="x-ai/grok-4.20">🥈 Grok 4.20</option>
+              <option value="x-ai/grok-4.3">Grok 4.3</option>
+              <option value="google/gemini-3.1-pro-preview">Gemini 3.1 Pro</option>
+              <option value="google/gemini-3.1-flash-lite">Gemini 3.1 Flash Lite</option>
+              <option value="google/gemini-3.5-flash">Gemini 3.5 Flash 🆕</option>
+              <option value="deepseek/deepseek-v4-flash">DeepSeek V4 Flash</option>
+              <option value="deepseek/deepseek-v4-pro">DeepSeek V4 Pro</option>
               <option value="anthropic/claude-sonnet-4.6">Claude Sonnet 4.6</option>
-              <option value="anthropic/claude-opus-4.7">Claude Opus 4.7</option>
-              <option value="deepseek/deepseek-v3.2">DeepSeek v3.2</option>
-              <option value="xiaomi/mimo-v2-pro">Xiaomi Mimo v2 Pro</option>
+              <option value="minimax/minimax-m2-her">🎭 Minimax M2-her</option>
+              <option value="openrouter/owl-alpha">🦉 Owl Alpha (FREE)</option>
+              <option value="mistral/mistral-medium-3.5">Mistral Medium 3.5</option>
+              <option value="inclusionai/ring-2.6-1t:free">🔗 Ring-2.6-1T (FREE)</option>
             </select>
           </div>
           
           <div>
             <label className="block text-xs font-bold mb-1 text-on-surface-variant">Wersja Suno</label>
-            <select className="w-full bg-surface-container-low border border-outline-variant/20 focus:border-primary p-3 rounded-xl outline-none" value={editing.suno_version || 'V4'} onChange={e => setEditing({...editing, suno_version: e.target.value})}>
+            <select className="w-full bg-surface-container-low border border-outline-variant/20 focus:border-primary p-3 rounded-xl outline-none" value={editing.suno_version || 'V5'} onChange={e => setEditing({...editing, suno_version: e.target.value})}>
               <option value="V4">V4</option>
               <option value="V4_5">V4_5</option>
               <option value="V4_5PLUS">V4_5 & V4_5PLUS</option>
               <option value="V4_5ALL">V4_5ALL</option>
               <option value="V5_5">V5_5</option>
               <option value="V5">V5</option>
+            </select>
+          </div>
+
+          {/* Weirdness & Style Influence — Suno advanced generation params */}
+          <div className="col-span-1 md:col-span-2 mt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface-container-low p-4 rounded-xl border border-outline-variant/10">
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-xs font-bold text-on-surface-variant">
+                    <span className="material-symbols-outlined text-[14px] align-middle mr-1">psychology</span>
+                    Weirdness
+                  </label>
+                  <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                    {editing.weirdness_constraint != null ? Number(editing.weirdness_constraint).toFixed(2) : '—'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] text-on-surface-variant w-8 text-right">0%</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-primary bg-surface-container-high"
+                    value={editing.weirdness_constraint ?? ''}
+                    onChange={e => {
+                      const val = e.target.value;
+                      setEditing({...editing, weirdness_constraint: val === '' ? null : parseFloat(val)});
+                    }}
+                  />
+                  <span className="text-[10px] text-on-surface-variant w-8">100%</span>
+                  {editing.weirdness_constraint != null && (
+                    <button
+                      type="button"
+                      onClick={() => setEditing({...editing, weirdness_constraint: null})}
+                      className="text-[10px] text-error hover:underline ml-1"
+                      title="Reset"
+                    >
+                      reset
+                    </button>
+                  )}
+                </div>
+                <p className="text-[10px] text-on-surface-variant mt-1">Kontroluje kreatywność/nieprzewidywalność (0=bezpiecznie, 1=eksperymentalnie)</p>
+              </div>
+              
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-xs font-bold text-on-surface-variant">
+                    <span className="material-symbols-outlined text-[14px] align-middle mr-1">tune</span>
+                    Style Influence
+                  </label>
+                  <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                    {editing.style_weight != null ? Number(editing.style_weight).toFixed(2) : '—'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] text-on-surface-variant w-8 text-right">0%</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-primary bg-surface-container-high"
+                    value={editing.style_weight ?? ''}
+                    onChange={e => {
+                      const val = e.target.value;
+                      setEditing({...editing, style_weight: val === '' ? null : parseFloat(val)});
+                    }}
+                  />
+                  <span className="text-[10px] text-on-surface-variant w-8">100%</span>
+                  {editing.style_weight != null && (
+                    <button
+                      type="button"
+                      onClick={() => setEditing({...editing, style_weight: null})}
+                      className="text-[10px] text-error hover:underline ml-1"
+                      title="Reset"
+                    >
+                      reset
+                    </button>
+                  )}
+                </div>
+                <p className="text-[10px] text-on-surface-variant mt-1">Siła wpływu prompta stylu na generację (0=ignoruj, 1=ściśle przestrzegaj)</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold mb-1 text-on-surface-variant">Płeć głosu (Suno)</label>
+            <select className="w-full bg-surface-container-low border border-outline-variant/20 focus:border-primary p-3 rounded-xl outline-none" value={editing.vocal_gender || 'auto'} onChange={e => setEditing({...editing, vocal_gender: e.target.value})}>
+              <option value="auto">Auto (zależy od tagów)</option>
+              <option value="m">👨 Męski</option>
+              <option value="f">👩 Żeński</option>
+              <option value="duet">👫 Duet (M+Ż)</option>
+              <option value="duet_f">👩‍👩‍ Duet (Ż+Ż)</option>
+              <option value="duet_m">👨‍👨‍ Duet (M+M)</option>
             </select>
           </div>
           
@@ -355,7 +466,7 @@ export function ProducerManager() {
           <button onClick={() => { setLoading(true); fetchProducers(); }} disabled={loading} className="bg-surface-container-high hover:bg-surface-variant text-on-surface px-3 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors border border-outline-variant/20 disabled:opacity-50">
             <span className="material-symbols-outlined text-[18px]" style={loading ? { animation: 'spin 1s linear infinite' } : {}}>refresh</span> Aktualizuj
           </button>
-          <button onClick={() => setEditing({ _isNew: true, is_active: true, is_on_main_page: false, tier: 'basic', price_coins: 0, model_name: 'google/gemini-2.5-flash', suno_version: 'V4', theme_config: '{\n  "colorText": "text-lime-500",\n  "colorBg": "bg-lime-500",\n  "colorBorder": "border-lime-500"\n}' })} className="bg-primary hover:bg-primary-dark text-on-primary px-4 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors shadow-lg shadow-primary/20">
+          <button onClick={() => setEditing({ _isNew: true, is_active: true, is_on_main_page: false, tier: 'basic', price_coins: 0, model_name: 'x-ai/grok-4.20', suno_version: 'V5_5', theme_config: '{\n  "colorText": "text-lime-500",\n  "colorBg": "bg-lime-500",\n  "colorBorder": "border-lime-500"\n}' })} className="bg-primary hover:bg-primary-dark text-on-primary px-4 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-colors shadow-lg shadow-primary/20">
             <span className="material-symbols-outlined text-[18px]">add</span> Dodaj Wykonawcę
           </button>
         </div>
@@ -452,7 +563,7 @@ export function ProducerManager() {
              </div>
              <h3 className="text-xl font-bold mb-2">Brak wykonawców</h3>
              <p className="text-on-surface-variant max-w-sm mb-6">Wypełnij giełdę talentów pierwszymi agentami, by użytkownicy mogli z nich korzystać.</p>
-             <button onClick={() => setEditing({ _isNew: true, is_active: true, is_on_main_page: false, tier: 'basic', price_coins: 0, model_name: 'google/gemini-2.5-flash', suno_version: 'V4', theme_config: '{\n  "colorText": "text-lime-500",\n  "colorBg": "bg-lime-500",\n  "colorBorder": "border-lime-500"\n}' })} className="bg-surface-container-high hover:bg-surface-variant text-on-surface px-6 py-3 rounded-xl font-bold text-sm transition-colors">
+             <button onClick={() => setEditing({ _isNew: true, is_active: true, is_on_main_page: false, tier: 'basic', price_coins: 0, model_name: 'x-ai/grok-4.20', suno_version: 'V5_5', theme_config: '{\n  "colorText": "text-lime-500",\n  "colorBg": "bg-lime-500",\n  "colorBorder": "border-lime-500"\n}' })} className="bg-surface-container-high hover:bg-surface-variant text-on-surface px-6 py-3 rounded-xl font-bold text-sm transition-colors">
                Dodaj pierwszego
              </button>
            </div>

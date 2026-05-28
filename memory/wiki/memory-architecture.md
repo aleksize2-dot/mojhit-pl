@@ -1,11 +1,12 @@
 # Memory Architecture (LLM Wiki / Karpathy-style)
 
 - **Philosophy:** Adopted Andrey Karpathy's "second brain" approach: plain text files as the sole long-term memory, with the LLM acting as an autonomous librarian (reading, summarizing, categorizing, cross-linking).
-- **Current State (2026-04-10):**
+- **Current State (2026-05-13):**
   - Transitioned to **LLM Wiki pattern**. `MEMORY.md` serves as Schema/Index. Knowledge is stored in `memory/wiki/`.
   - **OpenViking:** Fully removed – binary process stopped, plugin folder deleted. API was unstable (`fetch failed`).
   - **LightRAG:** Removed (container deleted).
   - **Active Engine:** File-based LLM Wiki with semantic search via Gemini embeddings (`memory_search`).
+  - **Agentmemory (2026-05-13):** Installed as complementary engine (v0.9.12, Docker/iii-engine, BM25+Graph search). Plugin at `~/.openclaw/extensions/agentmemory/`. Auto-starts with Windows. Currently rate-limited on Gemini free tier.
 - **Three-Stage Pipeline:**
   1. **Raw Dump:** `raw/` folder created with README.md (Immutable sources).
   2. **Compilation/Ingest:** LLM reads new sources, updates wiki pages, cross-references, logs to daily.

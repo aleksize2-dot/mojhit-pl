@@ -4,5 +4,6 @@
   "terminal",
   "calendar",
   "fileorganizer2000",
-  "obsidian-excalidraw-plugin"
+  "obsidian-excalidraw-plugin",
+  "obsidian-local-rest-api"
 ]

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChatMessage } from './ChatMessage';
 import { useGeneratorLogic } from './useGeneratorLogic';
-import { useAuth, useUser, SignInButton, SignUpButton } from '@clerk/clerk-react';
+import { useAuth, useUser, SignInButton, SignUpButton } from '@clerk/react';
 
 export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {}) {
   const { isSignedIn } = useAuth();
@@ -26,6 +26,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
     guestEmail,
     showGuestLimitModal,
     showSuccessModal,
+    videoRenderStatus,
     generationError,
     // Computed
     activeProducer,
@@ -338,15 +339,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                           </div>
                       </div>
 
-                      <div className="mb-4 pb-4 border-b border-outline-variant/10">
-                        <span className="text-[10px] uppercase font-bold text-on-surface-variant font-label block mb-1.5 tracking-widest">Wirtualny Wykonawca - Tagi Suno</span>
-                        <div className="flex flex-wrap gap-2">
-                           {finalAiPrompt.tags.split(',').map((tag, i) => (
-                             <span key={i} className="px-2.5 py-1 bg-surface-container-high border border-outline-variant/10 rounded-md text-xs font-bold text-primary">{tag.trim()}</span>
-                           ))}
-                        </div>
-                      </div>
-                      
+
                       <div className="mb-5 relative">
                         <div className="flex items-center justify-between mb-1.5">
                           <span className="text-[10px] uppercase font-bold text-on-surface-variant font-label tracking-widest">Dopracowany Tekst</span>
@@ -393,7 +386,7 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
                             )}
                           </div>
                         </div>
-                        <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/10 max-h-[180px] overflow-y-auto custom-scrollbar">
+                        <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/10 max-h-[400px] overflow-y-auto custom-scrollbar">
                           {isEditingPrompt ? (
                             <textarea 
                               value={editedLyrics}
@@ -596,21 +589,39 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-surface-container rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl border border-outline-variant/20 animate-in zoom-in-95 duration-300 relative overflow-hidden">
-            <div className={`absolute top-0 left-0 w-full h-1 ${activeProducer.colorBg}`}></div>
-            <div className={`w-16 h-16 rounded-full ${activeProducer.colorBg10} flex items-center justify-center ${activeProducer.colorText} mx-auto mb-4`}>
-              <span className="material-symbols-outlined text-3xl">check_circle</span>
+            <div className={`absolute top-0 left-0 w-full h-1 ${videoRenderStatus === 'ready' ? 'bg-green-500' : activeProducer.colorBg}`}></div>
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${videoRenderStatus === 'ready' ? 'bg-green-500/10 text-green-500' : `${activeProducer.colorBg10} ${activeProducer.colorText}`}`}>
+              {videoRenderStatus === 'ready' ? (
+                <span className="material-symbols-outlined text-3xl" style={{fontVariationSettings: "'FILL' 1"}}>check_circle</span>
+              ) : (
+                <span className="material-symbols-outlined text-3xl animate-pulse">movie</span>
+              )}
             </div>
-            <h3 className="text-2xl font-black headline-font text-center text-on-surface mb-2">Gotowe!</h3>
-            <p className="text-sm text-on-surface-variant text-center mb-6">
-              Utwory zostały pomyślnie wygenerowane! Znajdziesz je w panelu Moje Utwory. Dwa warianty (V1 i V2) są gotowe do odsłuchu.
-            </p>
+            {videoRenderStatus === 'ready' ? (
+              <>
+                <h3 className="text-xl md:text-2xl font-black headline-font text-center text-on-surface mb-2">Wszystko gotowe! 🎬</h3>
+                <p className="text-sm text-on-surface-variant text-center mb-6">
+                  Audio i wideo (MP4) dla Twoich utworów są już dostępne w panelu <b>Moje Utwory</b>. <br/><br/>
+                  <span className="flex items-center justify-center gap-2 text-green-500 font-bold"><span className="material-symbols-outlined text-lg" style={{fontVariationSettings: "'FILL' 1"}}>check_circle</span> Wideo gotowe!</span>
+                </p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl md:text-2xl font-black headline-font text-center text-on-surface mb-2">Dźwięk gotowy, renderujemy wideo...</h3>
+                <p className="text-sm text-on-surface-variant text-center mb-6">
+                  Audio dla Twoich utworów (V1 i V2) jest gotowe! System automatycznie generuje do nich wideo (MP4). <br/><br/>
+                  <span className="flex items-center justify-center gap-2 text-primary font-bold"><span className="material-symbols-outlined animate-spin text-lg">progress_activity</span> Rendering wideo w tle...</span><br/>
+                  Pojawią się w panelu <b>Moje Utwory</b> za około 1-2 minuty.
+                </p>
+              </>
+            )}
             <div className="flex flex-col gap-3">
               <button 
                 onClick={() => {
                   setShowSuccessModal(false);
-                  window.location.href = '/moje-utwory';
+                  window.location.href = '/my-tracks';
                 }}
-                className={`w-full py-3.5 rounded-xl font-bold text-white transition-colors ${activeProducer.colorBg} hover:opacity-90`}
+                className={`w-full py-3.5 rounded-xl font-bold text-white transition-colors ${videoRenderStatus === 'ready' ? 'bg-green-500 hover:bg-green-600' : `${activeProducer.colorBg} hover:opacity-90`}`}
               >
                 Przejdź do Moich Utworów
               </button>

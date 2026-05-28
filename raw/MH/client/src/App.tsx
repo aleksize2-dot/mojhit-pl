@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
 import { Footer } from './components/Footer';
 import { CookieBanner } from './components/CookieBanner';
+import { AgeGateModal, useAgeGate } from './components/AgeGate';
 
 import { Home } from './pages/Home';
 import './safelist';
@@ -34,6 +35,7 @@ const GiftTemplatePage = lazy(() => import('./pages/GiftFunnel/GiftTemplatePage'
 
 function App() {
   const [searchParams] = useSearchParams();
+  const { status: ageStatus, verify: ageVerify, block: ageBlock } = useAgeGate();
 
   useEffect(() => {
     const refCode = searchParams.get('ref');
@@ -86,6 +88,7 @@ function App() {
       </div>
       <BottomNav />
       <CookieBanner />
+      {ageStatus === 'pending' && <AgeGateModal onVerify={ageVerify} onBlock={ageBlock} />}
     </div>
   );
 }

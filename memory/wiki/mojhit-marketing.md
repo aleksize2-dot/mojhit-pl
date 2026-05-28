@@ -19,8 +19,15 @@
 
 Campaign launch is dependent on verification of the BLIK Stripe integration.
 
+## Viral Growth Loop: Video Watermark (2026-04-28)
+- **Video generation** is now available for **all tiers** (Free, Basic, VIP, Legend).
+- **Free tier** videos include `mojhit.pl` watermark — each video shared on TikTok/Reels becomes free advertising.
+- **VIP/Legend** get watermark-free videos as a premium differentiator.
+- **Mechanism:** User creates → shares on social → watermark drives curiosity → new visitors → signups.
+- **Pair with nano-influencer campaign:** Influencers create watermarked videos → organic reach → lead gen.
+
 ## Tags
-#marketing #growth-hacking #influencer #tiktok #mojhit #user-acquisition
+#marketing #growth-hacking #influencer #tiktok #mojhit #user-acquisition #viral-loop
 
 ## Cross-links
 - [[mojhit-economics]]

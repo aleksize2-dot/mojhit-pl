@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { SignUpButton, SignInButton } from '@clerk/clerk-react';
+import { SignUpButton, SignInButton } from '@clerk/react';
 
 export function Welcome() {
   const [producers, setProducers] = useState<any[]>([]);

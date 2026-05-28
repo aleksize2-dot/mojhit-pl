@@ -1,22 +1,40 @@
-const generate = async (prompt, style = '', title = '', instrumental = false, model = 'V4', customMode = false, personaId = '', personaModel = '') => {
+const generate = async (prompt, style = '', title = '', instrumental = false, model = 'V5', customMode = false, personaId = '', personaModel = '', vocalGenderOverride = '', weirdnessConstraint = null, styleWeight = null) => {
+  // Append webhook secret token for verification
+  const webhookSecret = process.env.KIE_WEBHOOK_SECRET || '';
+  const callbackBase = `${process.env.KIE_CALLBACK_BASE_URL || 'http://localhost:3000'}/api/webhooks/kie`;
+  const callBackUrl = webhookSecret ? `${callbackBase}?token=${encodeURIComponent(webhookSecret)}` : callbackBase;
+
   const payload = {
     prompt,
     customMode,
     instrumental,
     model,
-    callBackUrl: `${process.env.KIE_CALLBACK_BASE_URL || 'http://localhost:3000'}/api/webhooks/kie`
+    callBackUrl
   };
   
+  // weirdnessConstraint and styleWeight (Suno advanced params, 0.0-1.0)
+  if (weirdnessConstraint !== null && weirdnessConstraint !== undefined) {
+    payload.weirdnessConstraint = Number(weirdnessConstraint);
+  }
+  if (styleWeight !== null && styleWeight !== undefined) {
+    payload.styleWeight = Number(styleWeight);
+  }
+
   if (customMode || style || title) {
     payload.customMode = true; // force custom mode if style or title provided
     if (style) {
       payload.style = style.substring(0, 499); // max 500 chars
-      // Infer vocalGender from style
-      const s = style.toLowerCase();
-      if (s.includes('female') || s.includes('żeńsk') || s.includes('dziewcz')) {
-        payload.vocalGender = 'f';
-      } else if (s.includes('male') || s.includes('męsk') || s.includes('chłop')) {
-        payload.vocalGender = 'm';
+      // Use producer's explicit vocal_gender if set, otherwise infer from tags
+      if (vocalGenderOverride && vocalGenderOverride !== 'auto') {
+        payload.vocalGender = vocalGenderOverride;
+      } else {
+        // Infer vocalGender from style tags
+        const s = style.toLowerCase();
+        if (s.includes('female') || s.includes('żeńsk') || s.includes('dziewcz')) {
+          payload.vocalGender = 'f';
+        } else if (s.includes('male') || s.includes('męsk') || s.includes('chłop')) {
+          payload.vocalGender = 'm';
+        }
       }
     }
     if (title) payload.title = title;
@@ -69,7 +87,11 @@ const getTaskStatus = async (taskId) => {
   });
   
   if (!response.ok) {
-    console.error(`[KIE STATUS] HTTP error: ${response.status}`);
+    if (response.status === 404) {
+      console.log('[KIE STATUS] Task not found on KIE (expected for Suno tasks)');
+    } else {
+      console.warn(`[KIE STATUS] HTTP error: ${response.status}`);
+    }
     throw new Error(`Status check failed: ${response.status}`);
   }
   

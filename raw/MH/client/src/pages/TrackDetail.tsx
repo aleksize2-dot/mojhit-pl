@@ -13,8 +13,12 @@ type Track = {
   producer_id?: string;
   producers?: { id?: string, name: string };
   users?: { email: string, clerk_id: string };
-  likes_count?: number;
+  likes?: number;
+  plays?: number;
   kie_task_id?: string;
+  viral_protected?: boolean;
+  audio_expires_at?: string;
+  explicit?: boolean;
   variants?: Array<{ audio_url: string, stream_audio_url?: string, image_url?: string }>;
 };
 
@@ -37,6 +41,14 @@ export function TrackDetail() {
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   const [isShuffle, setIsShuffle] = useState(false);
+  
+  // Explicit content warning — one click per session
+  const EXPLICIT_KEY = 'mojhit_explicit_ok';
+  const [explicitAcknowledged, setExplicitAcknowledged] = useState(() => sessionStorage.getItem(EXPLICIT_KEY) === 'true');
+  const dismissExplicitWarning = () => {
+    sessionStorage.setItem(EXPLICIT_KEY, 'true');
+    setExplicitAcknowledged(true);
+  };
   
   // Video generation
   const [generatingVideo, setGeneratingVideo] = useState(false);
@@ -118,8 +130,8 @@ export function TrackDetail() {
     .then(([trackData, tracksData]) => {
       if (!trackData) throw new Error('Utwór nie został znaleziony');
       setTrack(trackData);
-      setLikesCount(trackData.likes_count || Math.floor(Math.random() * 50) + 1); // fallback
-      setAllTracks(tracksData);
+      setLikesCount(trackData.likes ?? 0);
+      setAllTracks([...tracksData].sort((a: Track, b: Track) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
       setActiveVariant(0);
       setIsPlaying(false);
       setProgress(0);
@@ -127,8 +139,12 @@ export function TrackDetail() {
       setError(null);
       
       // Check if there's an existing completed video for this track
-      if (trackData.kie_task_id) {
-        fetch(`/api/video/check?audio_task_id=${trackData.kie_task_id}&variant_index=${activeVariant}`, { credentials: 'include' })
+      // First, check if track already has video_url from the backend (after callback update)
+      if ((trackData as any).video_url) {
+        setVideoStatus('completed');
+        setVideoUrl((trackData as any).video_url);
+      } else if (trackData.kie_task_id) {
+        fetch(`/api/video/check?audio_task_id=${trackData.kie_task_id}&variant_index=${trackData.variant_index ?? 0}`, { credentials: 'include' })
           .then(res => res.ok ? res.json() : null)
           .then(videoData => {
             if (videoData && videoData.status === 'completed' && videoData.video_url) {
@@ -154,7 +170,12 @@ export function TrackDetail() {
     setVideoUrl(null);
     setVideoStatus(null);
     setVideoDbId(null);
-    fetch(`/api/video/check?audio_task_id=${track.kie_task_id}&variant_index=${activeVariant}`, { credentials: 'include' })
+    // Calculate the real variant_index: the track's own index when activeVariant is 0 (main), 
+    // or lookup from variants array for alternatives
+    const realVariantIndex = activeVariant === 0 
+      ? ((track as any).variant_index ?? 0) 
+      : ((track as any).variants?.[activeVariant - 1]?.variant_index ?? activeVariant);
+    fetch(`/api/video/check?audio_task_id=${track.kie_task_id}&variant_index=${realVariantIndex}`, { credentials: 'include' })
       .then(res => res.ok ? res.json() : null)
       .then(videoData => {
         if (videoData && videoData.status === 'completed' && videoData.video_url) {
@@ -274,7 +295,7 @@ export function TrackDetail() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ audioTaskId: track.kie_task_id, variantIndex: activeVariant })
+        body: JSON.stringify({ audioTaskId: track.kie_task_id, variantIndex: (track as any).variant_index ?? activeVariant })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Błąd generowania wideo');
@@ -331,8 +352,37 @@ export function TrackDetail() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[80vh]">
-        <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+      <div className="flex flex-col min-h-[calc(100vh-80px)] md:min-h-screen max-w-lg mx-auto bg-surface p-6 animate-pulse">
+        <div className="flex items-center justify-between mb-8">
+          <div className="w-10 h-10 bg-surface-container-high rounded-full"></div>
+          <div className="w-32 h-4 bg-surface-container-high rounded-full"></div>
+          <div className="w-10 h-10 bg-surface-container-high rounded-full"></div>
+        </div>
+        <div className="w-full aspect-square bg-surface-container-high rounded-3xl mb-8"></div>
+        <div className="flex justify-between items-center mb-6 px-2">
+          <div className="flex flex-col gap-3 w-2/3">
+            <div className="h-8 bg-surface-container-high rounded-lg w-full"></div>
+            <div className="h-4 bg-surface-container-high rounded-lg w-2/3"></div>
+          </div>
+          <div className="w-10 h-10 bg-surface-container-high rounded-full"></div>
+        </div>
+        <div className="px-2 mb-8">
+          <div className="w-full h-1.5 bg-surface-container-high rounded-full mb-2"></div>
+          <div className="flex justify-between">
+            <div className="w-8 h-3 bg-surface-container-high rounded"></div>
+            <div className="w-8 h-3 bg-surface-container-high rounded"></div>
+          </div>
+        </div>
+        <div className="flex justify-between items-center px-2 mb-12">
+          <div className="w-8 h-8 bg-surface-container-high rounded-full"></div>
+          <div className="flex gap-6 items-center">
+            <div className="w-10 h-10 bg-surface-container-high rounded-full"></div>
+            <div className="w-16 h-16 bg-surface-container-high rounded-full"></div>
+            <div className="w-10 h-10 bg-surface-container-high rounded-full"></div>
+          </div>
+          <div className="w-8 h-8 bg-surface-container-high rounded-full"></div>
+        </div>
+        <div className="flex-1 bg-surface-container-high rounded-3xl opacity-50"></div>
       </div>
     );
   }
@@ -402,6 +452,23 @@ export function TrackDetail() {
     ]
   };
 
+  // Clean lyrics - remove structural markers and vocal instructions
+  const cleanLyrics = (text: string) => {
+    return text
+      .split('\n')
+      .map(line => {
+        // Remove structural markers: [Intro], [Verse], [Chorus], etc.
+        line = line.replace(/^\[?(Intro|Verse \d+|Pre-Chorus|Chorus|Bridge|Outro|Build-Up|Drop( \/ Chorus)?|Hook( \/ Chorus)?|Guitar Solo|Saxophone Solo)\]?\s*[-—]?\s*/gi, '');
+        // Remove vocal instructions in parentheses
+        line = line.replace(/\(.*?(Vocal|Duet|Razem|Julia|Bartek|Nika|Riri|VENA|lead|backing|chór|gang|ad-lib).*?\)/gi, '');
+        // Remove instrumental descriptions after em dash
+        line = line.replace(/\s*[—–-]\s*(Głębokie|Ciche|Energetyczne|Saw|Gitara|Akusty|Pumping|Delikatn|Orkiestr|Tribal|Ambient|Synth|Bass|Beat|Flet|Fortepian|Piano|Szept|Oddech|Budowanie|Wybrzmienie|Eksplozja|Drop|Riser|Klawisz).*$/gi, '');
+        return line.trim();
+      })
+      .filter(line => line.length > 0)
+      .join('\n');
+  };
+
   // Parsing lyrics
   let parsedDesc = track.description || "";
   let occasion = "";
@@ -414,6 +481,9 @@ export function TrackDetail() {
     voice = parts[1]?.replace('Głos: ', '') || '';
     parsedDesc = lines.slice(1).join('\n').replace(/^Opis:\s*/, '').trim();
   }
+
+  // Apply lyrics cleaning
+  parsedDesc = cleanLyrics(parsedDesc);
 
   return (
     <>
@@ -465,14 +535,17 @@ export function TrackDetail() {
       {/* Visual Content: Video or Album Art */}
       <div className="px-6 w-full mb-8">
         {videoUrl ? (
-          <div className="w-full rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-surface-container-high aspect-video">
+          <div className="w-full rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-surface-container-high aspect-square">
             <video
               src={videoUrl}
               controls
               autoPlay
               playsInline
-              className="w-full h-full object-contain bg-black"
+              className="w-full h-full object-cover bg-black"
               poster={currentCover || undefined}
+              onEnded={() => {
+                if (nextTrack) goToNext();
+              }}
             />
           </div>
         ) : (
@@ -487,10 +560,23 @@ export function TrackDetail() {
             
             {/* Video Generation Status Overlay */}
             {(generatingVideo || videoStatus === 'pending' || videoStatus === 'processing') && (
-              <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center backdrop-blur-sm z-10">
-                <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-3"></div>
-                <p className="text-white font-bold text-sm tracking-wide">Montujemy teledysk...</p>
-                <p className="text-white/70 text-xs mt-1">To może zająć około minuty</p>
+              <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center backdrop-blur-md z-10 transition-all duration-500 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent animate-pulse"></div>
+                <div className="relative flex flex-col items-center justify-center">
+                  <div className="relative w-20 h-20 mb-6">
+                    <div className="absolute inset-0 border-4 border-primary/30 rounded-full animate-ping"></div>
+                    <div className="absolute inset-2 border-4 border-primary/50 rounded-full animate-spin" style={{ animationDuration: '3s' }}></div>
+                    <div className="absolute inset-4 border-4 border-primary rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+                    <span className="absolute inset-0 flex items-center justify-center material-symbols-outlined text-3xl text-white">movie</span>
+                  </div>
+                  <h3 className="text-white font-black text-xl tracking-wider mb-2 animate-pulse">Montujemy teledysk</h3>
+                  <div className="flex gap-1.5 mb-3">
+                    <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                    <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                    <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                  </div>
+                  <p className="text-white/70 text-sm font-medium tracking-wide">To magia, daj nam około minuty...</p>
+                </div>
               </div>
             )}
             
@@ -510,6 +596,18 @@ export function TrackDetail() {
         )}
       </div>
 
+      {/* Explicit Content Warning */}
+      {track.explicit && !explicitAcknowledged && (
+        <div className="mx-6 mb-4 bg-red-500/10 border border-red-500/30 rounded-2xl p-6 animate-in fade-in zoom-in">
+          <div className="flex flex-col items-center text-center gap-3">
+            <span className="text-4xl">🔞</span>
+            <h3 className="text-lg font-black headline-font text-red-400">Ten utwór zawiera wulgaryzmy</h3>
+            <p className="text-sm text-on-surface-variant">Tekst przeznaczony dla dorosłych odbiorców. Kliknij poniżej, aby odsłuchać.</p>
+            <button onClick={dismissExplicitWarning} className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl font-bold text-sm transition-colors shadow-lg shadow-red-500/20">Rozumiem, pokaż</button>
+          </div>
+        </div>
+      )}
+
       {/* Track Info & Like */}
       <div className="px-8 flex items-center justify-between mb-6">
         <div className="flex flex-col overflow-hidden pr-4">
@@ -527,6 +625,23 @@ export function TrackDetail() {
             )}
             {track.users?.email && (
               <span className="text-on-surface-variant/60 text-xs"> • {track.users.email.split('@')[0]}</span>
+            )}
+            {track.explicit && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/15 text-red-400 border border-red-500/30" title="Treści dla dorosłych">
+                E
+              </span>
+            )}
+            {track.viral_protected && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30" title="Chroniony — viral lub PRO">
+                <span className="material-symbols-outlined text-[12px]">shield_lock</span>
+                CHRONIONY
+              </span>
+            )}
+            {track.audio_expires_at && !track.viral_protected && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-surface-container-high text-on-surface-variant" title={`Dostępny do ${new Date(track.audio_expires_at).toLocaleDateString('pl-PL')}`}>
+                <span className="material-symbols-outlined text-[12px]">schedule</span>
+                {Math.max(0, Math.ceil((new Date(track.audio_expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} dni
+              </span>
             )}
             {(occasion || voice) && (
                <span className="opacity-50 text-[10px] uppercase"> • {voice || occasion}</span>

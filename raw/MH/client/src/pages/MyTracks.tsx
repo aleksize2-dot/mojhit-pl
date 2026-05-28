@@ -11,6 +11,11 @@ type Track = {
   created_at: string;
   producer_id?: string;
   producers?: { name: string };
+  video_url?: string | null;
+  video_thumbnail_url?: string | null;
+  video_status?: string | null;
+  duration?: number | null;
+  variant_index?: number | null;
 };
 
 export function MyTracks() {
@@ -75,8 +80,22 @@ export function MyTracks() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20 min-h-[40vh]">
-        <span className="material-symbols-outlined animate-spin text-4xl text-primary text-center">cycle</span>
+      <div className="space-y-6 animate-pulse">
+        <div className="mb-6">
+          <div className="h-10 bg-surface-variant/50 rounded-lg w-1/3 mb-2"></div>
+          <div className="h-4 bg-surface-variant/50 rounded-lg w-1/4"></div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="bg-surface-container-low p-4 rounded-xl flex items-center gap-4 border border-outline-variant/10">
+              <div className="w-16 h-16 bg-surface-variant/50 rounded-lg flex-shrink-0"></div>
+              <div className="flex-grow space-y-2">
+                <div className="h-5 bg-surface-variant/50 rounded w-3/4"></div>
+                <div className="h-3 bg-surface-variant/50 rounded w-1/2"></div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -102,9 +121,14 @@ export function MyTracks() {
     );
   }
 
-  const handleDownload = (e: React.MouseEvent, trackId: string) => {
+  const handleDownload = (e: React.MouseEvent, track: Track) => {
     e.preventDefault();
-    window.open(`/api/tracks/${trackId}/download`, '_blank');
+    if (track.video_url) {
+      // Video available — download video
+      window.open(track.video_url, '_blank');
+    } else {
+      window.open(`/api/tracks/${track.id}/download`, '_blank');
+    }
   };
 
   const handleLike = (e: React.MouseEvent, trackId: string) => {
@@ -207,7 +231,7 @@ export function MyTracks() {
       <div className="bg-primary/5 border border-primary/20 text-on-surface p-5 rounded-2xl mb-8 flex items-start gap-4">
         <span className="material-symbols-outlined text-primary mt-0.5">info</span>
         <p className="text-sm">
-          <strong>Polityka przechowywania plików:</strong> Wygenerowane utwory są przechowywane przez 14 dni. Po tym czasie pliki audio oraz ich metadane zostaną trwale usunięte z systemu. Zalecamy pobranie ważnych utworów przed upływem tego terminu.
+          <strong>Polityka przechowywania plików:</strong> Darmowe utwory są przechowywane przez <strong>14 dni</strong>. Po tym czasie pliki audio zostaną trwale usunięte. <br/><br/><strong>🔒 Jak zatrzymać na zawsze?</strong> Wykup subskrypcję PRO — wszystkie Twoje tracki będą chronione. Albo zdobądź <strong>ponad 1000 odsłuchań</strong> — viralowe hity chronimy bezterminowo! 🔥
         </p>
       </div>
       
@@ -215,7 +239,9 @@ export function MyTracks() {
         {tracks.map((track: Track) => {
           const style = getStyle(track.description);
           const dateStr = new Date(track.created_at).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-          const isVideoPending = track.video_status === 'pending' || track.video_status === 'processing';
+          // Only show video spinner if task is fresh (< 30 min) to avoid stuck spinners from failed callbacks
+          const isTaskFresh = track.created_at && (Date.now() - new Date(track.created_at).getTime()) < 30 * 60 * 1000;
+          const isVideoPending = (track.video_status === 'pending' || track.video_status === 'processing') && isTaskFresh;
           const imageUrl = track.video_thumbnail_url || track.cover_image_url;
 
           return (
@@ -228,8 +254,14 @@ export function MyTracks() {
                 )}
                 
                 {isVideoPending ? (
-                  <div className={`absolute inset-0 bg-black/60 flex items-center justify-center`}>
-                    <span className="material-symbols-outlined text-white animate-spin">progress_activity</span>
+                  <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex flex-col items-center justify-center overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent animate-pulse"></div>
+                    <div className="relative w-6 h-6 mb-1">
+                       <div className="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping"></div>
+                       <div className="absolute inset-0.5 border-2 border-primary/60 rounded-full animate-spin" style={{ animationDuration: '2s' }}></div>
+                       <span className="absolute inset-0 flex items-center justify-center material-symbols-outlined text-[12px] text-white">movie</span>
+                    </div>
+                    <span className="relative text-[8px] font-bold text-white uppercase tracking-widest animate-pulse">Wideo</span>
                   </div>
                 ) : (
                   <div className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity opacity-0 group-hover:opacity-100`}>
@@ -256,17 +288,19 @@ export function MyTracks() {
                   <span className="text-on-surface-variant text-[11px] font-medium font-body border-l border-outline-variant/20 pl-2">
                     {dateStr}
                   </span>
-                  <span className="text-on-surface-variant text-[11px] font-medium font-body border-l border-outline-variant/20 pl-2 hidden sm:inline">
-                    2:45
-                  </span>
+                  {track.duration ? (
+                    <span className="text-on-surface-variant text-[11px] font-medium font-body border-l border-outline-variant/20 pl-2 hidden sm:inline">
+                      {Math.floor(track.duration / 60)}:{String(Math.floor(track.duration % 60)).padStart(2, '0')}
+                    </span>
+                  ) : null}
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
                 <button 
-                  onClick={(e) => handleDownload(e, track.id)}
+                  onClick={(e) => handleDownload(e, track)}
                   className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors hover:scale-110 active:scale-90"
-                  title="Pobierz MP3"
+                  title={track.video_url ? 'Pobierz MP4' : 'Pobierz MP3'}
                 >
                   download
                 </button>

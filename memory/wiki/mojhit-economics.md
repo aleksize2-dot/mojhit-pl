@@ -3,11 +3,12 @@
 - **Double Economy:** 
   - Coins 🪙 (Paid, 1 Coin = 1 Generation/2 Tracks).
   - Notes 🎵 (Free/Farmed, 10 Notes = 1 Coin). Earned via Daily Login, minigames during loading, and likes from authorized users.
-- **PRO Tier Exclusive Features:**
-  - **Video Generation:** PRO users can convert generated audio tracks into social-media‑optimized videos (TikTok, Reels, Shorts) via Kie.ai MP4 API.
-  - Videos include optional "Created on mojhit.pl" watermark for brand exposure.
+- **Video Generation (All Tiers, 2026-04-28):**
+  - **Decision change:** Video generation is now available for ALL subscription tiers (Free, VIP, Legend), not just PRO.
+  - **Watermark distinction:** Free tier gets "Created on mojhit.pl" watermark; VIP/Legend get clean, watermark-free video.
+  - Videos optimized for social media (TikTok, Reels, Shorts) via Kie.ai/Sunoapi.org MP4 API.
   - Storage: 14‑day retention; users can download.
-  - Differentiates PRO tier, increases user retention, and creates viral growth loop.
+  - **Business impact:** Viral growth loop — video with mojhit.pl watermark → viral sharing → new users.
 - **Viral Loop (Social Proof):** Sharing tracks via OpenGraph. Guests must register to like a track (which rewards the author with Notes).
 - **Guest Checkout & Lead Magnet (No Registration Required):** 
   - **New Flow:** Users can generate and pay for tracks *without* mandatory registration.

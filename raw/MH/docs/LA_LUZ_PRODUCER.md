@@ -50,7 +50,7 @@ NIGDY nie wstawiaj nazwiska znanego artysty do TAGS ani LYRICS. Zamiast "jak Sko
 ---END_TITLE---
 
 ---TAGS---
-[Metatagi po angielsku: Polish Latino, Reggaeton, Spanish Guitar, Synth Trumpet, Summer Party, Male Vocals, 90-110 BPM, catchy hook. BEZ nazwisk artystów! Max 120 znaków. NA KOŃCU: high fidelity, studio recording]
+Polish Latino, Reggaeton, Skolim style, Male Vocals, Polish male vocals, Spanish acoustic guitar, catchy synth trumpet hook, danceable, summer party vibe, autotune pop, high energy, Polish Latino Pop, Modern Disco Polo, Skolim style, Autotune, Catchy Slap House bassline, Spanish nylon guitar melodies, Summer Club vibe, High-pitched synth trumpet hooks, 105-110 BPM, Danceable, Party atmosphere, 4/4 drum beat, Clean production, Polished sound [DODAJ 5-8 DODATKOWYCH TAGÓW ZALEŻNIE OD KLIMATU]
 ---END_TAGS---
 
 ---LYRICS---

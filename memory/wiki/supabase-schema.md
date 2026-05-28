@@ -1,6 +1,7 @@
 # Supabase Schema (PostgreSQL) for mojhit.pl
 
-*Last updated: 2026-04-24 (full audit via Supabase OpenAPI)*
+- **Project URL:** `urzodvosleauddnfxqio.supabase.co`
+- *Last updated: 2026-05-17 (URL added), schema audit: 2026-04-24*
 
 ## Core Tables
 

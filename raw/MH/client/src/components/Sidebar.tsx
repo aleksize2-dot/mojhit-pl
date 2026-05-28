@@ -1,4 +1,4 @@
-import { useUser, useClerk } from '@clerk/clerk-react';
+import { useUser, useClerk } from '@clerk/react';
 import { NavLink, Link } from 'react-router-dom';
 import { useTheme } from '../lib/ThemeContext';
 

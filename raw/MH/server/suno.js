@@ -20,7 +20,7 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
  * @param {string} personaModel - Optional model for persona (e.g., "V4_5ALL")
  * @returns {Promise<string>} taskId from Suno API
  */
-const generate = async (prompt, style = '', title = '', instrumental = false, model = '5.5', customMode = false, personaId = '', personaModel = '') => {
+const generate = async (prompt, style = '', title = '', instrumental = false, model = '5.5', customMode = false, personaId = '', personaModel = '', vocalGenderOverride = '', weirdnessConstraint = null, styleWeight = null) => {
   // Get API settings from environment or fallback
   const baseUrl = process.env.SUNO_API_BASE_URL || 'https://api.sunoapi.org/api/v1';
   const apiKey = process.env.SUNO_API_KEY || '';
@@ -35,7 +35,7 @@ const generate = async (prompt, style = '', title = '', instrumental = false, mo
     prompt: prompt.substring(0, customMode ? 5000 : 500), // Limit based on mode
     instrumental,
     model: model || '5.5',
-    callBackUrl: `${process.env.SUNO_CALLBACK_BASE_URL || 'http://localhost:3000'}/api/webhooks/suno`
+    callBackUrl: `${process.env.SUNO_CALLBACK_BASE_URL || 'http://localhost:3000'}/api/webhooks/suno${process.env.SUNO_WEBHOOK_SECRET ? '?token=' + process.env.SUNO_WEBHOOK_SECRET : ''}`
   };
 
   // Add persona fields if provided (for voice cloning)
@@ -44,6 +44,14 @@ const generate = async (prompt, style = '', title = '', instrumental = false, mo
     if (personaModel && personaModel.trim()) {
       payload.personaModel = personaModel.trim();
     }
+  }
+
+  // Add weirdnessConstraint and styleWeight if provided (Suno advanced params, 0.0-1.0)
+  if (weirdnessConstraint !== null && weirdnessConstraint !== undefined) {
+    payload.weirdnessConstraint = Number(weirdnessConstraint);
+  }
+  if (styleWeight !== null && styleWeight !== undefined) {
+    payload.styleWeight = Number(styleWeight);
   }
 
   // Handle custom mode logic based on documentation
@@ -166,7 +174,12 @@ const checkStatus = async (taskId) => {
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[SUNO STATUS] Error:', response.status, errorText);
+      // 404 is expected when checking a KIE task on Suno — don't log as error
+      if (response.status === 404) {
+        console.log('[SUNO STATUS] Task not found on Suno (expected for KIE tasks)');
+      } else {
+        console.warn('[SUNO STATUS] Error:', response.status, errorText);
+      }
       throw new Error(`Suno status check failed: ${response.status}`);
     }
     
@@ -187,7 +200,11 @@ const checkStatus = async (taskId) => {
       raw: result
     };
   } catch (error) {
-    console.error('[SUNO STATUS] Error:', error.message);
+    if (error.message.includes('404')) {
+      console.log('[SUNO STATUS] Not found (expected for cross-provider check)');
+    } else {
+      console.warn('[SUNO STATUS] Error:', error.message);
+    }
     return {
       status: 'error',
       error: error.message

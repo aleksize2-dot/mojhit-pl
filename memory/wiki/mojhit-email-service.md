@@ -23,6 +23,15 @@ Email service for automated notifications when tracks are generated. Separate fr
   - Upsell block: PRO/VIP tier benefits
 - **Variables:** `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM` (commented out in `.env`)
 
+## Status (2026-05-14)
+- **Module:** Ready — code complete, template designed
+- **Blocker:** SMTP credentials not configured (commented out in `.env`)
+- **Remaining tasks:**
+  1. Obtain SMTP credentials (Gmail / SendGrid / Mailgun / Brevo SMTP)
+  2. Uncomment SMTP variables in `.env`
+  3. Add 14-day storage reminder to email template (both providers keep files 14 days)
+  4. Restart server + E2E test with real email
+
 ## Setup Required
 
 1. Uncomment SMTP variables in `.env`
