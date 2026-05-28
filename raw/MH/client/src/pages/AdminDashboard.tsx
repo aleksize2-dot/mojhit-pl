@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useUser, RedirectToSignIn } from '@clerk/clerk-react';
+import { useUser, RedirectToSignIn } from '@clerk/react';
 import { Link } from 'react-router-dom';
 import { ProducerManager } from '../components/admin/ProducerManager';
 import ApiSettingsManager from '../components/admin/ApiSettingsManager';
@@ -16,7 +16,7 @@ const ADMIN_ID = 'user_3BiIa5lj5AiMLDvGL2OqjEDbqLh';
 
 export function AdminDashboard() {
   const { user, isLoaded, isSignedIn } = useUser();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'producers' | 'tracks' | 'roles' | 'settings' | 'support' | 'affiliates' | 'logs' | 'siteSettings' | 'promoCodes' | 'contests' | 'reviews'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'users' | 'producers' | 'tracks' | 'roles' | 'settings' | 'support' | 'affiliates' | 'logs' | 'siteSettings' | 'promoCodes' | 'contests' | 'reviews' | 'lyricsModeration'>('dashboard');
   const [stats, setStats] = useState<{ totalTracks: number; totalUsers: number; revenuePLN: number; headerCounterManualEnabled?: boolean; headerCounterManualValue?: number } | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
 
@@ -70,6 +70,13 @@ export function AdminDashboard() {
   const [userRoleModal, setUserRoleModal] = useState<{ userId: string; email: string } | null>(null);
   const [userRoles, setUserRoles] = useState<any[]>([]);
   const [userRolesLoading, setUserRolesLoading] = useState(false);
+  // Lyrics moderation state
+  const [lyricsList, setLyricsList] = useState<any[]>([]);
+  const [lyricsLoading, setLyricsLoading] = useState(false);
+  const [lyricsError, setLyricsError] = useState<string | null>(null);
+  const [lyricsSearch, setLyricsSearch] = useState('');
+  const [lyricsFilter, setLyricsFilter] = useState<'all' | 'pending' | 'approved'>('all');
+  const [lyricsEdits, setLyricsEdits] = useState<Record<string, { title: string; content: string; category: string }>>({});
 
   useEffect(() => {
     if (activeTab === 'dashboard' && isSignedIn && user.id === ADMIN_ID) {
@@ -122,6 +129,12 @@ export function AdminDashboard() {
   useEffect(() => {
     if (activeTab === 'tracks' && isSignedIn && user.id === ADMIN_ID) {
       fetchTracks();
+    }
+  }, [activeTab, isSignedIn, user?.id]);
+
+  useEffect(() => {
+    if (activeTab === 'lyricsModeration' && isSignedIn && user.id === ADMIN_ID) {
+      fetchLyrics();
     }
   }, [activeTab, isSignedIn, user?.id]);
 
@@ -267,6 +280,103 @@ export function AdminDashboard() {
         }
       })
       .catch(console.error);
+  };
+
+  const fetchLyrics = () => {
+    setLyricsLoading(true);
+    setLyricsError(null);
+
+    fetch('/api/admin/lyrics', { credentials: 'include' })
+      .then(res => {
+        if (!res.ok) throw new Error('Błąd pobierania bazy tekstów do moderacji');
+        return res.json();
+      })
+      .then(data => {
+        setLyricsList(data || []);
+        const initialEdits: Record<string, { title: string; content: string; category: string }> = {};
+        (data || []).forEach((item: any) => {
+          const lines = (item.description || '').split('\n');
+          const filteredLines = lines.filter((line: string) => {
+            const trimmed = line.trim();
+            if (trimmed.startsWith('[Main Style:') || trimmed.startsWith('[Excluded Style:')) {
+              return false;
+            }
+            if (/^-{3,}$/.test(trimmed)) {
+              return false;
+            }
+            if (trimmed.startsWith('Okazja:')) {
+              return false;
+            }
+            return true;
+          });
+          const cleanedText = filteredLines
+            .map((l: string) => l.replace(/^Opis:\s*/i, '').trim())
+            .join('\n')
+            .trim();
+          
+          initialEdits[item.trackId] = {
+            title: item.title || '',
+            content: cleanedText,
+            category: item.approvedCategory || 'Inne'
+          };
+        });
+        setLyricsEdits(initialEdits);
+        setLyricsLoading(false);
+      })
+      .catch(err => {
+        console.error('Lyrics fetch error:', err);
+        setLyricsError(err.message);
+        setLyricsLoading(false);
+      });
+  };
+
+  const handleApproveLyrics = (item: any, editTitle: string, editContent: string, editCategory: string) => {
+    fetch('/api/admin/lyrics/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        trackId: item.trackId,
+        title: editTitle,
+        content: editContent,
+        category: editCategory,
+        tags: 'AI',
+        isPremium: item.approvedIsPremium
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          fetchLyrics();
+        } else {
+          alert('Błąd zatwierdzania tekstu');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Błąd połączenia z serwerem');
+      });
+  };
+
+  const handleRejectLyrics = (trackId: string) => {
+    fetch('/api/admin/lyrics/reject', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ trackId })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          fetchLyrics();
+        } else {
+          alert('Błąd odrzucania tekstu');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Błąd połączenia z serwerem');
+      });
   };
 
   // Format time for progress display
@@ -551,6 +661,9 @@ export function AdminDashboard() {
         <button onClick={() => setActiveTab('tracks')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm ${activeTab === 'tracks' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-on-surface-variant hover:bg-surface-bright'}`}>
           <span className="material-symbols-outlined text-[20px]">library_music</span> Treki i Moderacja
         </button>
+        <button onClick={() => setActiveTab('lyricsModeration')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm ${activeTab === 'lyricsModeration' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-on-surface-variant hover:bg-surface-bright'}`}>
+          <span className="material-symbols-outlined text-[20px]">gavel</span> Moderacja Tekstów
+        </button>
         <button onClick={() => setActiveTab('roles')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium text-sm ${activeTab === 'roles' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-on-surface-variant hover:bg-surface-bright'}`}>
           <span className="material-symbols-outlined text-[20px]">shield</span> Role i Uprawnienia
         </button>
@@ -586,6 +699,242 @@ export function AdminDashboard() {
         {activeTab === 'promoCodes' && <PromoCodesManager />}
         {activeTab === 'contests' && <ContestsManager />}
         {activeTab === 'reviews' && <ReviewsManager />}
+        {activeTab === 'lyricsModeration' && (
+          <div className="space-y-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <h2 className="text-2xl font-bold font-headline">Moderacja Banku Tekstów</h2>
+                <p className="text-sm text-on-surface-variant">Zatwierdzaj, edytuj i kategoryzuj teksty generowane przez użytkowników przed publikacją w Banku Tekstów.</p>
+              </div>
+              <button 
+                onClick={fetchLyrics}
+                className="px-5 py-2.5 bg-primary/20 text-primary border border-primary/20 hover:bg-primary hover:text-on-primary rounded-xl text-sm font-bold flex items-center gap-2 transition-all active:scale-95"
+              >
+                <span className="material-symbols-outlined text-[18px]">refresh</span> Odśwież
+              </button>
+            </div>
+
+            {/* Filters panel */}
+            <div className="flex flex-wrap items-center gap-3 p-4 bg-surface rounded-xl border border-outline-variant/10">
+              <div className="flex bg-surface-container rounded-lg p-0.5 border border-outline-variant/10">
+                <button
+                  onClick={() => setLyricsFilter('all')}
+                  className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${lyricsFilter === 'all' ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+                >
+                  Wszystkie
+                </button>
+                <button
+                  onClick={() => setLyricsFilter('pending')}
+                  className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${lyricsFilter === 'pending' ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+                >
+                  Oczekujące ({lyricsList.filter(l => !l.isApproved).length})
+                </button>
+                <button
+                  onClick={() => setLyricsFilter('approved')}
+                  className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${lyricsFilter === 'approved' ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+                >
+                  Zatwierdzone ({lyricsList.filter(l => l.isApproved).length})
+                </button>
+              </div>
+
+              <div className="flex-1 min-w-[200px]">
+                <input
+                  type="text"
+                  value={lyricsSearch}
+                  onChange={(e) => setLyricsSearch(e.target.value)}
+                  placeholder="Szukaj po tytule lub tekście..."
+                  className="w-full px-3 py-1.5 bg-surface-bright border border-outline-variant/20 rounded-lg text-sm focus:outline-none focus:border-primary"
+                />
+              </div>
+            </div>
+
+            {/* Lyrics List */}
+            {lyricsLoading ? (
+              <div className="flex justify-center items-center py-20">
+                <span className="material-symbols-outlined animate-spin text-4xl text-primary">cycle</span>
+              </div>
+            ) : lyricsError ? (
+              <div className="bg-error/10 text-error p-4 rounded-xl border border-error/20 max-w-md mx-auto text-center">
+                <span className="material-symbols-outlined text-3xl mb-1">warning</span>
+                <p className="font-bold">{lyricsError}</p>
+              </div>
+            ) : (
+              (() => {
+                const filtered = lyricsList.filter(item => {
+                  const matchesSearch = item.title.toLowerCase().includes(lyricsSearch.toLowerCase()) || 
+                                       item.description.toLowerCase().includes(lyricsSearch.toLowerCase());
+                  if (lyricsFilter === 'pending') return matchesSearch && !item.isApproved;
+                  if (lyricsFilter === 'approved') return matchesSearch && item.isApproved;
+                  return matchesSearch;
+                });
+
+                if (filtered.length === 0) {
+                  return (
+                    <div className="text-center py-16 bg-surface rounded-xl border border-outline-variant/10 space-y-3 w-full">
+                      <span className="material-symbols-outlined text-4xl text-on-surface-variant/40">sentiment_neutral</span>
+                      <h3 className="text-lg font-bold">Brak tekstów do wyświetlenia</h3>
+                      <p className="text-sm text-on-surface-variant">Brak wygenerowanych utworów spełniających kryteria.</p>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="grid grid-cols-1 gap-6 w-full">
+                    {filtered.map(item => {
+                      const editState = lyricsEdits[item.trackId] || { title: item.title, content: '', category: item.approvedCategory };
+                      return (
+                        <div 
+                          key={item.trackId}
+                          className={`bg-surface p-6 rounded-2xl border transition-all flex flex-col gap-5 ${item.isApproved ? 'border-success/30 bg-success/5 shadow-md shadow-success/5' : 'border-outline-variant/10 hover:border-outline-variant/30'}`}
+                        >
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div className="space-y-1">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <h3 className="font-black text-lg headline-font">{item.title}</h3>
+                                {item.explicit && (
+                                  <span className="px-2 py-0.5 bg-error/10 text-error border border-error/20 rounded-full text-[10px] font-bold flex items-center gap-0.5">
+                                    <span className="material-symbols-outlined text-[12px]">warning</span>
+                                    Wulgarny
+                                  </span>
+                                )}
+                                {item.isApproved ? (
+                                  <span className="px-2 py-0.5 bg-success/15 text-success border border-success/20 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-0.5">
+                                    <span className="material-symbols-outlined text-[12px]" style={{fontVariationSettings: "'FILL' 1"}}>check_circle</span>
+                                    W Banku
+                                  </span>
+                                ) : (
+                                  <span className="px-2 py-0.5 bg-warning/15 text-warning border border-warning/20 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-0.5">
+                                    <span className="material-symbols-outlined text-[12px]">schedule</span>
+                                    Oczekuje
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-on-surface-variant font-mono">ID Tracka: {item.trackId}</p>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              {item.audioUrl && (
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => handlePlayTrack(item.trackId, item.audioUrl)}
+                                    className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                                    title={playingTrackId === item.trackId && audioRef.current && !audioRef.current.paused ? "Pauza" : "Słuchaj utworu"}
+                                  >
+                                    <span className="material-symbols-outlined">
+                                      {playingTrackId === item.trackId && audioRef.current && !audioRef.current.paused ? 'pause' : 'play_arrow'}
+                                    </span>
+                                  </button>
+                                  {playingTrackId === item.trackId && (
+                                    <div className="flex flex-col items-center w-[80px]">
+                                      <div className="w-full bg-surface-container-high rounded-full h-1 overflow-hidden">
+                                        <div
+                                          className="bg-primary h-full rounded-full"
+                                          style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              {item.isApproved ? (
+                                <button
+                                  onClick={() => handleRejectLyrics(item.trackId)}
+                                  className="px-4 py-2 bg-error/10 hover:bg-error hover:text-white border border-error/20 text-error rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
+                                >
+                                  Usuń z Banku
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => handleApproveLyrics(item, editState.title, editState.content, editState.category)}
+                                  className="px-4 py-2 bg-success text-white hover:scale-105 active:scale-95 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-success/20 cursor-pointer"
+                                >
+                                  Zatwierdź do Banku
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Editable fields */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-bold uppercase text-on-surface-variant">Tytuł w Banku</label>
+                              <input
+                                type="text"
+                                value={editState.title}
+                                onChange={(e) => {
+                                  setLyricsEdits(prev => ({
+                                    ...prev,
+                                    [item.trackId]: { ...editState, title: e.target.value }
+                                  }));
+                                }}
+                                className="w-full px-3 py-2 bg-surface-bright border border-outline-variant/20 rounded-xl text-sm font-bold focus:outline-none focus:border-primary"
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-bold uppercase text-on-surface-variant">Kategoria okazaty</label>
+                              <select
+                                value={editState.category}
+                                onChange={(e) => {
+                                  setLyricsEdits(prev => ({
+                                    ...prev,
+                                    [item.trackId]: { ...editState, category: e.target.value }
+                                  }));
+                                }}
+                                className="w-full px-3 py-2 bg-surface-bright border border-outline-variant/20 rounded-xl text-sm font-bold focus:outline-none focus:border-primary"
+                              >
+                                <option value="Urodziny">Urodziny</option>
+                                <option value="Ślub / Rocznica">Ślub / Rocznica</option>
+                                <option value="Humor / Żart">Humor / Żart</option>
+                                <option value="Impreza">Impreza</option>
+                                <option value="Miłość">Miłość</option>
+                                <option value="Do Auta">Do Auta</option>
+                                <option value="Niespodzianka">Niespodzianka</option>
+                                <option value="Przeprosiny">Przeprosiny</option>
+                                <option value="Pocieszenie">Pocieszenie</option>
+                                <option value="Inne">Inne</option>
+                              </select>
+                            </div>
+                            <div className="flex flex-wrap items-end justify-between text-xs text-on-surface-variant pb-2 px-1 font-bold gap-2">
+                              <span>❤️ {item.likes} lajków</span>
+                              <span>🔊 {item.plays} odtworzeń</span>
+                              <span>📅 {new Date(item.created_at).toLocaleDateString('pl-PL')}</span>
+                            </div>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <div className="flex justify-between items-center">
+                              <label className="text-xs font-bold uppercase text-on-surface-variant">Tekst utworu (Edytowalny)</label>
+                              {item.isApproved && (
+                                <button
+                                  onClick={() => handleApproveLyrics(item, editState.title, editState.content, editState.category)}
+                                  className="text-xs text-primary hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                                >
+                                  <span className="material-symbols-outlined text-[14px]">save</span> Zapisz poprawki tekstu
+                                </button>
+                              )}
+                            </div>
+                            <textarea
+                              rows={8}
+                              value={editState.content}
+                              onChange={(e) => {
+                                  setLyricsEdits(prev => ({
+                                    ...prev,
+                                    [item.trackId]: { ...editState, content: e.target.value }
+                                  }));
+                              }}
+                              className="w-full p-4 bg-surface-bright border border-outline-variant/20 rounded-2xl text-sm font-mono focus:outline-none focus:border-primary leading-relaxed whitespace-pre-wrap"
+                              placeholder="Wklej lub edytuj tekst piosenki..."
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()
+            )}
+          </div>
+        )}
         {activeTab === 'dashboard' && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold font-headline mb-6">Przegląd Systemu</h2>

@@ -1214,30 +1214,20 @@ app.get('/api/lyrics', apiLimiter, async (req, res) => {
   try {
     const { category, limit = 100 } = req.query;
     
-    // Fetch tracks that have occasion categories
     let query = supabase
-      .from('tracks')
-      .select('id, title, description, created_at, likes, plays')
-      .ilike('description', 'Okazja:%')
-      .eq('expired', false);
+      .from('lyrics')
+      .select('id, slug, title, category, tags, is_premium, uses_count, created_at');
       
-    const { data: tracks, error } = await query
+    const { data: lyrics, error } = await query
       .order('created_at', { ascending: false })
       .limit(limit);
       
     if (error) throw error;
     
-    // Map tracks to Lyric items
-    const lyrics = (tracks || []).map(track => {
-      // Parse occasion category
-      const firstLine = track.description.split('\n')[0] || '';
-      let rawCategory = 'Inne';
-      if (firstLine.startsWith('Okazja:')) {
-        rawCategory = firstLine.replace('Okazja:', '').split(',')[0].trim().toLowerCase();
-      }
-      
-      // Map category to Polish professional subgroups
-      let polishCategory = 'Inne';
+    // Map to the structure expected by the frontend
+    const mappedLyrics = (lyrics || []).map(item => {
+      let polishCategory = item.category || 'Inne';
+      const rawCategory = polishCategory.toLowerCase();
       if (rawCategory === 'birthday' || rawCategory === 'urodziny') polishCategory = 'Urodziny';
       else if (rawCategory === 'wedding' || rawCategory === 'ślub' || rawCategory === 'wesele' || rawCategory === 'slub' || rawCategory === 'rocznica') polishCategory = 'Ślub / Rocznica';
       else if (rawCategory === 'joke' || rawCategory === 'żart' || rawCategory === 'zart' || rawCategory === 'humor' || rawCategory === 'rozśmieszyć') polishCategory = 'Humor / Żart';
@@ -1247,26 +1237,23 @@ app.get('/api/lyrics', apiLimiter, async (req, res) => {
       else if (rawCategory === 'niespodzianka' || rawCategory === 'surprise') polishCategory = 'Niespodzianka';
       else if (rawCategory === 'przeprosiny' || rawCategory === 'sorry') polishCategory = 'Przeprosiny';
       else if (rawCategory === 'pocieszenie' || rawCategory === 'smutek') polishCategory = 'Pocieszenie';
-      else if (rawCategory && rawCategory !== 'none') polishCategory = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
       
-      // Clean title from V1/V2 suffix
-      const cleanTitle = track.title.replace(/\s+V\d+$/i, '');
+      const cleanTitle = item.title.replace(/\s+V\d+$/i, '');
       
       return {
-        id: track.id,
-        slug: track.id, // Use track ID directly as slug for robust details page routing
+        id: item.id,
+        slug: item.slug || item.id,
         title: cleanTitle,
         category: polishCategory,
-        tags: 'AI',
-        is_premium: track.likes > 2,
-        uses_count: track.plays || 0
+        tags: item.tags || 'AI',
+        is_premium: item.is_premium || false,
+        uses_count: item.uses_count || 0
       };
     });
     
-    // If a specific category was requested, filter by it
-    let filteredLyrics = lyrics;
+    let filteredLyrics = mappedLyrics;
     if (category) {
-      filteredLyrics = lyrics.filter(l => l.category.toLowerCase() === category.toLowerCase());
+      filteredLyrics = mappedLyrics.filter(l => l.category.toLowerCase() === category.toLowerCase());
     }
     
     res.json(filteredLyrics);
@@ -1280,65 +1267,28 @@ app.get('/api/lyrics/:slug', apiLimiter, async (req, res) => {
   try {
     const { slug } = req.params;
     
-    // Fetch track from tracks table using the ID (slug)
-    const { data: track, error } = await supabase
-      .from('tracks')
-      .select('id, title, description, created_at, likes, plays')
-      .eq('id', slug)
-      .single();
+    // 1. Fetch approved lyric from lyrics table (single source of truth for the moderated bank)
+    const { data: approvedLyric, error: lyricError } = await supabase
+      .from('lyrics')
+      .select('*')
+      .eq('slug', slug)
+      .maybeSingle();
       
-    if (error) {
-      // If not found in tracks, check the static lyrics table as fallback
-      const { data: staticLyric, error: staticError } = await supabase
-        .from('lyrics')
-        .select('*')
-        .eq('slug', slug)
-        .single();
-        
-      if (!staticError && staticLyric) {
-        return res.json(staticLyric);
-      }
-      throw error;
+    if (!lyricError && approvedLyric) {
+      return res.json({
+        id: approvedLyric.id,
+        slug: approvedLyric.slug,
+        title: approvedLyric.title,
+        content: approvedLyric.content,
+        category: approvedLyric.category || 'Inne',
+        tags: approvedLyric.tags || 'AI',
+        is_premium: approvedLyric.is_premium || false,
+        uses_count: approvedLyric.uses_count || 0
+      });
     }
     
-    if (!track) return res.status(404).json({ error: 'Text not found' });
-    
-    // Parse occasion category
-    const lines = track.description.split('\n');
-    let occasion = 'Inne';
-    let cleanTextLines = lines;
-    
-    if (lines[0].startsWith('Okazja:')) {
-      const rawCategory = lines[0].replace('Okazja:', '').split(',')[0].trim().toLowerCase();
-      if (rawCategory === 'birthday' || rawCategory === 'urodziny') occasion = 'Urodziny';
-      else if (rawCategory === 'wedding' || rawCategory === 'ślub' || rawCategory === 'wesele' || rawCategory === 'slub' || rawCategory === 'rocznica') occasion = 'Ślub / Rocznica';
-      else if (rawCategory === 'joke' || rawCategory === 'żart' || rawCategory === 'zart' || rawCategory === 'humor' || rawCategory === 'rozśmieszyć') occasion = 'Humor / Żart';
-      else if (rawCategory === 'party' || rawCategory === 'impreza' || rawCategory === 'club' || rawCategory === 'dance') occasion = 'Impreza';
-      else if (rawCategory === 'love' || rawCategory === 'miłość' || rawCategory === 'milosc' || rawCategory === 'romans') occasion = 'Miłość';
-      else if (rawCategory === 'car' || rawCategory === 'auto' || rawCategory === 'do auta') occasion = 'Do Auta';
-      else if (rawCategory === 'niespodzianka' || rawCategory === 'surprise') occasion = 'Niespodzianka';
-      else if (rawCategory === 'przeprosiny' || rawCategory === 'sorry') occasion = 'Przeprosiny';
-      else if (rawCategory === 'pocieszenie' || rawCategory === 'smutek') occasion = 'Pocieszenie';
-      else if (rawCategory && rawCategory !== 'none') occasion = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
-      
-      cleanTextLines = lines.slice(1);
-    }
-    
-    // Clean lyrics lines from "Opis: ..." prefix instead of discarding the whole line
-    const cleanedLines = cleanTextLines.map(line => line.replace(/^Opis:\s*/i, '').trim());
-    const lyricsContent = cleanedLines.join('\n').trim();
-    const cleanTitle = track.title.replace(/\s+V\d+$/i, '');
-    
-    res.json({
-      id: track.id,
-      slug: track.id,
-      title: cleanTitle,
-      category: occasion,
-      content: lyricsContent,
-      tags: 'AI',
-      is_premium: track.likes > 2,
-      uses_count: track.plays || 0
-    });
+    // 2. If not found in approved lyrics table, return 404 to prevent displaying unmoderated content
+    return res.status(404).json({ error: 'Text not found or not approved' });
   } catch (error) {
     console.error('[LYRICS DETAIL ERROR]', error);
     res.status(500).json({ error: error.message });
@@ -3497,6 +3447,164 @@ app.put('/api/admin/tracks/:id/moderate', requireAuth(), requireAdmin, async (re
     res.json({ success: true, track: data });
   } catch (error) {
     console.error('[ADMIN TRACK MODERATE] Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ----------------------------------------
+// Admin Lyrics Moderation Endpoints
+// ----------------------------------------
+
+app.get('/api/admin/lyrics', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    // 1. Fetch tracks that look like they have lyrics
+    // (description is not null, not empty, and length > 100)
+    const { data: tracks, error: tracksError } = await supabase
+      .from('tracks')
+      .select('id, title, description, created_at, explicit, expired, plays, likes, audio_url')
+      .order('created_at', { ascending: false })
+      .limit(100);
+      
+    if (tracksError) throw tracksError;
+    
+    const tracksWithLyrics = (tracks || []).filter(t => 
+      t.description && 
+      (t.description.length > 100 || t.description.startsWith('Okazja:'))
+    );
+    
+    // 2. Fetch all approved lyrics from the lyrics table to match status
+    const { data: approvedLyrics, error: lyricsError } = await supabase
+      .from('lyrics')
+      .select('id, slug, category, is_premium');
+      
+    if (lyricsError) throw lyricsError;
+    
+    const approvedSlugs = new Set((approvedLyrics || []).map(l => l.slug));
+    const approvedMap = new Map((approvedLyrics || []).map(l => [l.slug, l]));
+    
+    // 3. Map tracks to moderation items
+    const moderationList = tracksWithLyrics.map(track => {
+      const isApproved = approvedSlugs.has(track.id);
+      const approvedItem = approvedMap.get(track.id);
+      
+      let occasion = 'Inne';
+      const lines = track.description.split('\n');
+      if (lines[0] && lines[0].startsWith('Okazja:')) {
+        const rawCategory = lines[0].replace('Okazja:', '').split(',')[0].trim().toLowerCase();
+        if (rawCategory === 'birthday' || rawCategory === 'urodziny') occasion = 'Urodziny';
+        else if (rawCategory === 'wedding' || rawCategory === 'ślub' || rawCategory === 'wesele' || rawCategory === 'slub' || rawCategory === 'rocznica') occasion = 'Ślub / Rocznica';
+        else if (rawCategory === 'joke' || rawCategory === 'żart' || rawCategory === 'zart' || rawCategory === 'humor' || rawCategory === 'rozśmieszyć') occasion = 'Humor / Żart';
+        else if (rawCategory === 'party' || rawCategory === 'impreza' || rawCategory === 'club' || rawCategory === 'dance') occasion = 'Impreza';
+        else if (rawCategory === 'love' || rawCategory === 'miłość' || rawCategory === 'milosc' || rawCategory === 'romans') occasion = 'Miłość';
+        else if (rawCategory === 'car' || rawCategory === 'auto' || rawCategory === 'do auta') occasion = 'Do Auta';
+        else if (rawCategory === 'niespodzianka' || rawCategory === 'surprise') occasion = 'Niespodzianka';
+        else if (rawCategory === 'przeprosiny' || rawCategory === 'sorry') occasion = 'Przeprosiny';
+        else if (rawCategory === 'pocieszenie' || rawCategory === 'smutek') occasion = 'Pocieszenie';
+      } else {
+        const descLower = track.description.toLowerCase();
+        const titleLower = track.title.toLowerCase();
+        if (descLower.includes('urodzin') || descLower.includes('lat') || titleLower.includes('urodzin')) occasion = 'Urodziny';
+        else if (descLower.includes('ślub') || descLower.includes('wesele') || descLower.includes('rocznic') || titleLower.includes('ślub')) occasion = 'Ślub / Rocznica';
+        else if (descLower.includes('żart') || descLower.includes('śmiesz') || descLower.includes('pech') || descLower.includes('patyk')) occasion = 'Humor / Żart';
+        else if (descLower.includes('imprez') || descLower.includes('party') || descLower.includes('tańc') || descLower.includes('klub')) occasion = 'Impreza';
+        else if (descLower.includes('miłość') || descLower.includes('kocham') || descLower.includes('serce') || descLower.includes('love')) occasion = 'Miłość';
+        else if (descLower.includes('aut') || descLower.includes('drog') || descLower.includes('szos')) occasion = 'Do Auta';
+      }
+      
+      return {
+        trackId: track.id,
+        title: track.title,
+        description: track.description,
+        explicit: track.explicit || false,
+        expired: track.expired || false,
+        created_at: track.created_at,
+        likes: track.likes || 0,
+        plays: track.plays || 0,
+        audioUrl: track.audio_url,
+        isApproved,
+        approvedCategory: approvedItem ? approvedItem.category : occasion,
+        approvedIsPremium: approvedItem ? approvedItem.is_premium : false,
+        approvedId: approvedItem ? approvedItem.id : null
+      };
+    });
+    
+    res.json(moderationList);
+  } catch (error) {
+    console.error('[ADMIN LYRICS GET ERROR]', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/admin/lyrics/approve', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { trackId, title, content, category, tags = 'AI', isPremium = false } = req.body;
+    
+    if (!trackId || !title || !content) {
+      return res.status(400).json({ error: 'TrackId, title and content are required' });
+    }
+    
+    const { data: existing, error: checkError } = await supabase
+      .from('lyrics')
+      .select('id')
+      .eq('slug', trackId)
+      .maybeSingle();
+      
+    if (checkError) throw checkError;
+    
+    if (existing) {
+      const { error: updateError } = await supabase
+        .from('lyrics')
+        .update({
+          title,
+          content,
+          category,
+          tags,
+          is_premium: isPremium
+        })
+        .eq('slug', trackId);
+        
+      if (updateError) throw updateError;
+    } else {
+      const { error: insertError } = await supabase
+        .from('lyrics')
+        .insert({
+          slug: trackId,
+          title,
+          content,
+          category,
+          tags,
+          is_premium: isPremium,
+          uses_count: 0
+        });
+        
+      if (insertError) throw insertError;
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('[ADMIN LYRICS APPROVE ERROR]', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/admin/lyrics/reject', requireAuth(), requireAdmin, async (req, res) => {
+  try {
+    const { trackId } = req.body;
+    
+    if (!trackId) {
+      return res.status(400).json({ error: 'TrackId is required' });
+    }
+    
+    const { error: deleteError } = await supabase
+      .from('lyrics')
+      .delete()
+      .eq('slug', trackId);
+      
+    if (deleteError) throw deleteError;
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('[ADMIN LYRICS REJECT ERROR]', error);
     res.status(500).json({ error: error.message });
   }
 });
