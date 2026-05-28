@@ -1212,18 +1212,66 @@ app.post('/api/support/chat', chatLimiter, async (req, res) => {
 
 app.get('/api/lyrics', apiLimiter, async (req, res) => {
   try {
-    const { category, limit = 50 } = req.query;
-    let query = supabase.from('lyrics').select('id, slug, title, category, tags, is_premium, uses_count, created_at');
+    const { category, limit = 100 } = req.query;
     
+    // Fetch tracks that have occasion categories
+    let query = supabase
+      .from('tracks')
+      .select('id, title, description, created_at, likes, plays')
+      .ilike('description', 'Okazja:%')
+      .eq('expired', false);
+      
+    const { data: tracks, error } = await query
+      .order('created_at', { ascending: false })
+      .limit(limit);
+      
+    if (error) throw error;
+    
+    // Map tracks to Lyric items
+    const lyrics = (tracks || []).map(track => {
+      // Parse occasion category
+      const firstLine = track.description.split('\n')[0] || '';
+      let rawCategory = 'Inne';
+      if (firstLine.startsWith('Okazja:')) {
+        rawCategory = firstLine.replace('Okazja:', '').split(',')[0].trim().toLowerCase();
+      }
+      
+      // Map category to Polish professional subgroups
+      let polishCategory = 'Inne';
+      if (rawCategory === 'birthday' || rawCategory === 'urodziny') polishCategory = 'Urodziny';
+      else if (rawCategory === 'wedding' || rawCategory === 'ślub' || rawCategory === 'wesele' || rawCategory === 'slub' || rawCategory === 'rocznica') polishCategory = 'Ślub / Rocznica';
+      else if (rawCategory === 'joke' || rawCategory === 'żart' || rawCategory === 'zart' || rawCategory === 'humor' || rawCategory === 'rozśmieszyć') polishCategory = 'Humor / Żart';
+      else if (rawCategory === 'party' || rawCategory === 'impreza' || rawCategory === 'club' || rawCategory === 'dance') polishCategory = 'Impreza';
+      else if (rawCategory === 'love' || rawCategory === 'miłość' || rawCategory === 'milosc' || rawCategory === 'romans') polishCategory = 'Miłość';
+      else if (rawCategory === 'car' || rawCategory === 'auto' || rawCategory === 'do auta') polishCategory = 'Do Auta';
+      else if (rawCategory === 'niespodzianka' || rawCategory === 'surprise') polishCategory = 'Niespodzianka';
+      else if (rawCategory === 'przeprosiny' || rawCategory === 'sorry') polishCategory = 'Przeprosiny';
+      else if (rawCategory === 'pocieszenie' || rawCategory === 'smutek') polishCategory = 'Pocieszenie';
+      else if (rawCategory && rawCategory !== 'none') polishCategory = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
+      
+      // Clean title from V1/V2 suffix
+      const cleanTitle = track.title.replace(/\s+V\d+$/i, '');
+      
+      return {
+        id: track.id,
+        slug: track.id, // Use track ID directly as slug for robust details page routing
+        title: cleanTitle,
+        category: polishCategory,
+        tags: 'AI',
+        is_premium: track.likes > 2,
+        uses_count: track.plays || 0
+      };
+    });
+    
+    // If a specific category was requested, filter by it
+    let filteredLyrics = lyrics;
     if (category) {
-      query = query.eq('category', category);
+      filteredLyrics = lyrics.filter(l => l.category.toLowerCase() === category.toLowerCase());
     }
     
-    const { data, error } = await query.order('created_at', { ascending: false }).limit(limit);
-    
-    if (error) throw error;
-    res.json(data);
+    res.json(filteredLyrics);
   } catch (error) {
+    console.error('[LYRICS GET ERROR]', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -1231,17 +1279,68 @@ app.get('/api/lyrics', apiLimiter, async (req, res) => {
 app.get('/api/lyrics/:slug', apiLimiter, async (req, res) => {
   try {
     const { slug } = req.params;
-    const { data, error } = await supabase
-      .from('lyrics')
-      .select('*')
-      .eq('slug', slug)
+    
+    // Fetch track from tracks table using the ID (slug)
+    const { data: track, error } = await supabase
+      .from('tracks')
+      .select('id, title, description, created_at, likes, plays')
+      .eq('id', slug)
       .single();
       
-    if (error) throw error;
-    if (!data) return res.status(404).json({ error: 'Text not found' });
+    if (error) {
+      // If not found in tracks, check the static lyrics table as fallback
+      const { data: staticLyric, error: staticError } = await supabase
+        .from('lyrics')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+        
+      if (!staticError && staticLyric) {
+        return res.json(staticLyric);
+      }
+      throw error;
+    }
     
-    res.json(data);
+    if (!track) return res.status(404).json({ error: 'Text not found' });
+    
+    // Parse occasion category
+    const lines = track.description.split('\n');
+    let occasion = 'Inne';
+    let cleanTextLines = lines;
+    
+    if (lines[0].startsWith('Okazja:')) {
+      const rawCategory = lines[0].replace('Okazja:', '').split(',')[0].trim().toLowerCase();
+      if (rawCategory === 'birthday' || rawCategory === 'urodziny') occasion = 'Urodziny';
+      else if (rawCategory === 'wedding' || rawCategory === 'ślub' || rawCategory === 'wesele' || rawCategory === 'slub' || rawCategory === 'rocznica') occasion = 'Ślub / Rocznica';
+      else if (rawCategory === 'joke' || rawCategory === 'żart' || rawCategory === 'zart' || rawCategory === 'humor' || rawCategory === 'rozśmieszyć') occasion = 'Humor / Żart';
+      else if (rawCategory === 'party' || rawCategory === 'impreza' || rawCategory === 'club' || rawCategory === 'dance') occasion = 'Impreza';
+      else if (rawCategory === 'love' || rawCategory === 'miłość' || rawCategory === 'milosc' || rawCategory === 'romans') occasion = 'Miłość';
+      else if (rawCategory === 'car' || rawCategory === 'auto' || rawCategory === 'do auta') occasion = 'Do Auta';
+      else if (rawCategory === 'niespodzianka' || rawCategory === 'surprise') occasion = 'Niespodzianka';
+      else if (rawCategory === 'przeprosiny' || rawCategory === 'sorry') occasion = 'Przeprosiny';
+      else if (rawCategory === 'pocieszenie' || rawCategory === 'smutek') occasion = 'Pocieszenie';
+      else if (rawCategory && rawCategory !== 'none') occasion = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1);
+      
+      cleanTextLines = lines.slice(1);
+    }
+    
+    // Clean lyrics lines from "Opis: ..." prefix instead of discarding the whole line
+    const cleanedLines = cleanTextLines.map(line => line.replace(/^Opis:\s*/i, '').trim());
+    const lyricsContent = cleanedLines.join('\n').trim();
+    const cleanTitle = track.title.replace(/\s+V\d+$/i, '');
+    
+    res.json({
+      id: track.id,
+      slug: track.id,
+      title: cleanTitle,
+      category: occasion,
+      content: lyricsContent,
+      tags: 'AI',
+      is_premium: track.likes > 2,
+      uses_count: track.plays || 0
+    });
   } catch (error) {
+    console.error('[LYRICS DETAIL ERROR]', error);
     res.status(500).json({ error: error.message });
   }
 });
