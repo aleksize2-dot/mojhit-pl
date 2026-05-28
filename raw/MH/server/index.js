@@ -9,6 +9,8 @@ process.on('unhandledRejection', (reason, promise) => {
 
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const path = require('path');
 console.log('[CWD]', process.cwd());
 const envPath = path.resolve(__dirname, '.env');
@@ -19,7 +21,7 @@ console.log('[ENV] SUPABASE_URL:', process.env.SUPABASE_URL ? process.env.SUPABA
 console.log('[ENV] CLERK_SECRET_KEY:', process.env.CLERK_SECRET_KEY ? 'present (len=' + process.env.CLERK_SECRET_KEY.length + ')' : 'missing');
 console.log('[ENV] CLERK_PUBLISHABLE_KEY:', process.env.CLERK_PUBLISHABLE_KEY ? 'present (len=' + process.env.CLERK_PUBLISHABLE_KEY.length + ')' : 'missing');
 console.log('[ENV] All keys:', Object.keys(process.env).filter(k => k.includes('SUPABASE') || k.includes('CLERK')));
-console.log('[ENV] OPENROUTER_API_KEY:', process.env.OPENROUTER_API_KEY ? process.env.OPENROUTER_API_KEY.substring(0, 10) + '...' : 'missing');
+console.log('[ENV] OPENROUTER_API_KEY:', process.env.OPENROUTER_API_KEY ? 'present' : 'missing');
 const { createClient } = require('@supabase/supabase-js');
 const { clerkMiddleware, requireAuth } = require('@clerk/express');
 const { Webhook } = require('svix');
@@ -29,14 +31,58 @@ const persona = require('./persona');
 const video = require('./video');
 const createApiSettings = require('./config/apiSettings');
 const { sendTrackEmail } = require('./emailService');
+const protect = require('./protect');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// ── Security Middleware ───────────────────────────────────────────────
+app.use(helmet({
+  contentSecurityPolicy: false, // CSP handled by frontend framework
+  crossOriginEmbedderPolicy: false,
+}));
+
+// ── Rate Limiting ─────────────────────────────────────────────────────
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Zbyt wiele zapytań. Spróbuj ponownie za 15 minut.' }
+});
+
+const generationLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 5, // 5 generation requests per minute
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Zbyt wiele generacji. Poczekaj minutę.' }
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // 20 auth attempts per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Zbyt wiele prób. Spróbuj ponownie za 15 minut.' }
+});
+
+const chatLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // 10 chat messages per minute
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Zbyt wiele wiadomości. Poczekaj chwilę.' }
+});
 
 // Initialize Supabase Client
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+// Purge legacy system-level Supabase tokens that conflict with new JWT keys
+delete process.env.SUPABASE_ACCESS_TOKEN;
+delete process.env.SUPABASE_SERVICE_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
   console.warn('âš ď¸Ź WARNING: SUPABASE_URL or keys are missing in the .env file.');
@@ -44,7 +90,9 @@ if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
 
 // We pass empty strings fallback to prevent immediate crash if .env is untouched,
 // though requests will fail until properly configured.
+// Separate clients: service_role for server-side ops, anon for public-facing
 const supabase = createClient(supabaseUrl || 'https://placeholder.supabase.co', supabaseServiceKey || supabaseAnonKey || 'placeholder-key');
+const supabaseAnon = createClient(supabaseUrl, supabaseAnonKey); // Public-safe client
 
 // System Logger
 const originalConsoleError = console.error;
@@ -130,8 +178,19 @@ console.log = function(...args) {
 // Initialize API Settings module
 const { getApiSettings, updateApiSettings, getMusicProviders } = createApiSettings(supabase);
 
+// ── CORS Configuration ───────────────────────────────────────────────
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'https://fetal-hydroxide-wobbly.ngrok-free.dev',
+];
+// Add production domain from env if set
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'https://fetal-hydroxide-wobbly.ngrok-free.dev', 'http://192.168.1.40:5173', 'http://100.118.254.128:5173'],
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -181,13 +240,26 @@ app.post('/api/webhooks/clerk', express.raw({ type: 'application/json' }), async
   }
 
   // Helper to merge guest data
-  const mergeGuestData = async (guestEmail, userId) => {
+  const mergeGuestData = async (guestEmail, clerkId) => {
     try {
-      console.log(`[MERGE] Merging guest data for email ${guestEmail} to user ${userId}`);
+      console.log(`[MERGE] Merging guest data for email ${guestEmail} to user ${clerkId}`);
+      
+      const { data: dbUser, error: dbUserErr } = await supabase
+        .from('users')
+        .select('id')
+        .eq('clerk_id', clerkId)
+        .single();
+        
+      if (dbUserErr || !dbUser) {
+        console.error('[MERGE] Could not find internal user for clerk_id:', clerkId);
+        return;
+      }
+      
+      const internalUserId = dbUser.id;
       
       const { error: tracksError } = await supabase
         .from('tracks')
-        .update({ user_id: userId })
+        .update({ user_id: internalUserId })
         .eq('guest_email', guestEmail)
         .is('user_id', null);
         
@@ -195,7 +267,7 @@ app.post('/api/webhooks/clerk', express.raw({ type: 'application/json' }), async
 
       const { error: tasksError } = await supabase
         .from('kie_tasks')
-        .update({ user_id: userId })
+        .update({ user_id: internalUserId })
         .eq('guest_email', guestEmail)
         .is('user_id', null);
 
@@ -327,18 +399,25 @@ app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), asyn
         let coinsToAdd = 0;
         let newPlan = null;
         
+        // Stripe price IDs from environment (switch live/test via .env)
+        const PRICE_20COINS = process.env.STRIPE_PRICE_20COINS || 'price_1TP5kxEX68boAvndPnhQ0bF9';
+        const PRICE_50COINS = process.env.STRIPE_PRICE_50COINS || 'price_1TP5kyEX68boAvnduYSVC7LN';
+        const PRICE_150COINS = process.env.STRIPE_PRICE_150COINS || 'price_1TP5kyEX68boAvnd8XoySccD';
+        const PRICE_VIP = process.env.STRIPE_PRICE_VIP || 'price_1TP5kzEX68boAvnddF8WYcaj';
+        const PRICE_LEGEND = process.env.STRIPE_PRICE_LEGEND || 'price_1TP5kzEX68boAvnd5Hq3n7R7';
+        
         for (const item of lineItems.data) {
           const priceId = item.price.id;
           
-          if (priceId === 'price_1TP5kxEX68boAvndPnhQ0bF9') coinsToAdd += 20;
-          if (priceId === 'price_1TP5kyEX68boAvnduYSVC7LN') coinsToAdd += 50;
-          if (priceId === 'price_1TP5kyEX68boAvnd8XoySccD') coinsToAdd += 150;
+          if (priceId === PRICE_20COINS) coinsToAdd += 20;
+          if (priceId === PRICE_50COINS) coinsToAdd += 50;
+          if (priceId === PRICE_150COINS) coinsToAdd += 150;
           
-          if (priceId === 'price_1TP5kzEX68boAvnddF8WYcaj') {
+          if (priceId === PRICE_VIP) {
              coinsToAdd += 50;
              newPlan = 'VIP';
           }
-          if (priceId === 'price_1TP5kzEX68boAvnd5Hq3n7R7') {
+          if (priceId === PRICE_LEGEND) {
              coinsToAdd += 150;
              newPlan = 'Legend';
           }
@@ -435,12 +514,12 @@ app.post('/api/webhooks/stripe', express.raw({ type: 'application/json' }), asyn
 });
 
 // Global JSON parser applied AFTER webhooks
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // ----------------------------------------
 // Public Endpoints (before auth middleware)
 // ----------------------------------------
-app.get('/api/tracks/recent', async (req, res) => {
+app.get('/api/tracks/recent', apiLimiter, async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 8;
     const { data: tracks, error } = await supabase
@@ -487,7 +566,7 @@ app.get('/api/tracks/recent', async (req, res) => {
   }
 });
 
-app.get('/api/tracks/top', async (req, res) => {
+app.get('/api/tracks/top', apiLimiter, async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
     const { data: tracks, error } = await supabase
@@ -537,7 +616,7 @@ app.get('/api/tracks/top', async (req, res) => {
 // ----------------------------------------
 // Templates Endpoints (Gift Funnel)
 // ----------------------------------------
-app.get('/api/templates', async (req, res) => {
+app.get('/api/templates', apiLimiter, async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('track_templates')
@@ -553,7 +632,7 @@ app.get('/api/templates', async (req, res) => {
   }
 });
 
-app.get('/api/templates/:slug', async (req, res) => {
+app.get('/api/templates/:slug', apiLimiter, async (req, res) => {
   try {
     const { slug } = req.params;
     const { data, error } = await supabase
@@ -576,7 +655,6 @@ app.get('/api/templates/:slug', async (req, res) => {
   }
 });
 
-app.use(express.json());
 console.log('[CLERK DEBUG] CLERK_PUBLISHABLE_KEY exists?', !!process.env.CLERK_PUBLISHABLE_KEY);
 console.log('[CLERK DEBUG] CLERK_SECRET_KEY exists?', !!process.env.CLERK_SECRET_KEY);
 app.use(clerkMiddleware({ secretKey: process.env.CLERK_SECRET_KEY, publishableKey: process.env.CLERK_PUBLISHABLE_KEY })); // Clerk authentication middleware
@@ -627,7 +705,7 @@ app.get('/api/test-supabase', async (req, res) => {
 });
 
 // Test Audio Generation Endpoint (no auth, uses admin user)
-app.post('/api/test-generate-audio', async (req, res) => {
+app.post('/api/test-generate-audio', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { prompt, tags, title, instrumental = false, model = 'V4', currency_type = 'notes' } = req.body;
     
@@ -710,7 +788,7 @@ app.post('/api/test-generate-audio', async (req, res) => {
 });
 
 // Test Audio Status Endpoint (no auth)
-app.get('/api/test-status/:taskId', async (req, res) => {
+app.get('/api/test-status/:taskId', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { taskId } = req.params;
     if (!taskId) {
@@ -727,7 +805,7 @@ app.get('/api/test-status/:taskId', async (req, res) => {
 });
 
 // Test Video Generation Endpoint (no auth, uses admin user and existing audio task)
-app.post('/api/test-generate-video', async (req, res) => {
+app.post('/api/test-generate-video', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { audioTaskId } = req.body; // kie_tasks.task_id or kie_tasks.id
     
@@ -827,7 +905,7 @@ app.post('/api/test-generate-video', async (req, res) => {
     
     // Last resort: KIE record-info API
     if (audioId === audioTask.task_id) {
-      const sunoId = await video.getSunoAudioId(audioTask.task_id);
+      const sunoId = await video.getAudioInfo(audioTask.task_id, 0);
       if (sunoId) audioId = sunoId;
     }
     
@@ -857,7 +935,7 @@ app.post('/api/test-generate-video', async (req, res) => {
 });
 
 // Test Video Status Endpoint (no auth, uses admin user)
-app.get('/api/test-video-status/:id', async (req, res) => {
+app.get('/api/test-video-status/:id', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { id } = req.params; // video_tasks.id or video_task_id
     
@@ -966,7 +1044,7 @@ app.get('/api/auth/me', requireAuth(), async (req, res) => {
 
 app.get('/api/user/balance', requireAuth(), async (req, res) => {
   try {
-    console.log('đź” Auth object:', req.auth);
+    console.log('đź”  Auth object:', req.auth);
     console.log('đź“¨ Headers:', req.headers);
     console.log('req.auth type:', typeof req.auth);
 
@@ -1042,7 +1120,7 @@ app.get('/api/user/balance', requireAuth(), async (req, res) => {
 // Users Endpoints
 // ----------------------------------------
 
-app.get('/api/users', async (req, res) => {
+app.get('/api/users', requireAuth(), apiLimiter, async (req, res) => {
   try {
     const { data, error } = await supabase.from('users').select('*');
     if (error) throw error;
@@ -1077,7 +1155,7 @@ app.post('/api/users', requireAuth(), async (req, res) => {
 // Support Chat Endpoint
 // ----------------------------------------
 
-app.post('/api/support/chat', async (req, res) => {
+app.post('/api/support/chat', chatLimiter, async (req, res) => {
   try {
     const { messages } = req.body;
     if (!messages || !Array.isArray(messages)) {
@@ -1132,7 +1210,7 @@ app.post('/api/support/chat', async (req, res) => {
 // Lyrics Endpoints
 // ----------------------------------------
 
-app.get('/api/lyrics', async (req, res) => {
+app.get('/api/lyrics', apiLimiter, async (req, res) => {
   try {
     const { category, limit = 50 } = req.query;
     let query = supabase.from('lyrics').select('id, slug, title, category, tags, is_premium, uses_count, created_at');
@@ -1150,7 +1228,7 @@ app.get('/api/lyrics', async (req, res) => {
   }
 });
 
-app.get('/api/lyrics/:slug', async (req, res) => {
+app.get('/api/lyrics/:slug', apiLimiter, async (req, res) => {
   try {
     const { slug } = req.params;
     const { data, error } = await supabase
@@ -1206,7 +1284,7 @@ app.get('/sitemap.xml', async (req, res) => {
 // Tracks Endpoints
 // ----------------------------------------
 
-app.get('/api/tracks', async (req, res) => {
+app.get('/api/tracks', apiLimiter, async (req, res) => {
   try {
     const { data, error } = await supabase.from('tracks').select('*, producers(name)');
     if (error) throw error;
@@ -1218,14 +1296,14 @@ app.get('/api/tracks', async (req, res) => {
 
 app.post('/api/tracks', requireAuth(), async (req, res) => {
   try {
-    console.log('đź” Track endpoint req.auth type:', typeof req.auth);
+    console.log('đź”  Track endpoint req.auth type:', typeof req.auth);
     let authData;
     if (typeof req.auth === 'function') {
       authData = req.auth();
-      console.log('đź” Track endpoint req.auth():', authData);
+      console.log('đź”  Track endpoint req.auth():', authData);
     } else {
       authData = req.auth;
-      console.log('đź” Track endpoint req.auth:', authData);
+      console.log('đź”  Track endpoint req.auth:', authData);
     }
 
     const clerk_id = authData?.userId;
@@ -1334,7 +1412,7 @@ app.get('/api/tracks/my', requireAuth(), async (req, res) => {
     // Get tracks
     const { data: tracks, error: tracksError } = await supabase
       .from('tracks')
-      .select('id, title, description, audio_url, cover_image_url, created_at, producer_id, kie_task_id, producers(name)')
+      .select('id, title, description, audio_url, cover_image_url, created_at, producer_id, kie_task_id, variant_index, producers(name)')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
@@ -1365,6 +1443,42 @@ app.get('/api/tracks/my', requireAuth(), async (req, res) => {
       console.warn('Error fetching video_tasks for my tracks:', videoErr);
     }
 
+    // Map duration from kie_tasks / kie_track_variants
+    try {
+      const taskIds = tracks.filter(t => t.kie_task_id).map(t => t.kie_task_id);
+      if (taskIds.length > 0) {
+        // Try to get per-variant duration first (more precise)
+        const { data: variants } = await supabase
+          .from('kie_track_variants')
+          .select('task_id, variant_index, duration')
+          .in('task_id', taskIds);
+
+        // Fallback: get duration from kie_tasks
+        const { data: tasks } = await supabase
+          .from('kie_tasks')
+          .select('id, duration')
+          .in('id', taskIds);
+
+        tracks.forEach(t => {
+          if (t.kie_task_id) {
+            // First try variant-level duration
+            const variant = variants && variants.find(v => v.task_id === t.kie_task_id && v.variant_index === (t.variant_index ?? 0));
+            if (variant && variant.duration) {
+              t.duration = Number(variant.duration);
+            } else {
+              // Fallback to task-level duration
+              const task = tasks && tasks.find(tk => tk.id === t.kie_task_id);
+              if (task && task.duration) {
+                t.duration = Number(task.duration);
+              }
+            }
+          }
+        });
+      }
+    } catch (durErr) {
+      console.warn('Error fetching duration for my tracks:', durErr);
+    }
+
     res.json(tracks);
   } catch (err) {
     console.error('Error fetching my tracks:', err);
@@ -1372,16 +1486,9 @@ app.get('/api/tracks/my', requireAuth(), async (req, res) => {
   }
 });
 
-app.get('/api/tracks/:id', requireAuth(), async (req, res) => {
+app.get('/api/tracks/:id', async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Auth validation
-    const authData = typeof req.auth === 'function' ? req.auth() : req.auth;
-    const clerk_id = authData?.userId;
-    if (!clerk_id) {
-      return res.status(401).json({ error: 'Not authenticated' });
-    }
 
     // Verify track visually
     const { data: track, error } = await supabase
@@ -1409,6 +1516,46 @@ app.get('/api/tracks/:id', requireAuth(), async (req, res) => {
       }
     }
 
+    // Attach video info if available (look up by kie_track_variants.id → video_tasks.audio_task_id)
+    if (track.kie_task_id) {
+      try {
+        let videoRecord = null;
+        
+        // First: find the correct kie_track_variant for THIS track's variant_index
+        const { data: variantRec } = await supabase
+          .from('kie_track_variants')
+          .select('id')
+          .eq('task_id', track.kie_task_id)
+          .eq('variant_index', track.variant_index ?? 0)
+          .limit(1)
+          .maybeSingle();
+        
+        if (variantRec) {
+          const { data: vidRec } = await supabase
+            .from('video_tasks')
+            .select('video_url, thumbnail_url, status')
+            .eq('audio_task_id', variantRec.id)
+            .eq('status', 'completed')
+            .limit(1)
+            .maybeSingle();
+          videoRecord = vidRec;
+        }
+        
+        // Fallback: also check track.video_url column directly (set by polling/webhook)
+        if (!videoRecord && track.video_url) {
+          videoRecord = { video_url: track.video_url, thumbnail_url: null, status: 'completed' };
+        }
+        
+        if (videoRecord) {
+          track.video_url = videoRecord.video_url;
+          track.video_thumbnail_url = videoRecord.thumbnail_url;
+          track.video_status = videoRecord.status;
+        }
+      } catch (videoErr) {
+        // No video found, that's ok
+      }
+    }
+
     // Return track with variants
     res.json({
       ...track,
@@ -1425,7 +1572,7 @@ app.get('/api/tracks/:id', requireAuth(), async (req, res) => {
 // Transactions Endpoints
 // ----------------------------------------
 
-app.get('/api/transactions', async (req, res) => {
+app.get('/api/transactions', requireAuth(), async (req, res) => {
   try {
     const { data, error } = await supabase.from('transactions').select('*');
     if (error) throw error;
@@ -1477,7 +1624,7 @@ app.get('/api/producers', async (req, res) => {
 });
 
 // Admin: Get API Settings
-app.get('/api/admin/settings/api', async (req, res) => {
+app.get('/api/admin/settings/api', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const settings = await getApiSettings();
     if (!settings) throw new Error('Failed to load settings');
@@ -1489,7 +1636,7 @@ app.get('/api/admin/settings/api', async (req, res) => {
 });
 
 // Admin: Update API Settings
-app.put('/api/admin/settings/api', async (req, res) => {
+app.put('/api/admin/settings/api', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const success = await updateApiSettings(req.body);
     if (!success) throw new Error('Failed to save settings');
@@ -1573,7 +1720,7 @@ app.post('/api/admin/upload-avatar', requireAuth(), requireAdmin, async (req, re
 // Admin: POST create a new producer
 app.post('/api/admin/producers', requireAuth(), requireAdmin, async (req, res) => {
   try {
-    const { id, name, badge, icon, img, init_msg, header_title, header_status, typing_msg, placeholder, gradient, button_gradient, theme_config, system_prompt, model_name, price_coins, is_active } = req.body;
+    const { id, name, badge, icon, img, init_msg, header_title, header_status, typing_msg, placeholder, gradient, button_gradient, theme_config, system_prompt, model_name, vocal_gender, description, strengths, price_coins, is_active, weirdness_constraint, style_weight } = req.body;
 
     if (!id || !name) {
       return res.status(400).json({ error: 'Missing required fields: id, name' });
@@ -1581,7 +1728,7 @@ app.post('/api/admin/producers', requireAuth(), requireAdmin, async (req, res) =
 
     const { data, error } = await supabase
       .from('producers')
-      .insert([{ id, name, badge, icon, img, init_msg, header_title, header_status, typing_msg, placeholder, gradient, button_gradient, theme_config, system_prompt, model_name, price_coins, is_active }])
+      .insert([{ id, name, badge, icon, img, init_msg, header_title, header_status, typing_msg, placeholder, gradient, button_gradient, theme_config, system_prompt, model_name, vocal_gender, description, strengths, price_coins, is_active, weirdness_constraint, style_weight }])
       .select()
       .single();
 
@@ -1756,7 +1903,199 @@ app.get('/api/user-producers', requireAuth(), async (req, res) => {
 // Suno Endpoints
 // ----------------------------------------
 
-app.post('/api/suno/generate', async (req, res) => {
+// Suno webhook handler (callback from sunoapi.org)
+app.post('/api/webhooks/suno', express.json(), async (req, res) => {
+  console.log('[SUNO WEBHOOK] Received callback headers:', req.headers);
+  console.log('[SUNO WEBHOOK] Received callback body:', JSON.stringify(req.body, null, 2));
+  
+  // Token verification
+  const webhookSecret = process.env.SUNO_WEBHOOK_SECRET;
+  if (webhookSecret) {
+    const token = req.query.token || req.headers['x-suno-webhook-token'];
+    if (!token || token !== webhookSecret) {
+      console.warn('[SUNO WEBHOOK] ⛔ Unauthorized webhook attempt (invalid token)');
+      return res.status(403).json({ error: 'Invalid webhook token' });
+    }
+    console.log('[SUNO WEBHOOK] ✅ Token verified');
+  } else {
+    console.warn('[SUNO WEBHOOK] ⚠️ No SUNO_WEBHOOK_SECRET configured');
+  }
+  
+  try {
+    const { code, msg, data } = req.body;
+    
+    if (code && code !== 200) {
+      console.error('[SUNO WEBHOOK] Callback error:', msg);
+      return res.sendStatus(200);
+    }
+    
+    // Extract task info - sunoapi.org may have different formats
+    const taskId = data?.taskId || data?.task_id || data?.id || req.body.taskId || req.body.task_id;
+    if (!taskId) {
+      console.log('[SUNO WEBHOOK] No task ID found, skipping');
+      return res.sendStatus(200);
+    }
+    
+    console.log('[SUNO WEBHOOK] Processing task:', taskId);
+    
+    // Get full status from sunoapi.org
+    const status = await suno.checkStatus(taskId);
+    console.log('[SUNO WEBHOOK] Status from sunoapi.org:', JSON.stringify(status, null, 2));
+    
+    // Find local task record
+    const { data: task } = await supabase
+      .from('kie_tasks')
+      .select('*')
+      .eq('task_id', taskId)
+      .single();
+    
+    if (!task) {
+      console.log('[SUNO WEBHOOK] Task not found in local DB:', taskId);
+      return res.sendStatus(200);
+    }
+    
+    // Determine status
+    let dbStatus = 'processing';
+    if (status.status === 'completed' || status.status === 'SUCCESS') dbStatus = 'completed';
+    else if (status.status === 'failed' || status.status === 'error') dbStatus = 'failed';
+    
+    // Update task
+    const updates = {
+      status: dbStatus,
+      updated_at: new Date().toISOString(),
+      audio_url: status.audio_url || null,
+      stream_audio_url: status.stream_audio_url || null,
+      title: status.title || null,
+      duration: status.duration || null
+    };
+    await supabase.from('kie_tasks').update(updates).eq('id', task.id);
+    
+    // Process variants
+    const variants = status.variants || (status.audio_url ? [{
+      audio_url: status.audio_url,
+      stream_audio_url: status.stream_audio_url,
+      image_url: status.image_url,
+      title: status.title,
+      duration: status.duration
+    }] : []);
+    
+    if (variants.length > 0) {
+      // UPSERT variants to avoid race condition with polling/webhook
+      const variantRecords = variants.map((v, i) => ({
+        task_id: task.id,
+        variant_index: i,
+        audio_url: v.audio_url || v.audioUrl || null,
+        stream_audio_url: v.stream_audio_url || v.streamAudioUrl || null,
+        image_url: v.image_url || v.imageUrl || null,
+        title: v.title || status.title || 'Track',
+        tags: (v.id ? `suno_id:${v.id}` : '') + (v.tags ? `|${v.tags}` : ''),
+        prompt: v.prompt || null,
+        duration: v.duration || null
+      }));
+      
+      // Safe DELETE + INSERT (catches duplicate key race condition)
+      await supabase.from('kie_track_variants').delete().eq('task_id', task.id);
+      try {
+        await supabase.from('kie_track_variants').insert(variantRecords);
+      } catch (insertErr) {
+        if (!insertErr.message.includes('duplicate') && !insertErr.message.includes('23505')) {
+          console.error('Failed to insert variants:', insertErr.message);
+        }
+      }
+      
+      // Create/update tracks
+      for (const [index, variant] of variantRecords.entries()) {
+        if (!variant.audio_url) continue;
+        
+        const trackTitle = `${variant.title || 'Track'} V${index + 1}`;
+        const { data: existing } = await supabase
+          .from('tracks')
+          .select('id')
+          .eq('kie_task_id', task.id)
+          .eq('variant_index', index)
+          .single();
+        
+        const lyricsText = (variant.prompt || task.prompt || '').toLowerCase();
+        const swearsRegex = /(kurwa|chuj|pizda|jeba|pierdol|skurwiel|skurwysyn|spierdal|wypierdal|gówno|zasrany|szmata|dziwka|suka|zajebi|pojeb|popierdol)/i;
+        const isExplicit = swearsRegex.test(lyricsText);
+        
+        const trackData = {
+          user_id: task.user_id,
+          is_paid: !!task.user_id,
+          is_unlocked: !!task.user_id,
+          title: trackTitle,
+          description: variant.prompt || task.prompt || '',
+          audio_url: variant.audio_url,
+          cover_image_url: variant.image_url,
+          kie_task_id: task.id,
+          variant_index: index,
+          producer_id: task.persona_id,
+          explicit: isExplicit,
+          likes: 0, plays: 0, expired: false,
+          audio_expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
+        };
+        
+        if (existing) {
+          await supabase.from('tracks').update(trackData).eq('id', existing.id);
+          console.log(`[SUNO WEBHOOK] Updated track variant ${index}`);
+        } else {
+          try {
+            const { data: nt } = await supabase.from('tracks').insert(trackData).select('id').single();
+            console.log(`[SUNO WEBHOOK] Created track variant ${index} (ID: ${nt?.id})`);
+          } catch (trackErr) {
+            if (!trackErr.message.includes('duplicate') && !trackErr.message.includes('23505')) {
+              console.error('[SUNO WEBHOOK] Failed to insert track:', trackErr.message);
+            }
+          }
+        }
+      }
+    }
+    
+    // Auto-generate video for all variants (same as KIE webhook)
+    if (dbStatus === 'completed' && variants.length > 0) {
+      console.log('[SUNO AUTO VIDEO] Triggering for ' + variants.length + ' variants of task:', task.id);
+      
+      for (const [index, variant] of variants.entries()) {
+        if (!variant.audio_url) continue;
+        
+        (async () => {
+          try {
+            console.log(`[SUNO AUTO VIDEO] Processing variant ${index} for task ${task.id}, user: ${task.user_id}`);
+            const { data: u } = await supabase.from('users').select('id, subscription_tier').eq('id', task.user_id).single();
+            if (!u) { console.error(`[SUNO AUTO VIDEO] User not found for id: ${task.user_id}`); return; }
+            
+            let vid = task.id;
+            const { data: vr } = await supabase.from('kie_track_variants').select('id').eq('task_id', task.id).eq('variant_index', index).limit(1);
+            if (vr?.[0]) vid = vr[0].id;
+            
+            const { data: ex } = await supabase.from('video_tasks').select('id').eq('audio_task_id', vid).limit(1);
+            if (ex?.length) { console.log('[SUNO AUTO VIDEO] Exists for variant ' + index + ', skip'); return; }
+            
+            const wm = (u.subscription_tier||'free').toLowerCase() === 'free';
+            const cbBase = process.env.SUNO_CALLBACK_BASE_URL || process.env.KIE_CALLBACK_BASE_URL || 'http://localhost:3000';
+            const opts = { provider: 'suno', callbackUrl: cbBase + '/api/webhooks/kie/video' };
+            if (wm) { opts.author = 'mojhit.pl'; opts.domainName = 'mojhit.pl'; }
+            
+            const { data: vt, error: ve } = await supabase.from('video_tasks').insert({ user_id: task.user_id, audio_task_id: vid, status: 'pending' }).select().single();
+            if (ve) { console.error('[SUNO AUTO VIDEO] Insert video_task failed:', ve.message); return; }
+            if (!vt) return;
+            
+            const vti = await video.generate(task.task_id, variant.audio_url, opts);
+            await supabase.from('video_tasks').update({ video_task_id: vti }).eq('id', vt.id);
+            console.log(`[SUNO AUTO VIDEO] ✅ Started variant ${index}:`, vti);
+          } catch(e) { console.error(`[SUNO AUTO VIDEO] ❌ Failed variant ${index}:`, e.message); }
+        })();
+      }
+    }
+    
+    res.sendStatus(200);
+  } catch (error) {
+    console.error('[SUNO WEBHOOK] Error:', error);
+    res.sendStatus(200);
+  }
+});
+
+app.post('/api/suno/generate', generationLimiter, async (req, res) => {
   try {
     let { prompt, tags, title, instrumental = false, model = 'V4_5', currency_type = 'notes', customMode = false, personaId, personaModel, email } = req.body;
     console.log('[SUNO GENERATE] Received initial personaId:', personaId, 'model:', model);
@@ -1768,15 +2107,26 @@ app.post('/api/suno/generate', async (req, res) => {
     if (personaId) {
       const { data: producer } = await supabase
         .from('producers')
-        .select('suno_persona_id, suno_persona_model')
+        .select('suno_persona_id, suno_persona_model, suno_version, weirdness_constraint, style_weight, vocal_gender')
         .eq('id', personaId)
         .single();
         
-      if (producer && producer.suno_persona_id) {
-        personaId = producer.suno_persona_id;
-        personaModel = producer.suno_persona_model || 'V4_5ALL';
-        finalModel = producer.suno_persona_model || 'V4_5ALL';
-        console.log('[SUNO GENERATE] Resolved to suno_persona_id:', personaId, 'finalModel:', finalModel);
+      if (producer) {
+        // Store producer-specific generation params on request for later use
+        req.producerVocalGender = producer.vocal_gender || '';
+        req.producerWeirdnessConstraint = producer.weirdness_constraint;
+        req.producerStyleWeight = producer.style_weight;
+        
+        if (producer.suno_persona_id) {
+          personaId = producer.suno_persona_id;
+          personaModel = producer.suno_persona_model || 'V4_5ALL';
+          finalModel = producer.suno_persona_model || 'V4_5ALL';
+          console.log('[SUNO GENERATE] Resolved to suno_persona_id:', personaId, 'finalModel:', finalModel);
+        } else if (producer.suno_version) {
+          // Use producer's configured suno_version if no persona
+          finalModel = producer.suno_version;
+          console.log('[SUNO GENERATE] Using producer suno_version:', finalModel);
+        }
       }
     }
 
@@ -1785,6 +2135,8 @@ app.post('/api/suno/generate', async (req, res) => {
     const clerk_id = authData?.userId;
     let user = null;
     let guestSessionId = req.headers['x-guest-session'] || req.cookies?.guest_session || '';
+    let cost = 0;
+    let chargedUser = null;
 
     if (!clerk_id) {
       // GUEST LOGIC
@@ -1844,7 +2196,7 @@ app.post('/api/suno/generate', async (req, res) => {
       }
       user = dbUser;
 
-      const cost = currency_type === 'coins' ? 1 : 10;
+      cost = currency_type === 'coins' ? 1 : 10;
       if (currency_type === 'coins' && (user.coins || 0) < cost) {
         return res.status(400).json({ error: 'Niewystarczająca liczba monet.' });
       }
@@ -1897,7 +2249,7 @@ app.post('/api/suno/generate', async (req, res) => {
       return res.status(500).json({ error: 'Nie udało się utworzyć zadania generacji.' });
     }
 
-    // 5. Đ’Ń‹Đ·Đ˛Đ°Ń‚ŃŚ API Ń ŃŃ‡ĐµŃ‚ĐľĐĽ fallback
+    // 5. Đ’Ń‹Đ·Đ˛Đ°Ń‚ŃŚ API Ń  ŃƒŃ‡ĐµŃ‚ĐľĐĽ fallback
     const apiSettings = await getApiSettings();
     const musicConfig = apiSettings?.music || { active: 'kie', fallback: 'suno_direct' };
     
@@ -1922,7 +2274,7 @@ app.post('/api/suno/generate', async (req, res) => {
 
     try {
       if (activeProvider === 'kie') {
-        taskId = await kie.generate(prompt, tags, title, instrumental, finalModel, customMode, personaId, personaModel);
+        taskId = await kie.generate(prompt, tags, title, instrumental, finalModel, customMode, personaId, personaModel, req.producerVocalGender, req.producerWeirdnessConstraint, req.producerStyleWeight);
       } else if (activeProvider === 'suno') {
         // Use Suno API via sunoapi.org
         // Set environment variables for API key and base URL
@@ -1931,7 +2283,7 @@ app.post('/api/suno/generate', async (req, res) => {
           process.env.SUNO_API_KEY = sunoProvider.apiKey || '';
           process.env.SUNO_API_BASE_URL = sunoProvider.baseUrl || 'https://api.sunoapi.org/api/v1';
         }
-        taskId = await suno.generate(prompt, tags, title, instrumental, finalModel, customMode, personaId, personaModel);
+        taskId = await suno.generate(prompt, tags, title, instrumental, finalModel, customMode, personaId, personaModel, req.producerVocalGender, req.producerWeirdnessConstraint, req.producerStyleWeight);
       } else {
         // Fallback to suno_direct (Local Python API)
         throw new Error("Local Suno API not fully implemented yet");
@@ -1952,14 +2304,14 @@ app.post('/api/suno/generate', async (req, res) => {
       console.log(`[MUSIC GENERATION] Switching to fallback provider: ${usedProvider}`);
       
       if (usedProvider === 'kie') {
-        taskId = await kie.generate(prompt, tags, title, instrumental, model, customMode, personaId, personaModel);
+        taskId = await kie.generate(prompt, tags, title, instrumental, model, customMode, personaId, personaModel, req.producerVocalGender, req.producerWeirdnessConstraint, req.producerStyleWeight);
       } else if (usedProvider === 'suno') {
         const sunoProvider = enabledProviders.find(p => p.key === 'suno');
         if (sunoProvider) {
           process.env.SUNO_API_KEY = sunoProvider.apiKey || '';
           process.env.SUNO_API_BASE_URL = sunoProvider.baseUrl || 'https://api.sunoapi.org/api/v1';
         }
-        taskId = await suno.generate(prompt, tags, title, instrumental, model, customMode, personaId, personaModel);
+        taskId = await suno.generate(prompt, tags, title, instrumental, model, customMode, personaId, personaModel, req.producerVocalGender, req.producerWeirdnessConstraint, req.producerStyleWeight);
       } else {
         console.log('[MUSIC GENERATION] Simulating fallback to local Python API...');
         taskId = `suno-fallback-${Date.now()}`;
@@ -1976,19 +2328,78 @@ app.post('/api/suno/generate', async (req, res) => {
     res.json({ taskId, dbId: task.id, provider: usedProvider });
   } catch (error) {
     console.error('Kie generate error:', error);
-    res.status(500).json({ error: error.message });
+    
+    // Refund if user was charged
+    if (user && clerk_id && typeof cost !== 'undefined' && currency_type) {
+      try {
+        const refundUpdates = currency_type === 'coins'
+          ? { coins: (user.coins || 0) } // restore original (deduction already happened)
+          : { notes: (user.notes || 0) };
+        
+        const { data: currentUser } = await supabase
+          .from('users')
+          .select('coins, notes')
+          .eq('clerk_id', clerk_id)
+          .single();
+          
+        if (currentUser) {
+          const restore = currency_type === 'coins'
+            ? { coins: (currentUser.coins || 0) + cost }
+            : { notes: (currentUser.notes || 0) + cost };
+          await supabase.from('users').update(restore).eq('clerk_id', clerk_id);
+          
+          await supabase.from('transactions').insert({
+            user_id: user.id,
+            type: 'refund',
+            amount: cost,
+            currency: currency_type,
+            reason: 'Generation failed: ' + (error.message || 'unknown').substring(0, 200)
+          });
+          console.log(`[REFUND] Returned ${cost} ${currency_type} to user ${clerk_id}`);
+        }
+      } catch (refundErr) {
+        console.error('[REFUND] Failed to refund:', refundErr.message);
+      }
+    }
+    
+    // Mark task as failed
+    if (task?.id) {
+      try {
+        await supabase.from('kie_tasks').update({ status: 'failed', error_message: error.message?.substring(0, 500) }).eq('id', task.id);
+      } catch(e) { console.error('Failed to mark task as failed:', e.message); }
+    }
+    
+    res.status(500).json({ 
+      error: error.message,
+      refunded: !!(user && clerk_id),
+      message: user ? 'Środki zostały zwrócone. Spróbuj ponownie za chwilę.' : 'Wystąpił błąd generacji.'
+    });
   }
 });
 
 app.post('/api/webhooks/kie', express.json(), async (req, res) => {
   console.log('[KIE WEBHOOK] Received callback headers:', req.headers);
   console.log('[KIE WEBHOOK] Received callback body:', JSON.stringify(req.body, null, 2));
+  
+  // HMAC/Token verification for KIE webhooks
+  const webhookSecret = process.env.KIE_WEBHOOK_SECRET;
+  if (webhookSecret) {
+    const token = req.query.token || req.headers['x-kie-webhook-token'];
+    if (!token || token !== webhookSecret) {
+      console.warn('[KIE WEBHOOK] ⛔ Unauthorized webhook attempt (invalid token)');
+      return res.status(403).json({ error: 'Invalid webhook token' });
+    }
+    console.log('[KIE WEBHOOK] ✅ Token verified');
+  } else {
+    console.warn('[KIE WEBHOOK] ⚠️ No KIE_WEBHOOK_SECRET configured — webhook unverified');
+  }
+  
   try {
     const { code, msg, data } = req.body;
 
     if (code !== 200) {
       console.error('Kie callback error:', msg);
-      // ĐžĐ±Đ˝ĐľĐ˛Đ¸Ń‚ŃŚ ŃŃ‚Đ°Ń‚ŃŃ Đ·Đ°Đ´Đ°Ń‡Đ¸ ĐşĐ°Đş failed
+      // ĐžĐ±Đ˝ĐľĐ˛Đ¸Ń‚ŃŚ Ń Ń‚Đ°Ń‚ŃƒŃ  Đ·Đ°Đ´Đ°Ń‡Đ¸ ĐşĐ°Đş failed
       await supabase
         .from('kie_tasks')
         .update({
@@ -1997,17 +2408,32 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
           updated_at: new Date()
         })
         .eq('task_id', data?.task_id);
-      return res.sendStatus(200); // Đ’ŃĐµĐłĐ´Đ° 200 Ń‡Ń‚ĐľĐ±Ń‹ kie.ai Đ˝Đµ ĐżĐľĐ˛Ń‚ĐľŃ€ŃŹĐ»
+      return res.sendStatus(200); // Đ’Ń ĐµĐłĐ´Đ° 200 Ń‡Ń‚ĐľĐ±Ń‹ kie.ai Đ˝Đµ ĐżĐľĐ˛Ń‚ĐľŃ€ŃŹĐ»
     }
 
-    // ĐĐ·Đ˛Đ»ĐµĐşĐ°ĐµĐĽ task_id Đ¸Đ· Ń€Đ°Đ·Đ˝Ń‹Ń… Đ˛ĐľĐ·ĐĽĐľĐ¶Đ˝Ń‹Ń… ĐĽĐµŃŃ‚
+    // Đ˜Đ·Đ˛Đ»ĐµĐşĐ°ĐµĐĽ task_id Đ¸Đ· Ń€Đ°Đ·Đ˝Ń‹Ń… Đ˛ĐľĐ·ĐĽĐľĐ¶Đ˝Ń‹Ń… ĐĽĐµŃ Ń‚
     let taskId = data?.task_id || data?.taskId || data?.taskId;
     let callbackType = data?.callbackType || 'complete';
 
-    // ĐŃ‰ĐµĐĽ ĐĽĐ°ŃŃĐ¸Đ˛ Ń‚Ń€ĐµĐşĐľĐ˛ Đ˛ Ń€Đ°Đ·Đ˝Ń‹Ń… Đ˛ĐľĐ·ĐĽĐľĐ¶Đ˝Ń‹Ń… ĐĽĐµŃŃ‚Đ°Ń…
+    
+
+    // Protect against out-of-order webhooks (e.g., first arriving after complete)
+    const { data: currentTask } = await supabase
+      .from('kie_tasks')
+      .select('status')
+      .eq('task_id', taskId)
+      .single();
+
+    if (currentTask && currentTask.status === 'completed' && callbackType !== 'complete') {
+      console.log("[KIE WEBHOOK] Ignoring out-of-order callback (" + callbackType + ") for already completed task: " + taskId);
+      return res.sendStatus(200);
+    }
+
+
+    // Đ˜Ń‰ĐµĐĽ ĐĽĐ°Ń Ń Đ¸Đ˛ Ń‚Ń€ĐµĐşĐľĐ˛ Đ˛ Ń€Đ°Đ·Đ˝Ń‹Ń… Đ˛ĐľĐ·ĐĽĐľĐ¶Đ˝Ń‹Ń… ĐĽĐµŃ Ń‚Đ°Ń…
     let tracks = null;
     if (data?.data && Array.isArray(data.data)) {
-      tracks = data.data; // Đ¤ĐľŃ€ĐĽĐ°Ń‚ Đ¸Đ· Đ´ĐľĐşŃĐĽĐµĐ˝Ń‚Đ°Ń†Đ¸Đ¸
+      tracks = data.data; // Đ¤ĐľŃ€ĐĽĐ°Ń‚ Đ¸Đ· Đ´ĐľĐşŃƒĐĽĐµĐ˝Ń‚Đ°Ń†Đ¸Đ¸
     } else if (data?.tracks && Array.isArray(data.tracks)) {
       tracks = data.tracks;
     } else if (data?.response?.sunoData && Array.isArray(data.response.sunoData)) {
@@ -2016,13 +2442,13 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
       tracks = data;
     }
 
-    // ĐžĐ±Đ˝ĐľĐ˛Đ¸Ń‚ŃŚ Đ·Đ°Đ´Đ°Ń‡Ń Đ˛ Đ‘Đ”
+    // ĐžĐ±Đ˝ĐľĐ˛Đ¸Ń‚ŃŚ Đ·Đ°Đ´Đ°Ń‡Ńƒ Đ˛ Đ‘Đ”
     const updates = {
       status: callbackType === 'complete' ? 'completed' : 'processing',
       updated_at: new Date()
     };
 
-    // Đ•ŃĐ»Đ¸ ĐµŃŃ‚ŃŚ Ń‚Ń€ĐµĐşĐ¸ â€” ŃĐľŃ…Ń€Đ°Đ˝Đ¸Ń‚ŃŚ ĐżĐµŃ€Đ˛Ń‹Đą (ĐĽĐľĐ¶Đ˝Đľ Ń€Đ°ŃŃĐ¸Ń€Đ¸Ń‚ŃŚ Đ´Đ»ŃŹ multiple)
+    // Đ•Ń Đ»Đ¸ ĐµŃ Ń‚ŃŚ Ń‚Ń€ĐµĐşĐ¸ â€” Ń ĐľŃ…Ń€Đ°Đ˝Đ¸Ń‚ŃŚ ĐżĐµŃ€Đ˛Ń‹Đą (ĐĽĐľĐ¶Đ˝Đľ Ń€Đ°Ń ŃˆĐ¸Ń€Đ¸Ń‚ŃŚ Đ´Đ»ŃŹ multiple)
     if (tracks && tracks.length > 0) {
       const first = tracks[0];
       // ĐźĐľĐ´Đ´ĐµŃ€Đ¶Đ¸Đ˛Đ°ĐµĐĽ ĐľĐ±Đ° Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚Đ° Đ˝Đ°Đ·Đ˛Đ°Đ˝Đ¸Đą ĐżĐľĐ»ĐµĐą (camelCase Đ¸ snake_case)
@@ -2033,7 +2459,7 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
       updates.tags = first.tags || null;
       updates.duration = first.duration || null;
 
-      // Đ•ŃĐ»Đ¸ audio_url ĐżŃŃŃ‚ĐľĐą, Đ˝Đľ ĐµŃŃ‚ŃŚ stream_audio_url, Đ¸ŃĐżĐľĐ»ŃŚĐ·ŃĐµĐĽ ĐµĐłĐľ ĐşĐ°Đş ĐľŃĐ˝ĐľĐ˛Đ˝ĐľĐą audio_url
+      // Đ•Ń Đ»Đ¸ audio_url ĐżŃƒŃ Ń‚ĐľĐą, Đ˝Đľ ĐµŃ Ń‚ŃŚ stream_audio_url, Đ¸Ń ĐżĐľĐ»ŃŚĐ·ŃƒĐµĐĽ ĐµĐłĐľ ĐşĐ°Đş ĐľŃ Đ˝ĐľĐ˛Đ˝ĐľĐą audio_url
       if (!updates.audio_url && updates.stream_audio_url) {
         updates.audio_url = updates.stream_audio_url;
       }
@@ -2041,10 +2467,7 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
       console.log('[KIE WEBHOOK] Updating task with audio URL:', updates.audio_url);
     }
 
-    if (!taskId) {
-      console.error('[KIE WEBHOOK] No task_id found in callback');
-      return res.sendStatus(200); // Đ’ŃĐµĐłĐ´Đ° 200 Ń‡Ń‚ĐľĐ±Ń‹ kie.ai Đ˝Đµ ĐżĐľĐ˛Ń‚ĐľŃ€ŃŹĐ»
-    }
+    
 
     const { error: updateError } = await supabase
       .from('kie_tasks')
@@ -2056,9 +2479,9 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
     } else {
       console.log('[KIE WEBHOOK] Task updated successfully for task_id:', taskId);
 
-      // ĐˇĐľŃ…Ń€Đ°Đ˝ŃŹĐµĐĽ Đ˛ŃĐµ Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚Ń‹ Ń‚Ń€ĐµĐşĐľĐ˛, ĐµŃĐ»Đ¸ ĐµŃŃ‚ŃŚ
+      // ĐˇĐľŃ…Ń€Đ°Đ˝ŃŹĐµĐĽ Đ˛Ń Đµ Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚Ń‹ Ń‚Ń€ĐµĐşĐľĐ˛, ĐµŃ Đ»Đ¸ ĐµŃ Ń‚ŃŚ
       if (tracks && tracks.length > 0) {
-        // ĐźĐľĐ»ŃŃ‡Đ°ĐµĐĽ Đ˛Đ˝ŃŃ‚Ń€ĐµĐ˝Đ˝Đ¸Đą id Đ·Đ°Đ´Đ°Ń‡Đ¸ Đ¸ persona_id
+        // ĐźĐľĐ´ŃƒŃ‡Đ°ĐµĐĽ Đ˛Đ˝ŃƒŃ‚Ń€ĐµĐ˝Đ˝Đ¸Đą id Đ·Đ°Đ´Đ°Ń‡Đ¸ Đ¸ persona_id
         const { data: taskRecord } = await supabase
           .from('kie_tasks')
           .select('id, user_id, persona_id, guest_session_id, guest_email')
@@ -2079,28 +2502,31 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
             duration: track.duration || null
           }));
 
-          // ĐŁĐ´Đ°Đ»ŃŹĐµĐĽ ŃŃ‚Đ°Ń€Ń‹Đµ Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚Ń‹ Đ´Đ»ŃŹ ŃŤŃ‚ĐľĐą Đ·Đ°Đ´Đ°Ń‡Đ¸ (ĐµŃĐ»Đ¸ Đ±Ń‹Đ»Đ¸)
           await supabase
             .from('kie_track_variants')
             .delete()
             .eq('task_id', taskRecord.id);
 
-          // Đ’ŃŃ‚Đ°Đ˛Đ»ŃŹĐµĐĽ Đ˝ĐľĐ˛Ń‹Đµ Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚Ń‹
-          const { error: variantsError } = await supabase
-            .from('kie_track_variants')
-            .insert(variantsToInsert);
-
-          if (variantsError) {
-            console.error('[KIE WEBHOOK] Failed to insert variants:', variantsError);
-          } else {
+          // Đ’Ń Ń‚Đ°Đ˛Đ»ŃŹĐµĐĽ Đ˝ĐľĐ˛Ń‹Đµ Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚Ń‹ (safe insert — catches duplicate from parallel webhook/polling)
+          try {
+            await supabase.from('kie_track_variants').insert(variantsToInsert);
             console.log(`[KIE WEBHOOK] Inserted ${variantsToInsert.length} track variants`);
+          } catch (insertErr) {
+            if (!insertErr.message.includes('duplicate') && !insertErr.message.includes('23505')) {
+              console.error('[KIE WEBHOOK] Failed to insert variants:', insertErr.message);
+            }
           }
 
           // ĐˇĐľĐ·Đ´Đ°Ń‘ĐĽ/ĐľĐ±Đ˝ĐľĐ˛Đ»ŃŹĐµĐĽ Ń‚Ń€ĐµĐşĐ¸ Đ´Đ»ŃŹ ĐşĐ°Đ¶Đ´ĐľĐłĐľ Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚Đ°
           for (const [index, variant] of variantsToInsert.entries()) {
+            if (!variant.audio_url) {
+              console.log('[KIE WEBHOOK] Skipping track variant ' + index + ' - no audio_url yet');
+              continue;
+            }
+            
             const trackTitle = `${variant.title || 'Track'} V${index + 1}`;
             
-            // ĐźŃ€ĐľĐ˛ĐµŃ€ŃŹĐµĐĽ, ŃŃŃ‰ĐµŃŃ‚Đ˛ŃĐµŃ‚ Đ»Đ¸ ŃĐ¶Đµ Ń‚Ń€ĐµĐş Ń Ń‚Đ°ĐşĐ¸ĐĽ kie_task_id Đ¸ variant_index
+            // ĐźŃ€ĐľĐ˛ĐµŃ€ŃŹĐµĐĽ, Ń ŃƒŃ‰ĐµŃ Ń‚Đ˛ŃƒĐµŃ‚ Đ»Đ¸ ŃƒĐ¶Đµ Ń‚Ń€ĐµĐş Ń  Ń‚Đ°ĐşĐ¸ĐĽ kie_task_id Đ¸ variant_index
             const { data: existingTrack } = await supabase
               .from('tracks')
               .select('id')
@@ -2116,7 +2542,7 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
               is_unlocked: !!taskRecord.user_id,
               title: trackTitle,
               description: variant.prompt || '',
-              audio_url: variant.audio_url || variant.stream_audio_url,
+              audio_url: variant.audio_url || null,
               cover_image_url: variant.image_url,
               kie_task_id: taskRecord.id,
               variant_index: index,
@@ -2127,7 +2553,7 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
             };
             
             if (existingTrack) {
-              // ĐžĐ±Đ˝ĐľĐ˛Đ»ŃŹĐµĐĽ ŃŃŃ‰ĐµŃŃ‚Đ˛ŃŃŽŃ‰Đ¸Đą Ń‚Ń€ĐµĐş
+              // ĐžĐ±Đ˝ĐľĐ˛Đ»ŃŹĐµĐĽ Ń ŃƒŃ‰ĐµŃ Ń‚Đ˛ŃƒŃŽŃ‰Đ¸Đą Ń‚Ń€ĐµĐş
               const { error: updateError } = await supabase
                 .from('tracks')
                 .update(trackData)
@@ -2186,7 +2612,7 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
                       const trackData = {
                         title: trackTitle,
                         audio_url: variant.audio_url || variant.stream_audio_url || '',
-                        download_url: variant.audio_url || variant.stream_audio_url || '',
+                        download_url: variant.audio_url || '',
                         cover_image_url: variant.image_url || null,
                       };
                       
@@ -2213,7 +2639,7 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
             }
           }
           
-          // ĐŁĐ´Đ°Đ»ŃŹĐµĐĽ Đ˛ĐľĐ·ĐĽĐľĐ¶Đ˝Ń‹Đµ Đ»Đ¸ŃĐ˝Đ¸Đµ Ń‚Ń€ĐµĐşĐ¸ (ĐµŃĐ»Đ¸ Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚ĐľĐ˛ ŃŃ‚Đ°Đ»Đľ ĐĽĐµĐ˝ŃŚŃĐµ, Ń‡ĐµĐĽ Đ±Ń‹Đ»Đľ Ń€Đ°Đ˝ĐµĐµ)
+          // ĐŁĐ´Đ°Đ»ŃŹĐµĐĽ Đ˛ĐľĐ·ĐĽĐľĐ¶Đ˝Ń‹Đµ Đ»Đ¸ŃˆĐ˝Đ¸Đµ Ń‚Ń€ĐµĐşĐ¸ (ĐµŃ Đ»Đ¸ Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚ĐľĐ˛ Ń Ń‚Đ°Đ»Đľ ĐĽĐµĐ˝ŃŚŃˆĐµ, Ń‡ĐµĐĽ Đ±Ń‹Đ»Đľ Ń€Đ°Đ˝ĐµĐµ)
           const { data: allTracks } = await supabase
             .from('tracks')
             .select('id, variant_index')
@@ -2232,45 +2658,56 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
           }
         }
         
-        // Auto-generate video for first variant on complete
+        // Auto-generate video for ALL variants on complete
         if (callbackType === 'complete' && taskRecord?.id && variantsToInsert?.length > 0) {
-          const v0 = variantsToInsert[0];
-          let autoAudioId = v0.tags?.match(/suno_id:([a-zA-Z0-9\-]+)/)?.[1];
-          if (!autoAudioId && v0.stream_audio_url?.includes('musicfile.kie.ai/')) {
-            try {
-              const b64 = v0.stream_audio_url.split('musicfile.kie.ai/').pop().split('?')[0];
-              const d = Buffer.from(b64, 'base64').toString('utf8');
-              if (d?.length > 20) autoAudioId = d;
-            } catch {}
+          console.log('[AUTO VIDEO] Triggering for all ' + variantsToInsert.length + ' variants of task:', taskRecord.id);
+          
+          for (const [index, variant] of variantsToInsert.entries()) {
+            let autoAudioId = variant.tags?.match(/suno_id:([a-zA-Z0-9\-]+)/)?.[1];
+            if (!autoAudioId && variant.stream_audio_url?.includes('musicfile.kie.ai/')) {
+              try {
+                const b64 = variant.stream_audio_url.split('musicfile.kie.ai/').pop().split('?')[0];
+                const d = Buffer.from(b64, 'base64').toString('utf8');
+                if (d?.length > 20) autoAudioId = d;
+              } catch {}
+            }
+            const fbTaskId = taskRecord.task_id || taskId;
+            
+            (async () => {
+              try {
+                console.log(`[AUTO VIDEO] Processing variant ${index} for task ${taskRecord.id}, user: ${taskRecord.user_id}`);
+                const { data: u } = await supabase.from('users').select('id, subscription_tier').eq('id', taskRecord.user_id).single();
+                if (!u) { console.error(`[AUTO VIDEO] User not found for id: ${taskRecord.user_id}`); return; }
+                
+                let vid = taskRecord.id;
+                const { data: vr } = await supabase.from('kie_track_variants').select('id').eq('task_id', taskRecord.id).eq('variant_index', index).limit(1);
+                if (vr?.[0]) vid = vr[0].id;
+                console.log(`[AUTO VIDEO] Variant ${index}: audio_task_id = ${vid}`);
+                
+                const { data: ex } = await supabase.from('video_tasks').select('id').eq('audio_task_id', vid).limit(1);
+                if (ex?.length) { console.log(`[AUTO VIDEO] Exists for variant ${index}, skip`); return; }
+                
+                let aid = autoAudioId || fbTaskId;
+                if (!autoAudioId) {
+                  const si = await video.getAudioInfo(fbTaskId, index);
+                  if (si) aid = si;
+                }
+                console.log(`[AUTO VIDEO] Variant ${index}: audioId = ${aid}, taskId = ${fbTaskId}`);
+                
+                const wm = (u.subscription_tier||'free').toLowerCase() === 'free';
+                const opts = { callbackUrl: (process.env.KIE_CALLBACK_BASE_URL||'http://localhost:3000') + '/api/webhooks/kie/video' };
+                if (wm) { opts.author = 'mojhit.pl'; opts.domainName = 'mojhit.pl'; }
+                
+                const { data: vt, error: ve } = await supabase.from('video_tasks').insert({ user_id: taskRecord.user_id, audio_task_id: vid, status: 'pending' }).select().single();
+                if (ve) { console.error(`[AUTO VIDEO] Insert video_task failed for variant ${index}:`, ve.message); return; }
+                if (!vt) { console.error(`[AUTO VIDEO] Insert video_task returned null for variant ${index}`); return; }
+                
+                const vti = await video.generate(fbTaskId, aid, opts);
+                await supabase.from('video_tasks').update({ video_task_id: vti }).eq('id', vt.id);
+                console.log(`[AUTO VIDEO] ✅ Started variant ${index}:`, vti);
+              } catch(e) { console.error(`[AUTO VIDEO] ❌ Failed variant ${index}:`, e.message); }
+            })();
           }
-          const fbTaskId = taskRecord.task_id || taskId;
-          console.log('[AUTO VIDEO] Triggering for task:', fbTaskId?.substring(0,20), 'id:', taskRecord.id);
-          (async () => {
-            try {
-              const { data: u } = await supabase.from('users').select('id, subscription_tier').eq('id', taskRecord.user_id).single();
-              if (!u) return;
-              let vid = taskRecord.id;
-              const { data: vr } = await supabase.from('kie_track_variants').select('id').eq('task_id', taskRecord.id).eq('variant_index', 0).limit(1);
-              if (vr?.[0]) vid = vr[0].id;
-              const { data: ex } = await supabase.from('video_tasks').select('id').eq('audio_task_id', vid).limit(1);
-              if (ex?.length) { console.log('[AUTO VIDEO] Exists, skip'); return; }
-              let aid = autoAudioId || fbTaskId;
-              if (!autoAudioId) {
-                const vm = require('./video');
-                const si = await vm.getSunoAudioId(fbTaskId);
-                if (si) aid = si;
-              }
-              const wm = (u.subscription_tier||'free').toLowerCase() === 'free';
-              const opts = { callbackUrl: (process.env.KIE_CALLBACK_BASE_URL||'http://localhost:3000') + '/api/webhooks/kie/video' };
-              if (wm) { opts.author = 'mojhit.pl'; opts.domainName = 'mojhit.pl'; }
-              const { data: vt, error: ve } = await supabase.from('video_tasks').insert({ user_id: taskRecord.user_id, audio_task_id: vid, status: 'pending' }).select().single();
-              if (ve || !vt) return;
-              const vm = require('./video');
-              const vti = await vm.generate(fbTaskId, aid, opts);
-              await supabase.from('video_tasks').update({ video_task_id: vti }).eq('id', vt.id);
-              console.log('[AUTO VIDEO] Started:', vti);
-            } catch(e) { console.warn('[AUTO VIDEO] Err:', e.message); }
-          })();
         }
       }
     }
@@ -2278,15 +2715,16 @@ app.post('/api/webhooks/kie', express.json(), async (req, res) => {
     res.sendStatus(200);
   } catch (error) {
     console.error('Webhook processing error:', error);
-    res.sendStatus(200); // Đ’ŃĐµĐłĐ´Đ° 200 Ń‡Ń‚ĐľĐ±Ń‹ Đ˝Đµ Đ±Ń‹Đ»Đľ ĐżĐľĐ˛Ń‚ĐľŃ€Đ˝Ń‹Ń… ĐżĐľĐżŃ‹Ń‚ĐľĐş
+    res.sendStatus(200); // Đ’Ń ĐµĐłĐ´Đ° 200 Ń‡Ń‚ĐľĐ±Ń‹ Đ˝Đµ Đ±Ń‹Đ»Đľ ĐżĐľĐ˛Ń‚ĐľŃ€Đ˝Ń‹Ń… ĐżĐľĐżŃ‹Ń‚ĐľĐş
   }
 });
 
-app.get('/api/suno/status/:id', requireAuth(), async (req, res) => {
+app.get('/api/suno/status/:id', async (req, res) => {
   try {
-    const { id } = req.params; // Đ­Ń‚Đľ taskId ĐľŃ‚ kie.ai Đ¸Đ»Đ¸ Đ˝Đ°Ń dbId
+    const { id } = req.params;
 
-    // ĐˇĐ˝Đ°Ń‡Đ°Đ»Đ° Đ¸Ń‰ĐµĐĽ Đ˛ Đ‘Đ”
+    // READ-ONLY: only check DB, never write or call external APIs
+    // Writing is handled by auto-polling (backend) and webhooks
     const { data: task } = await supabase
       .from('kie_tasks')
       .select('*')
@@ -2297,106 +2735,7 @@ app.get('/api/suno/status/:id', requireAuth(), async (req, res) => {
       return res.status(404).json({ error: 'Task not found' });
     }
 
-    // Đ•ŃĐ»Đ¸ ŃŃ‚Đ°Ń‚ŃŃ pending Đ¸ ĐżŃ€ĐľŃĐ»Đľ Đ±ĐľĐ»ŃŚŃĐµ 30 ŃĐµĐşŃĐ˝Đ´ â€” ĐżŃ€ĐľĐ˛ĐµŃ€Đ¸Ń‚ŃŚ Ń‡ĐµŃ€ĐµĐ· API
-    if (task.status === 'pending' && task.task_id &&
-      new Date() - new Date(task.created_at) > 30000) {
-      try {
-        console.log(`[STATUS] Polling kie.ai for task ${task.task_id}`);
-        const status = await kie.getTaskStatus(task.task_id);
-
-        // Đ•ŃĐ»Đ¸ Đ·Đ°ĐżŃ€ĐľŃ ŃŃĐżĐµŃĐµĐ˝ Đ¸ ĐµŃŃ‚ŃŚ Đ´Đ°Đ˝Đ˝Ń‹Đµ
-        if (status.code === 200 && status.data) {
-          const kieStatus = status.data.status;
-          const sunoData = status.data.response?.sunoData;
-
-          // ĐžĐżŃ€ĐµĐ´ĐµĐ»ŃŹĐµĐĽ ŃŃ‚Đ°Ń‚ŃŃ Đ´Đ»ŃŹ Đ‘Đ”
-          let dbStatus = 'processing';
-          if (kieStatus === 'SUCCESS') dbStatus = 'completed';
-          else if (kieStatus === 'TEXT_SUCCESS' || kieStatus === 'FIRST_SUCCESS') dbStatus = 'processing';
-          else if (kieStatus === 'PENDING') dbStatus = 'pending';
-          else if (kieStatus === 'CREATE_TASK_FAILED' || kieStatus === 'GENERATE_AUDIO_FAILED' ||
-            kieStatus === 'SENSITIVE_WORD_ERROR' || kieStatus === 'CALLBACK_EXCEPTION') {
-            dbStatus = 'failed';
-          }
-
-          const updates = {
-            status: dbStatus,
-            updated_at: new Date()
-          };
-
-          // Đ•ŃĐ»Đ¸ ĐµŃŃ‚ŃŚ Ń‚Ń€ĐµĐşĐ¸ â€” ŃĐľŃ…Ń€Đ°Đ˝ŃŹĐµĐĽ Đ´Đ°Đ˝Đ˝Ń‹Đµ ĐżĐµŃ€Đ˛ĐľĐłĐľ
-          if (sunoData && sunoData.length > 0) {
-            const first = sunoData[0];
-            updates.audio_url = first.audioUrl || first.audio_url || null;
-            updates.image_url = first.imageUrl || first.image_url || null;
-            updates.stream_audio_url = first.streamAudioUrl || first.stream_audio_url || null;
-            updates.title = first.title || null;
-            updates.tags = first.tags || null;
-            updates.duration = first.duration || null;
-
-            // Đ•ŃĐ»Đ¸ audio_url ĐżŃŃŃ‚ĐľĐą, Đ˝Đľ ĐµŃŃ‚ŃŚ stream_audio_url, Đ¸ŃĐżĐľĐ»ŃŚĐ·ŃĐµĐĽ ĐµĐłĐľ ĐşĐ°Đş ĐľŃĐ˝ĐľĐ˛Đ˝ĐľĐą audio_url
-            if (!updates.audio_url && updates.stream_audio_url) {
-              updates.audio_url = updates.stream_audio_url;
-            }
-          }
-
-          // Đ•ŃĐ»Đ¸ ŃŃ‚Đ°Ń‚ŃŃ failed, ŃĐľŃ…Ń€Đ°Đ˝ŃŹĐµĐĽ ŃĐľĐľĐ±Ń‰ĐµĐ˝Đ¸Đµ ĐľĐ± ĐľŃĐ¸Đ±ĐşĐµ
-          if (dbStatus === 'failed') {
-            updates.error_msg = status.data.errorMessage || `Kie.ai status: ${kieStatus}`;
-          }
-
-          await supabase
-            .from('kie_tasks')
-            .update(updates)
-            .eq('id', task.id);
-
-          // ĐžĐ±Đ˝ĐľĐ˛Đ»ŃŹĐµĐĽ Đ»ĐľĐşĐ°Đ»ŃŚĐ˝Ń‹Đą ĐľĐ±ŃŠĐµĐşŃ‚ task Đ´Đ»ŃŹ ĐľŃ‚Đ˛ĐµŃ‚Đ°
-          Object.assign(task, updates);
-          console.log(`[STATUS] Task ${task.task_id} updated via polling to ${dbStatus}`);
-
-          // ĐˇĐľŃ…Ń€Đ°Đ˝ŃŹĐµĐĽ Đ˛ŃĐµ Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚Ń‹ Ń‚Ń€ĐµĐşĐľĐ˛, ĐµŃĐ»Đ¸ ĐµŃŃ‚ŃŚ
-          if (sunoData && sunoData.length > 0) {
-            const variantsToInsert = sunoData.map((track, index) => ({
-              task_id: task.id,
-              variant_index: index,
-              audio_url: track.audioUrl || track.audio_url || null,
-              image_url: track.imageUrl || track.image_url || null,
-              stream_audio_url: track.streamAudioUrl || track.stream_audio_url || null,
-              title: track.title || null,
-              tags: (track.id ? `suno_id:${track.id}` : '') + (track.tags ? (track.id ? '|' : '') + track.tags : ''),
-              duration: track.duration || null
-            }));
-
-            try {
-              // ĐŁĐ´Đ°Đ»ŃŹĐµĐĽ ŃŃ‚Đ°Ń€Ń‹Đµ Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚Ń‹ Đ´Đ»ŃŹ ŃŤŃ‚ĐľĐą Đ·Đ°Đ´Đ°Ń‡Đ¸ (ĐµŃĐ»Đ¸ Đ±Ń‹Đ»Đ¸)
-              await supabase
-                .from('kie_track_variants')
-                .delete()
-                .eq('task_id', task.id);
-
-              // Đ’ŃŃ‚Đ°Đ˛Đ»ŃŹĐµĐĽ Đ˝ĐľĐ˛Ń‹Đµ Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚Ń‹
-              const { error: variantsError } = await supabase
-                .from('kie_track_variants')
-                .insert(variantsToInsert);
-
-              if (variantsError) {
-                console.error('[STATUS] Failed to insert variants:', variantsError);
-              } else {
-                console.log(`[STATUS] Inserted ${variantsToInsert.length} track variants`);
-              }
-            } catch (err) {
-              console.error('[STATUS] Error saving variants:', err.message);
-              // ĐĐłĐ˝ĐľŃ€Đ¸Ń€ŃĐµĐĽ ĐľŃĐ¸Đ±ĐşĐ¸, Ń‡Ń‚ĐľĐ±Ń‹ Đ˝Đµ Đ»ĐľĐĽĐ°Ń‚ŃŚ ĐľŃĐ˝ĐľĐ˛Đ˝ĐľĐą ĐżĐľŃ‚ĐľĐş
-            }
-          }
-        }
-      } catch (e) {
-        console.error('[STATUS] Polling error:', e.message);
-        // ĐĐłĐ˝ĐľŃ€Đ¸Ń€ŃĐµĐĽ ĐľŃĐ¸Đ±ĐşĐ¸ polling
-      }
-    }
-
-    // Đ—Đ°ĐżŃ€Đ°ŃĐ¸Đ˛Đ°ĐµĐĽ Đ˛Đ°Ń€Đ¸Đ°Đ˝Ń‚Ń‹ Ń‚Ń€ĐµĐşĐľĐ˛, ĐµŃĐ»Đ¸ ĐµŃŃ‚ŃŚ
+    // Fetch variants from DB (auto-polling handles the actual KIE/suno checks)
     let variants = [];
     try {
       const { data: variantsData } = await supabase
@@ -2410,7 +2749,6 @@ app.get('/api/suno/status/:id', requireAuth(), async (req, res) => {
       }
     } catch (err) {
       console.error('[STATUS] Error fetching variants:', err.message);
-      // ĐĐłĐ˝ĐľŃ€Đ¸Ń€ŃĐµĐĽ ĐľŃĐ¸Đ±ĐşŃ
     }
 
     res.json({
@@ -2532,7 +2870,7 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
       .select('id, status, video_url')
       .eq('audio_task_id', audioTask.id)
       .eq('user_id', user.id)
-      .eq('status', 'completed')
+      
       .order('created_at', { ascending: false })
       .limit(1);
     
@@ -2584,10 +2922,10 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
       console.warn('[VIDEO] Error looking up Suno audio ID from DB:', e.message);
     }
     
-    // 3. Last resort: call KIE API to get Suno audio ID for variant 0
+    // 3. Last resort: call KIE API to get Suno audio ID for variant
     if (audioId === audioTask.task_id) {
-      console.log('[VIDEO] Falling back to KIE record-info API for task:', audioTask.task_id);
-      const sunoId = await video.getSunoAudioId(audioTask.task_id);
+      console.log('[VIDEO] Falling back to KIE record-info API for task:', audioTask.task_id, 'variant:', variantIndex);
+      const sunoId = await video.getAudioInfo(audioTask.task_id, variantIndex);
       if (sunoId) audioId = sunoId;
     }
     console.log('[VIDEO] Using audioId:', audioId, 'for task:', audioTask.task_id, 'variant:', variantIndex);
@@ -2665,17 +3003,9 @@ app.post('/api/video/generate', requireAuth(), async (req, res) => {
           return res.json({ success: true, existing: true, video_url: existingVidTask[0].video_url });
         }
         
-        // No existing video in DB, check Kie directly
-        const status = await video.getSunoAudioId(audioTask.task_id);
-        if (status) {
-          // Video exists on Kie but we don't have the task ID. Create a placeholder.
-          await supabase.from('video_tasks').update({
-            status: 'completed',
-            video_url: 'CHECK_KIE',
-            error_message: 'Video exists on Kie, but task ID unknown. Run status check.'
-          }).eq('id', videoTask.id);
-          return res.json({ success: true, existing: true, message: 'Video exists on Kie, checking status...' });
-        }
+        // No existing video in DB — mark as pending and let webhook/polling handle it
+        console.log('[VIDEO] 422 but no existing video found — waiting for webhook/polling');
+        return res.json({ success: true, pending: true, dbId: videoTask.id, message: 'Video generation queued, waiting for completion...' });
         throw genError;
       } else {
         throw genError;
@@ -2716,17 +3046,49 @@ app.get('/api/video/check', requireAuth(), async (req, res) => {
     
     if (!user) return res.status(401).json({ error: 'Not authenticated' });
     
-    const { data: tasks } = await supabase
-      .from('video_tasks')
-      .select('status, video_url')
-      .eq('user_id', user.id)
-      .eq('audio_task_id', audio_task_id)
-      .eq('status', 'completed')
-      .order('created_at', { ascending: false })
-      .limit(1);
+    let videoTask = null;
     
-    if (tasks && tasks.length > 0) {
-      res.json({ status: 'completed', video_url: tasks[0].video_url });
+    // Priority 1: Search by specific kie_track_variants.id for the exact variant
+    if (variant_index !== undefined && variant_index !== null && variant_index !== 'undefined') {
+      const { data: variant } = await supabase
+        .from('kie_track_variants')
+        .select('id')
+        .eq('task_id', audio_task_id)
+        .eq('variant_index', parseInt(variant_index, 10))
+        .single();
+        
+      if (variant && variant.id) {
+        const { data: tasks } = await supabase
+          .from('video_tasks')
+          .select('id, status, video_url')
+          .eq('user_id', user.id)
+          .eq('audio_task_id', variant.id)
+          .order('created_at', { ascending: false })
+          .limit(1);
+        
+        if (tasks && tasks.length > 0) {
+          videoTask = tasks[0];
+        }
+      }
+    }
+    
+    // Priority 2: Fallback — search directly by audio_task_id (legacy records)
+    if (!videoTask) {
+      const { data: tasks } = await supabase
+        .from('video_tasks')
+        .select('id, status, video_url')
+        .eq('user_id', user.id)
+        .eq('audio_task_id', audio_task_id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+      
+      if (tasks && tasks.length > 0) {
+        videoTask = tasks[0];
+      }
+    }
+    
+    if (videoTask) {
+      res.json({ status: videoTask.status, video_url: videoTask.video_url, dbId: videoTask.id });
     } else {
       res.json({ status: 'none' });
     }
@@ -2835,7 +3197,7 @@ app.get('/api/video/status/:id', requireAuth(), async (req, res) => {
 
 // Get system statistics
 
-app.get('/api/admin/logs', async (req, res) => {
+app.get('/api/admin/logs', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 100;
     const { data, error } = await supabase
@@ -2852,7 +3214,7 @@ app.get('/api/admin/logs', async (req, res) => {
   }
 });
 
-app.get('/api/admin/stats', async (req, res) => {
+app.get('/api/admin/stats', requireAuth(), requireAdmin, async (req, res) => {
   try {
     console.log('[ADMIN STATS] Route hit');
     // Total tracks
@@ -2889,7 +3251,7 @@ app.get('/api/admin/stats', async (req, res) => {
 });
 
 // Get users with pagination and search
-app.get('/api/admin/users', async (req, res) => {
+app.get('/api/admin/users', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
@@ -2940,7 +3302,7 @@ app.get('/api/admin/users', async (req, res) => {
 });
 
 // Update user (coins, notes, status)
-app.put('/api/admin/users/:userId', async (req, res) => {
+app.put('/api/admin/users/:userId', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { userId } = req.params;
     const updates = req.body;
@@ -2961,7 +3323,7 @@ app.put('/api/admin/users/:userId', async (req, res) => {
 });
 
 // Get tracks with moderation options
-app.get('/api/admin/tracks', async (req, res) => {
+app.get('/api/admin/tracks', requireAuth(), requireAdmin, async (req, res) => {
   try {
     console.log('[ADMIN TRACKS] Request received', req.query);
     const page = parseInt(req.query.page) || 1;
@@ -3020,7 +3382,7 @@ app.get('/api/admin/tracks', async (req, res) => {
 });
 
 // Moderate a track (delete/restore, update plays, moderation reason)
-app.put('/api/admin/tracks/:id/moderate', async (req, res) => {
+app.put('/api/admin/tracks/:id/moderate', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
@@ -3045,7 +3407,7 @@ app.put('/api/admin/tracks/:id/moderate', async (req, res) => {
 // ----------------------------------------
 
 // Get all permissions (from database)
-app.get('/api/admin/permissions', async (req, res) => {
+app.get('/api/admin/permissions', requireAuth(), requireAdmin, async (req, res) => {
   try { 
     console.log('[RBAC] GET /api/admin/permissions');
     const { data: permissions, error } = await supabase
@@ -3063,7 +3425,7 @@ app.get('/api/admin/permissions', async (req, res) => {
 });
 
 // Get all roles with their permissions
-app.get('/api/admin/roles', async (req, res) => {
+app.get('/api/admin/roles', requireAuth(), requireAdmin, async (req, res) => {
   try {
     console.log('[RBAC] GET /api/admin/roles');
     // Fetch roles
@@ -3110,7 +3472,7 @@ app.get('/api/admin/roles', async (req, res) => {
 });
 
 // Create a new role
-app.post('/api/admin/roles', async (req, res) => {
+app.post('/api/admin/roles', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { name, description, permissionCodes = [] } = req.body;
     if (!name) {
@@ -3164,7 +3526,7 @@ app.post('/api/admin/roles', async (req, res) => {
 });
 
 // Update a role
-app.put('/api/admin/roles/:id', async (req, res) => {
+app.put('/api/admin/roles/:id', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description, permissionCodes = [] } = req.body;
@@ -3224,7 +3586,7 @@ app.put('/api/admin/roles/:id', async (req, res) => {
 });
 
 // Delete a role
-app.delete('/api/admin/roles/:id', async (req, res) => {
+app.delete('/api/admin/roles/:id', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     
@@ -3261,7 +3623,7 @@ app.delete('/api/admin/roles/:id', async (req, res) => {
 });
 
 // Get roles assigned to a user
-app.get('/api/admin/users/:userId/roles', async (req, res) => {
+app.get('/api/admin/users/:userId/roles', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { userId } = req.params;
     
@@ -3292,7 +3654,7 @@ app.get('/api/admin/users/:userId/roles', async (req, res) => {
 });
 
 // Assign role to user
-app.post('/api/admin/users/:userId/roles', async (req, res) => {
+app.post('/api/admin/users/:userId/roles', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { userId } = req.params;
     const { roleId } = req.body;
@@ -3333,7 +3695,7 @@ app.post('/api/admin/users/:userId/roles', async (req, res) => {
 });
 
 // Remove role from user
-app.delete('/api/admin/users/:userId/roles/:roleId', async (req, res) => {
+app.delete('/api/admin/users/:userId/roles/:roleId', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { userId, roleId } = req.params;
     
@@ -3356,7 +3718,7 @@ app.delete('/api/admin/users/:userId/roles/:roleId', async (req, res) => {
 });
 
 // Get my permissions (for frontend to show/hide UI)
-app.get('/api/admin/my-permissions', async (req, res) => {
+app.get('/api/admin/my-permissions', requireAuth(), async (req, res) => {
   try {
     console.log('[MY PERMISSIONS] Request');
     // Try to get auth data
@@ -3687,7 +4049,13 @@ app.post('/api/tracks/:id/delete', requireAuth(), async (req, res) => {
       .eq('id', id)
       .single();
     if (fetchErr || !track) return res.status(404).json({ error: 'Track not found' });
-    if (track.user_id !== user.id) return res.status(403).json({ error: 'Not your track' });
+    
+    const ADMIN_USER_IDS = (process.env.ADMIN_USER_IDS || '').split(',').map(uid => uid.trim()).filter(Boolean);
+    const isAdmin = ADMIN_USER_IDS.includes(clerkId);
+    
+    if (track.user_id !== user.id && !isAdmin) {
+      return res.status(403).json({ error: 'Not your track' });
+    }
 
     // Soft-delete: ŃŃ‚Đ°Đ˛Đ¸ĐĽ expired = true
     const { error: updateErr } = await supabase
@@ -3852,7 +4220,7 @@ app.post('/api/tts/generate', requireAuth(), async (req, res) => {
   }
 });
 
-app.post('/api/chat-composer', async (req, res) => {
+app.post('/api/chat-composer', chatLimiter, async (req, res) => {
   try {
     const { messages, agent = 'cj_remi', regenerate = false, giftTemplate } = req.body;
     if (!messages || !Array.isArray(messages)) {
@@ -4230,6 +4598,20 @@ app.delete('/api/personas/:personaId', requireAuth(), async (req, res) => {
 app.post('/api/webhooks/kie/video', express.json(), async (req, res) => {
   console.log('[KIE VIDEO WEBHOOK] Received callback headers:', req.headers);
   console.log('[KIE VIDEO WEBHOOK] Received callback body:', JSON.stringify(req.body, null, 2));
+  
+  // HMAC/Token verification for KIE webhooks
+  const webhookSecret = process.env.KIE_WEBHOOK_SECRET;
+  if (webhookSecret) {
+    const token = req.query.token || req.headers['x-kie-webhook-token'];
+    if (!token || token !== webhookSecret) {
+      console.warn('[KIE VIDEO WEBHOOK] ⛔ Unauthorized webhook attempt (invalid token)');
+      return res.status(403).json({ error: 'Invalid webhook token' });
+    }
+    console.log('[KIE VIDEO WEBHOOK] ✅ Token verified');
+  } else {
+    console.warn('[KIE VIDEO WEBHOOK] ⚠️ No KIE_WEBHOOK_SECRET configured — webhook unverified');
+  }
+  
   try {
     const { code, msg, data } = req.body;
 
@@ -4251,6 +4633,21 @@ app.post('/api/webhooks/kie/video', express.json(), async (req, res) => {
     // Extract task_id
     let taskId = data?.task_id || data?.taskId || data?.taskId;
     let callbackType = data?.callbackType || 'complete';
+
+    
+
+    // Protect against out-of-order webhooks (e.g., first arriving after complete)
+    const { data: currentTask } = await supabase
+      .from('kie_tasks')
+      .select('status')
+      .eq('task_id', taskId)
+      .single();
+
+    if (currentTask && currentTask.status === 'completed' && callbackType !== 'complete') {
+      console.log("[KIE WEBHOOK] Ignoring out-of-order callback (" + callbackType + ") for already completed task: " + taskId);
+      return res.sendStatus(200);
+    }
+
 
     // Extract video URL and metadata
     const videoUrl = data?.videoUrl || data?.video_url || data?.url;
@@ -4283,6 +4680,56 @@ app.post('/api/webhooks/kie/video', express.json(), async (req, res) => {
       console.error('[KIE VIDEO WEBHOOK] Supabase update error:', updateError);
     } else {
       console.log('[KIE VIDEO WEBHOOK] Video task updated successfully for task_id:', taskId);
+
+      // When video completes, update the associated track to use video as primary media
+      if (callbackType === 'complete' && videoUrl) {
+        try {
+          // Find the video_task record to get audio_task_id
+          const { data: videoRecord } = await supabase
+            .from('video_tasks')
+            .select('audio_task_id, user_id')
+            .eq('video_task_id', taskId)
+            .single();
+
+          if (videoRecord) {
+            const { data: variantRecord } = await supabase
+              .from('kie_track_variants')
+              .select('task_id, variant_index')
+              .eq('id', videoRecord.audio_task_id)
+              .single();
+
+            const kieTaskId = variantRecord?.task_id || videoRecord.audio_task_id;
+            const variantIndex = variantRecord?.variant_index;
+
+            // Find tracks linked to this KIE task and variant index
+            let query = supabase
+              .from('tracks')
+              .select('id')
+              .eq('kie_task_id', kieTaskId);
+              
+            if (variantIndex !== undefined && variantIndex !== null) {
+              query = query.eq('variant_index', variantIndex);
+            }
+
+            const { data: linkedTracks } = await query;
+
+            if (linkedTracks && linkedTracks.length > 0) {
+              for (const tr of linkedTracks) {
+                await supabase
+                  .from('tracks')
+                  .update({
+                    video_url: videoUrl, // Save as video_url, do not overwrite audio_url
+                    cover_image_url: thumbnailUrl || undefined,
+                  })
+                  .eq('id', tr.id);
+                console.log('[KIE VIDEO WEBHOOK] Updated track', tr.id, 'with video URL');
+              }
+            }
+          }
+        } catch (linkErr) {
+          console.warn('[KIE VIDEO WEBHOOK] Failed to link video to track:', linkErr.message);
+        }
+      }
     }
 
     res.sendStatus(200);
@@ -4563,7 +5010,7 @@ app.post('/api/admin/affiliates/payout/:id', requireAuth(), requireAdmin, async 
 // ----------------------------------------
 
 // Get pending KIE tasks and manually poll status
-app.get('/api/debug/kie-tasks', async (req, res) => {
+app.get('/api/debug/kie-tasks', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { data: tasks, error } = await supabase
       .from('kie_tasks')
@@ -4638,8 +5085,8 @@ app.get('/api/debug/kie-tasks', async (req, res) => {
   }
 });
 
-// Manually trigger webhook simulation for a task
-app.post('/api/debug/kie-webhook-simulate', async (req, res) => {
+// Manually trigger webhook simulation for a task (polls KIE and processes results as if webhook arrived)
+app.post('/api/debug/kie-webhook-simulate', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { task_id } = req.body;
     if (!task_id) {
@@ -4654,37 +5101,150 @@ app.post('/api/debug/kie-webhook-simulate', async (req, res) => {
       return res.status(404).json({ error: 'Task not found in KIE' });
     }
     
-    // Simulate webhook payload
-    const webhookPayload = {
-      taskId: task_id,
-      status: kieData.status,
-      tracks: kieData.tracks || []
-    };
+    // Find local task record
+    const { data: task } = await supabase
+      .from('kie_tasks')
+      .select('*')
+      .eq('task_id', task_id)
+      .single();
     
-    // Call webhook handler directly
-    const webhookReq = {
-      body: webhookPayload,
-      headers: {}
-    };
-    const webhookRes = {
-      statusCode: 200,
-      sendStatus: function(code) {
-        this.statusCode = code;
-        return this;
-      },
-      send: function() { return this; }
-    };
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found in local DB' });
+    }
     
-    // Import the webhook handler function
-    const webhookHandler = require('./kie').webhookHandler;
-    await webhookHandler(webhookReq, webhookRes);
+    // Determine status from KIE response
+    const kieStatus = kieData.status || kieData.successFlag || '';
+    let dbStatus = 'processing';
+    if (kieStatus === 'SUCCESS') dbStatus = 'completed';
+    else if (kieStatus === 'TEXT_SUCCESS' || kieStatus === 'FIRST_SUCCESS') dbStatus = 'processing';
+    else if (kieStatus === 'PENDING') dbStatus = 'pending';
+    else if (['CREATE_TASK_FAILED', 'GENERATE_AUDIO_FAILED', 'SENSITIVE_WORD_ERROR', 'CALLBACK_EXCEPTION'].includes(kieStatus)) {
+      dbStatus = 'failed';
+    }
+    
+    // Extract sunoData from response
+    const sunoData = kieData.response?.sunoData || kieData.sunoData || [];
+    
+    // Update task status
+    const updates = { status: dbStatus, updated_at: new Date().toISOString() };
+    if (sunoData.length > 0) {
+      const first = sunoData[0];
+      updates.audio_url = first.audioUrl || first.audio_url || null;
+      updates.stream_audio_url = first.streamAudioUrl || first.stream_audio_url || null;
+      updates.title = first.title || null;
+      updates.duration = first.duration || null;
+    }
+    if (dbStatus === 'failed') {
+      updates.error_msg = kieData.errorMessage || `Kie status: ${kieStatus}`;
+    }
+    
+    await supabase.from('kie_tasks').update(updates).eq('id', task.id);
+    
+    // Save variants if present
+    let variantsSaved = 0;
+    let variants = [];
+    if (sunoData.length > 0) {
+      // UPSERT variants to avoid race condition with polling/webhook
+      variants = sunoData.map((t, i) => ({
+        task_id: task.id,
+        variant_index: i,
+        audio_url: t.audioUrl || t.audio_url || null,
+        stream_audio_url: t.streamAudioUrl || t.stream_audio_url || null,
+        image_url: t.imageUrl || t.image_url || null,
+        title: t.title || null,
+        tags: (t.id ? `suno_id:${t.id}` : '') + (t.tags ? `|${t.tags}` : ''),
+        prompt: t.prompt || null,
+        duration: t.duration || null
+      }));
+      // Safe DELETE + INSERT (catches duplicate key race condition)
+      await supabase.from('kie_track_variants').delete().eq('task_id', task.id);
+      try {
+        await supabase.from('kie_track_variants').insert(variants);
+      } catch (insertErr) {
+        if (!insertErr.message.includes('duplicate') && !insertErr.message.includes('23505')) {
+          console.error('Failed to insert variants:', insertErr.message);
+        }
+      }
+      variantsSaved = variants.length;
+    }
+    
+    // Create/update tracks for each variant (same logic as webhook handler)
+    let tracksCreated = 0;
+    let tracksUpdated = 0;
+    if (sunoData.length > 0) {
+      for (const [index, variant] of variants.entries()) {
+        // Skip variants without a real audio_url
+        if (!variant.audio_url) {
+          console.log(`[SIMULATE] Skipping track variant ${index} - no audio_url`);
+          continue;
+        }
+        
+        const trackTitle = `${variant.title || 'Track'} V${index + 1}`;
+        
+        const { data: existingTrack } = await supabase
+          .from('tracks')
+          .select('id')
+          .eq('kie_task_id', task.id)
+          .eq('variant_index', index)
+          .single();
+        
+        const trackData = {
+          user_id: task.user_id,
+          is_paid: !!task.user_id,
+          is_unlocked: !!task.user_id,
+          title: trackTitle,
+          description: variant.prompt || task.prompt || '',
+          audio_url: variant.audio_url,
+          cover_image_url: variant.image_url,
+          kie_task_id: task.id,
+          variant_index: index,
+          producer_id: task.persona_id,
+          likes: 0,
+          plays: 0,
+          expired: false
+        };
+        
+        if (existingTrack) {
+          await supabase.from('tracks').update(trackData).eq('id', existingTrack.id);
+          tracksUpdated++;
+          console.log(`[SIMULATE] Updated track variant ${index}`);
+        } else {
+          const { data: newTrack, error: insertErr } = await supabase
+            .from('tracks')
+            .insert(trackData)
+            .select('id')
+            .single();
+          if (!insertErr) {
+            tracksCreated++;
+            console.log(`[SIMULATE] Created track variant ${index} (ID: ${newTrack?.id})`);
+          }
+        }
+      }
+      
+      // Clean up obsolete tracks
+      const { data: allTracks } = await supabase
+        .from('tracks')
+        .select('id, variant_index')
+        .eq('kie_task_id', task.id);
+      
+      if (allTracks) {
+        const variantIndices = variants.map((_, idx) => idx);
+        const tracksToDelete = allTracks.filter(t => !variantIndices.includes(t.variant_index));
+        for (const t of tracksToDelete) {
+          await supabase.from('tracks').delete().eq('id', t.id);
+        }
+      }
+    }
     
     res.json({
       success: true,
       task_id,
-      kie_status: kieData.status,
-      webhook_status: webhookRes.statusCode,
-      message: 'Webhook simulated successfully'
+      dbStatus,
+      kieStatus,
+      variantsSaved,
+      tracksCreated,
+      tracksUpdated,
+      message: 'Webhook simulation completed'
     });
   } catch (error) {
     console.error('Webhook simulation error:', error);
@@ -4695,7 +5255,7 @@ app.post('/api/debug/kie-webhook-simulate', async (req, res) => {
 // ----------------------------------------
 // Site Settings Endpoints
 // ----------------------------------------
-app.get('/api/settings/site', async (req, res) => {
+app.get('/api/settings/site', apiLimiter, async (req, res) => {
   try {
     const { data, error } = await supabase.from('site_settings').select('*').eq('id', 1).single();
     if (error && error.code !== 'PGRST116') throw error;
@@ -4736,7 +5296,7 @@ app.put('/api/admin/settings/site', requireAdmin, async (req, res) => {
 // Stripe Promo Codes Endpoints
 // ----------------------------------------
 
-app.get('/api/admin/promo-codes', async (req, res) => {
+app.get('/api/admin/promo-codes', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const promotionCodes = await stripe.promotionCodes.list({ limit: 100, expand: ['data.promotion.coupon'] });
     res.json({ promoCodes: promotionCodes.data });
@@ -4746,7 +5306,7 @@ app.get('/api/admin/promo-codes', async (req, res) => {
   }
 });
 
-app.post('/api/admin/promo-codes', async (req, res) => {
+app.post('/api/admin/promo-codes', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { code, type, value, maxRedemptions, expiresAt } = req.body;
     
@@ -4790,7 +5350,7 @@ app.post('/api/admin/promo-codes', async (req, res) => {
   }
 });
 
-app.put('/api/admin/promo-codes/:id', async (req, res) => {
+app.put('/api/admin/promo-codes/:id', requireAuth(), requireAdmin, async (req, res) => {
   try {
     const { active } = req.body;
     const promoCode = await stripe.promotionCodes.update(req.params.id, { active });
@@ -5018,8 +5578,393 @@ app.post('/api/reviews', requireAuth(), async (req, res) => {
 });
 
 // ----------------------------------------
+// Auto-Polling for stuck KIE tasks (fallback when webhooks don't arrive)
+// ----------------------------------------
+let pollingActive = false;
+
+async function pollStuckKieTasks() {
+  if (pollingActive) return;
+  pollingActive = true;
+  
+  try {
+    const { data: stuckTasks } = await supabase
+      .from('kie_tasks')
+      .select('id, task_id, status, created_at, user_id')
+      .in('status', ['pending', 'processing'])
+      .gt('created_at', new Date(Date.now() - 3600000).toISOString()) // last 1 hour only
+      .order('created_at', { ascending: true })
+      .limit(5);
+    
+    if (!stuckTasks || stuckTasks.length === 0) return;
+    
+    console.log(`[POLL] Found ${stuckTasks.length} stuck task(s), checking providers...`);
+    
+    for (const task of stuckTasks) {
+      try {
+        console.log(`[POLL] Checking task ${task.task_id} (status: ${task.status})`);
+        
+        // Try KIE first, then Suno
+        let providerData = null;
+        let sunoData = [];
+        let kieStatusStr = '';
+        
+        try {
+          const kieStatus = await kie.getTaskStatus(task.task_id);
+          if (kieStatus?.data) {
+            providerData = kieStatus.data;
+            sunoData = providerData.response?.sunoData || providerData.sunoData || [];
+            kieStatusStr = providerData.status || providerData.successFlag || '';
+            console.log(`[POLL] Task ${task.task_id} - KIE returned data`);
+          }
+        } catch (e) {
+          console.log(`[POLL] Task ${task.task_id} - KIE check failed: ${e.message}, trying Suno...`);
+        }
+        
+        // Fallback to Suno if KIE returned nothing
+        if (!providerData || sunoData.length === 0) {
+          try {
+            const sunoStatus = await suno.checkStatus(task.task_id);
+            if (sunoStatus?.audio_url || (sunoStatus?.variants && sunoStatus.variants.length > 0)) {
+              console.log(`[POLL] Task ${task.task_id} - Suno returned data`);
+              kieStatusStr = sunoStatus.status === 'completed' ? 'SUCCESS' : (sunoStatus.status || '');
+              sunoData = sunoStatus.variants && sunoStatus.variants.length > 0 
+                ? sunoStatus.variants 
+                : [{ audio_url: sunoStatus.audio_url, stream_audio_url: sunoStatus.stream_audio_url, image_url: sunoStatus.image_url, title: sunoStatus.title, duration: sunoStatus.duration }];
+            }
+          } catch (e) {
+            console.log(`[POLL] Task ${task.task_id} - Suno check also failed: ${e.message}`);
+          }
+        }
+        
+        if (!providerData) {
+          console.log(`[POLL] Task ${task.task_id} - no data from any provider yet`);
+          continue;
+        }
+        
+        if (sunoData.length === 0) {
+          console.log(`[POLL] Task ${task.task_id} - provider has data but no tracks yet`);
+          continue;
+        }
+        
+        console.log(`[POLL] Task ${task.task_id} - KIE returned ${sunoData.length} track(s), processing...`);
+        
+        // Determine status
+        if (kieStatusStr === 'SUCCESS') dbStatus = 'completed';
+        else if (kieStatusStr === 'TEXT_SUCCESS' || kieStatusStr === 'FIRST_SUCCESS') dbStatus = 'processing';
+        else if (['CREATE_TASK_FAILED', 'GENERATE_AUDIO_FAILED', 'SENSITIVE_WORD_ERROR', 'CALLBACK_EXCEPTION'].includes(kieStatusStr)) {
+          dbStatus = 'failed';
+        }
+        
+        // Update task
+        const updates = { status: dbStatus, updated_at: new Date().toISOString() };
+        if (sunoData.length > 0) {
+          const first = sunoData[0];
+          updates.audio_url = first.audioUrl || first.audio_url || null;
+          updates.stream_audio_url = first.streamAudioUrl || first.stream_audio_url || null;
+          updates.title = first.title || null;
+          updates.duration = first.duration || null;
+        }
+        await supabase.from('kie_tasks').update(updates).eq('id', task.id);
+        
+        // Save variants
+        // UPSERT variants to avoid race condition with polling/webhook
+        const variants = sunoData.map((t, i) => ({
+          task_id: task.id,
+          variant_index: i,
+          audio_url: t.audioUrl || t.audio_url || null,
+          stream_audio_url: t.streamAudioUrl || t.stream_audio_url || null,
+          image_url: t.imageUrl || t.image_url || null,
+          title: t.title || null,
+          tags: (t.id ? `suno_id:${t.id}` : '') + (t.tags ? `|${t.tags}` : ''),
+          prompt: t.prompt || null,
+          duration: t.duration || null
+        }));
+        await supabase.from('kie_track_variants').delete().eq('task_id', task.id);
+        try {
+          await supabase.from('kie_track_variants').insert(variants);
+        } catch (insertErr) {
+          if (!insertErr.message.includes('duplicate') && !insertErr.message.includes('23505')) {
+            console.error('[POLL] Failed to insert variants:', insertErr.message);
+          }
+        }
+        
+        // Create/update tracks
+        const { data: fullTask } = await supabase.from('kie_tasks').select('*').eq('id', task.id).single();
+        for (const [index, variant] of variants.entries()) {
+          if (!variant.audio_url) continue;
+          
+          const trackTitle = `${variant.title || 'Track'} V${index + 1}`;
+          const lyricsText2 = (variant.prompt || fullTask?.prompt || '').toLowerCase();
+          const swearsRegex2 = /(kurwa|chuj|pizda|jeba|pierdol|skurwiel|skurwysyn|spierdal|wypierdal|gówno|zasrany|szmata|dziwka|suka|zajebi|pojeb|popierdol)/i;
+          const isExplicit2 = swearsRegex2.test(lyricsText2);
+          
+          const { data: existing } = await supabase
+            .from('tracks')
+            .select('id')
+            .eq('kie_task_id', task.id)
+            .eq('variant_index', index)
+            .single();
+          
+          const trackData = {
+            user_id: fullTask?.user_id || null,
+            is_paid: !!fullTask?.user_id,
+            is_unlocked: !!fullTask?.user_id,
+            title: trackTitle,
+            description: variant.prompt || fullTask?.prompt || '',
+            audio_url: variant.audio_url,
+            cover_image_url: variant.image_url,
+            kie_task_id: task.id,
+            variant_index: index,
+            producer_id: fullTask?.persona_id || null,
+            explicit: isExplicit2,
+            likes: 0, plays: 0, expired: false,
+            audio_expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
+          };
+          
+          if (existing) {
+            await supabase.from('tracks').update(trackData).eq('id', existing.id);
+          } else {
+            try {
+              await supabase.from('tracks').insert(trackData);
+            } catch (trackErr) {
+              if (!trackErr.message.includes('duplicate') && !trackErr.message.includes('23505')) {
+                console.error('[POLL] Failed to insert track:', trackErr.message);
+              }
+            }
+          }
+        }
+        
+        // Auto-generate video for completed tasks
+        if (dbStatus === 'completed') {
+          console.log(`[POLL] Triggering auto-video for task ${task.id}`);
+          for (const [index, variant] of variants.entries()) {
+            if (!variant.audio_url) continue;
+            (async () => {
+              try {
+                if (!task.user_id) {
+                  console.error(`[POLL AUTO VIDEO] No user_id for task ${task.id}, cannot create video_task`);
+                  return;
+                }
+                let vid = task.id;
+                const { data: vr } = await supabase.from('kie_track_variants').select('id').eq('task_id', task.id).eq('variant_index', index).limit(1);
+                if (vr?.[0]) vid = vr[0].id;
+                
+                const { data: ex } = await supabase.from('video_tasks').select('id').eq('audio_task_id', vid).limit(1);
+                if (ex?.length) { console.log(`[POLL AUTO VIDEO] Exists for variant ${index}, skip`); return; }
+                
+                const { data: u } = await supabase.from('users').select('subscription_tier').eq('id', task.user_id).single();
+                const wm = (u?.subscription_tier||'free').toLowerCase() === 'free';
+                const opts = { provider: 'kie', callbackUrl: (process.env.KIE_CALLBACK_BASE_URL||'http://localhost:3000') + '/api/webhooks/kie/video' };
+                if (wm) { opts.author = 'mojhit.pl'; opts.domainName = 'mojhit.pl'; }
+                
+                const { data: vt, error: vtErr } = await supabase.from('video_tasks').insert({ user_id: task.user_id, audio_task_id: vid, status: 'pending' }).select().single();
+                if (vtErr) { console.error(`[POLL AUTO VIDEO] Insert video_task failed for variant ${index}:`, vtErr.message); return; }
+                if (!vt) return;
+                
+                // Extract suno_id from variant tags (required by KIE video API)
+                let audioId = task.task_id; // fallback
+                const { data: varData } = await supabase.from('kie_track_variants').select('tags,stream_audio_url').eq('task_id', task.id).eq('variant_index', index).limit(1);
+                if (varData?.[0]) {
+                  const vd = varData[0];
+                  if (vd.tags) {
+                    const m = vd.tags.match(/suno_id:([a-zA-Z0-9\-]+)/);
+                    if (m?.[1]) audioId = m[1];
+                  }
+                  if (audioId === task.task_id && vd.stream_audio_url?.includes('musicfile.kie.ai/')) {
+                    try {
+                      const b64 = vd.stream_audio_url.split('musicfile.kie.ai/').pop().split('?')[0];
+                      const d = Buffer.from(b64, 'base64').toString('utf8');
+                      if (d?.length > 20) audioId = d;
+                    } catch {}
+                  }
+                }
+                
+                // Last resort: call KIE record-info API
+                if (audioId === task.task_id) {
+                  const kieAudioId = await video.getAudioInfo(task.task_id, index);
+                  if (kieAudioId) audioId = kieAudioId;
+                }
+                
+                console.log(`[POLL AUTO VIDEO] Using audioId: ${audioId} for variant ${index}`);
+                const vti = await video.generate(task.task_id, audioId, opts);
+                await supabase.from('video_tasks').update({ video_task_id: vti }).eq('id', vt.id);
+                console.log(`[POLL AUTO VIDEO] ✅ Started variant ${index}:`, vti);
+              } catch(e) { console.error(`[POLL AUTO VIDEO] ❌ Failed variant ${index}:`, e.message); }
+            })();
+          }
+        }
+        
+        console.log(`[POLL] Task ${task.task_id} - processed ${variants.length} variant(s), status: ${dbStatus}`);
+      } catch (taskError) {
+        console.error(`[POLL] Error processing task ${task.task_id}:`, taskError.message);
+      }
+    }
+  } catch (error) {
+    console.error('[POLL] Polling error:', error.message);
+  } finally {
+    pollingActive = false;
+  }
+}
+
+// Run poll every 10 seconds (faster auto-video)
+setInterval(pollStuckKieTasks, 10000);
+console.log('[POLL] Auto-polling for stuck KIE tasks enabled (every 10s)');
+
+// Run once on startup
+setTimeout(pollStuckKieTasks, 5000);
+
+// ----------------------------------------
+// Video Task Polling (fallback when KIE video callbacks don't arrive)
+// ----------------------------------------
+let videoPollingActive = false;
+
+async function pollVideoTasks() {
+  if (videoPollingActive) return;
+  videoPollingActive = true;
+  
+  try {
+    // Find video tasks that are pending or processing (created within last 2 hours)
+    const { data: pendingVideos } = await supabase
+      .from('video_tasks')
+      .select('id, video_task_id, audio_task_id, user_id, status, created_at')
+      .in('status', ['pending', 'processing'])
+      .not('video_task_id', 'is', null)
+      .gt('created_at', new Date(Date.now() - 7200000).toISOString()) // last 2 hours
+      .order('created_at', { ascending: true })
+      .limit(10);
+    
+    if (!pendingVideos || pendingVideos.length === 0) return;
+    
+    console.log(`[VIDEO POLL] Found ${pendingVideos.length} pending video task(s), checking KIE...`);
+    
+    for (const vTask of pendingVideos) {
+      try {
+        if (!vTask.video_task_id) continue;
+        
+        // Check video status from KIE
+        const statusResult = await video.getTaskStatus(vTask.video_task_id);
+        console.log(`[VIDEO POLL] Task ${vTask.video_task_id}: status=${statusResult.status}, video_url=${statusResult.video_url ? 'YES' : 'NO'}`);
+        
+        if (statusResult.status === 'completed' && statusResult.video_url) {
+          // Update video_tasks table
+          const updates = {
+            status: 'completed',
+            video_url: statusResult.video_url,
+            updated_at: new Date()
+          };
+          if (statusResult.thumbnail_url) updates.thumbnail_url = statusResult.thumbnail_url;
+          if (statusResult.duration) updates.duration_seconds = statusResult.duration;
+          if (statusResult.expires_at) updates.expires_at = new Date(statusResult.expires_at);
+          
+          await supabase.from('video_tasks').update(updates).eq('id', vTask.id);
+          console.log(`[VIDEO POLL] ✅ Video task ${vTask.video_task_id} completed! URL: ${statusResult.video_url.substring(0, 80)}...`);
+          
+          // Link video to track (same logic as webhook handler)
+          try {
+            const { data: variantRecord } = await supabase
+              .from('kie_track_variants')
+              .select('task_id, variant_index')
+              .eq('id', vTask.audio_task_id)
+              .single();
+            
+            const kieTaskId = variantRecord?.task_id || vTask.audio_task_id;
+            const variantIndex = variantRecord?.variant_index;
+            
+            let query = supabase.from('tracks').select('id').eq('kie_task_id', kieTaskId);
+            if (variantIndex !== undefined && variantIndex !== null) {
+              query = query.eq('variant_index', variantIndex);
+            }
+            
+            const { data: linkedTracks } = await query;
+            
+            if (linkedTracks && linkedTracks.length > 0) {
+              for (const tr of linkedTracks) {
+                await supabase
+                  .from('tracks')
+                  .update({
+                    video_url: statusResult.video_url,
+                    cover_image_url: statusResult.thumbnail_url || undefined,
+                  })
+                  .eq('id', tr.id);
+                console.log(`[VIDEO POLL] ✅ Updated track ${tr.id} with video URL`);
+              }
+            } else {
+              console.warn(`[VIDEO POLL] No tracks found for kieTaskId=${kieTaskId}, variantIndex=${variantIndex}`);
+            }
+          } catch (linkErr) {
+            console.error(`[VIDEO POLL] Failed to link video to track:`, linkErr.message);
+          }
+          
+        } else if (statusResult.status === 'failed') {
+          await supabase.from('video_tasks').update({
+            status: 'failed',
+            error_message: statusResult.error || 'Video generation failed on KIE',
+            updated_at: new Date()
+          }).eq('id', vTask.id);
+          console.log(`[VIDEO POLL] ❌ Video task ${vTask.video_task_id} failed`);
+          
+        } else if (statusResult.status === 'processing' && vTask.status === 'pending') {
+          await supabase.from('video_tasks').update({
+            status: 'processing',
+            updated_at: new Date()
+          }).eq('id', vTask.id);
+        }
+        
+      } catch (taskError) {
+        console.error(`[VIDEO POLL] Error checking video task ${vTask.video_task_id}:`, taskError.message);
+      }
+    }
+  } catch (error) {
+    console.error('[VIDEO POLL] Polling error:', error.message);
+  } finally {
+    videoPollingActive = false;
+  }
+}
+
+// Poll video tasks every 15 seconds
+setInterval(pollVideoTasks, 15000);
+console.log('[VIDEO POLL] Auto-polling for video tasks enabled (every 15s)');
+
+// Run once on startup (after a brief delay)
+setTimeout(pollVideoTasks, 8000);
+
+// ----------------------------------------
+// Track Protection Cron (viral detection + backup — every 6 hours)
+// ----------------------------------------
+setInterval(() => protect.runProtectionCron(supabase), 6 * 60 * 60 * 1000);
+setTimeout(() => protect.runProtectionCron(supabase), 30000); // First run after 30s
+console.log('[PROTECT] Auto-protection enabled (viral check every 6h)');
+
+// ----------------------------------------
 // Start Server
 // ----------------------------------------
+
+// ── Global Error Handler — strip stack traces in production ────────────
+const isProduction = process.env.NODE_ENV === 'production';
+app.use((err, req, res, next) => {
+  console.error(`[ERROR] ${req.method} ${req.path}:`, err.message);
+  if (isProduction) {
+    res.status(err.status || 500).json({ error: 'Internal Server Error' });
+  } else {
+    res.status(err.status || 500).json({ error: err.message, stack: err.stack });
+  }
+});
+
+// ── Stagger sensitive error details in production JSON responses ──────
+if (isProduction) {
+  const _json = app.response.json;
+  app.response.json = function(obj) {
+    if (this.statusCode >= 500 && obj && typeof obj === 'object' && !Array.isArray(obj)) {
+      if (obj.error && typeof obj.error === 'string' && obj.error.length > 50) {
+        obj.error = 'Internal Server Error';
+      }
+      if (obj.stack) delete obj.stack;
+      if (obj.details) delete obj.details;
+      if (obj.debug) delete obj.debug;
+    }
+    return _json.call(this, obj);
+  };
+}
 
 const server = app.listen(port, () => {
   console.log(`đźš€ Server listening on port ${port}`);
