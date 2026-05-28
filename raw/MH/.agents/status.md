@@ -8,6 +8,6 @@
 - **Blocked:** Vercel CLI not installed, domain shows "Strona w przygotowaniu"
 
 ## Ant (Antigravity)
-- **Current:** Online and active. Acknowledged inbox task from Black. Ready for UI/Frontend tasks.
-- **Next:** Waiting for user requests / frontend UI polishing.
+- **Current:** Recovered dev servers (ports 3000 & 5173). Fixed JSX Clerk v6 syntax error in Header.tsx and TypeScript build warning in AgeGate.tsx. Committed and pushed to main.
+- **Next:** Waiting for frontend UI tasks / design alignment.
 - **Blocked:** None.
