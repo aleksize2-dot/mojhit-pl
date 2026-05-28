@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
-import { SignedIn, SignedOut, SignInButton, UserButton, useAuth, useUser } from '@clerk/clerk-react';
+import { SignInButton, UserButton, useAuth, useUser } from '@clerk/react';
 import { Link } from 'react-router-dom';
 
 export function Header() {
@@ -120,53 +120,55 @@ export function Header() {
 
             {/* Actions */}
             <div className="flex items-center gap-2 md:gap-3">
-            <SignedIn>
-              {user?.id === 'user_3BiIa5lj5AiMLDvGL2OqjEDbqLh' && (
-                <Link to="/admin" className="text-on-surface-variant/50 hover:text-primary transition-colors" title="Admin Panel">
-                  <span className="material-symbols-outlined" style={{fontSize: '20px'}}>settings</span>
-                </Link>
-              )}
+            {isSignedIn && (
+              <>
+                {user?.id === 'user_3BiIa5lj5AiMLDvGL2OqjEDbqLh' && (
+                  <Link to="/admin" className="text-on-surface-variant/50 hover:text-primary transition-colors" title="Admin Panel">
+                    <span className="material-symbols-outlined" style={{fontSize: '20px'}}>settings</span>
+                  </Link>
+                )}
 
-              {/* Gift icon (mockup) */}
-              <button 
-                onClick={() => {/* TODO: Gift/bonus modal */}} 
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-surface-container-high hover:bg-surface-bright flex items-center justify-center transition-colors relative group shrink-0"
-                title="Bonusy"
-              >
-                <span className="material-symbols-outlined text-[18px] sm:text-[20px] text-on-surface-variant group-hover:text-primary transition-colors">redeem</span>
-              </button>
+                {/* Gift icon (mockup) */}
+                <button 
+                  onClick={() => {/* TODO: Gift/bonus modal */}} 
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-surface-container-high hover:bg-surface-bright flex items-center justify-center transition-colors relative group shrink-0"
+                  title="Bonusy"
+                >
+                  <span className="material-symbols-outlined text-[18px] sm:text-[20px] text-on-surface-variant group-hover:text-primary transition-colors">redeem</span>
+                </button>
 
-              {/* Balance pill + Upgrade */}
-              <div className="bg-surface-container-high rounded-full flex items-center gap-0 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider font-label overflow-hidden border border-outline-variant/20">
-                <div className="flex items-center gap-1.5 sm:gap-3 px-2 sm:px-3 py-1.5 sm:py-2 cursor-pointer hover:bg-surface-bright transition-colors" onClick={() => setIsSidebarOpen(true)}>
-                  <div className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px] sm:text-[16px] text-primary" style={{fontVariationSettings: "'FILL' 1"}}>stars</span>
-                    <span>{balance.coins}</span>
+                {/* Balance pill + Upgrade */}
+                <div className="bg-surface-container-high rounded-full flex items-center gap-0 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider font-label overflow-hidden border border-outline-variant/20">
+                  <div className="flex items-center gap-1.5 sm:gap-3 px-2 sm:px-3 py-1.5 sm:py-2 cursor-pointer hover:bg-surface-bright transition-colors" onClick={() => setIsSidebarOpen(true)}>
+                    <div className="flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[14px] sm:text-[16px] text-primary" style={{fontVariationSettings: "'FILL' 1"}}>stars</span>
+                      <span>{balance.coins}</span>
+                    </div>
+                    <span className="text-on-surface-variant/20">|</span>
+                    <div className="flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[14px] sm:text-[16px] text-tertiary" style={{fontVariationSettings: "'FILL' 1"}}>music_note</span>
+                      <span>{balance.notes}</span>
+                    </div>
                   </div>
-                  <span className="text-on-surface-variant/20">|</span>
-                  <div className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px] sm:text-[16px] text-tertiary" style={{fontVariationSettings: "'FILL' 1"}}>music_note</span>
-                    <span>{balance.notes}</span>
-                  </div>
+                  <Link to="/cennik" className="bg-primary hover:bg-primary-dim text-on-primary px-2 sm:px-3 py-1.5 sm:py-2 font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors whitespace-nowrap flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[16px] sm:text-[18px] sm:hidden" style={{fontVariationSettings: "'FILL' 1"}}>payments</span>
+                    <span className="hidden sm:inline">Upgrade</span>
+                  </Link>
                 </div>
-                <Link to="/cennik" className="bg-primary hover:bg-primary-dim text-on-primary px-2 sm:px-3 py-1.5 sm:py-2 font-bold text-[9px] sm:text-[10px] uppercase tracking-widest transition-colors whitespace-nowrap flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[16px] sm:text-[18px] sm:hidden" style={{fontVariationSettings: "'FILL' 1"}}>payments</span>
-                  <span className="hidden sm:inline">Upgrade</span>
-                </Link>
-              </div>
 
-              {/* Avatar */}
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center overflow-hidden border-2 border-outline-variant/20 hover:border-primary/50 transition-colors shrink-0 cursor-pointer" onClick={() => setIsSidebarOpen(true)}>
-                 <UserButton appearance={{ elements: { avatarBox: "w-8 h-8 sm:w-9 sm:h-9" } }} />
-              </div>
-            </SignedIn>
-            <SignedOut>
+                {/* Avatar */}
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center overflow-hidden border-2 border-outline-variant/20 hover:border-primary/50 transition-colors shrink-0 cursor-pointer" onClick={() => setIsSidebarOpen(true)}>
+                   <UserButton appearance={{ elements: { avatarBox: "w-8 h-8 sm:w-9 sm:h-9" } }} />
+                </div>
+              </>
+            )}
+            {!isSignedIn && (
                <SignInButton mode="modal">
                  <button className="bg-primary hover:bg-primary-dark text-on-primary px-5 py-2 rounded-full font-bold uppercase tracking-wider text-[11px] transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50">
                    Zaloguj się
                  </button>
                </SignInButton>
-            </SignedOut>
+            )}
           </div>
         </div>
         </div>

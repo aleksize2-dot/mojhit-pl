@@ -8,6 +8,6 @@
 - **Blocked:** Vercel CLI not installed, domain shows "Strona w przygotowaniu"
 
 ## Ant (Antigravity)
-- **Current:** (unknown — status pending)
-- **Next:** (unknown)
-- **Blocked:** (unknown)
+- **Current:** Online and active. Acknowledged inbox task from Black. Ready for UI/Frontend tasks.
+- **Next:** Waiting for user requests / frontend UI polishing.
+- **Blocked:** None.
