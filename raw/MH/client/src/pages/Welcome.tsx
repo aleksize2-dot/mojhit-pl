@@ -193,6 +193,32 @@ export function Welcome() {
         <div className="absolute top-0 right-0 w-[40%] h-[50%] bg-tertiary/20 rounded-full blur-[100px] pointer-events-none"></div>
 
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+          {/* AI Sparkle Hero Animation */}
+          <div className="relative w-16 h-16 mb-4 flex items-center justify-center select-none pointer-events-none">
+            {/* Glowing Aura */}
+            <div className="absolute inset-0 bg-primary/10 rounded-full blur-md animate-pulse"></div>
+
+            {/* Outer Slow Spinning 4-Point AI Star */}
+            <div className="absolute inset-0 animate-spin-slow flex items-center justify-center">
+              <svg className="w-12 h-12 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="url(#sparkle-grad)" />
+                <defs>
+                  <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#ff9064" stopOpacity="0.2" />
+                    <stop offset="100%" stopColor="#ffa765" stopOpacity="0.8" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+
+            {/* Inner Floating Music Note */}
+            <div className="relative z-10 flex items-center justify-center animate-float-gentle">
+              <span className="material-symbols-outlined text-primary text-3xl drop-shadow-[0_0_10px_rgba(255,144,100,0.5)] animate-pulse" style={{ fontVariationSettings: "'FILL' 1" }}>
+                music_note
+              </span>
+            </div>
+          </div>
+
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-high border border-outline-variant/30 text-xs font-bold uppercase tracking-widest text-primary mb-8 animate-fade-in">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
             Nowa era muzyki AI

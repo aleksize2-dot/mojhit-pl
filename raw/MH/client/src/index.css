@@ -289,4 +289,21 @@ body {
 .eq-bar-3 { animation: bar-jump-3 0.9s ease-in-out infinite; }
 .eq-bar-4 { animation: bar-jump-4 0.7s ease-in-out infinite; }
 
+/* ── Hero AI Sparkle animations ── */
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.animate-float-gentle {
+  animation: float-gentle 3s ease-in-out infinite;
+}
+
 
