@@ -600,7 +600,7 @@ export function TrackDetail() {
       </Helmet>
 
       <div 
-      className="flex flex-col min-h-[calc(100vh-80px)] md:min-h-screen max-w-lg mx-auto bg-surface relative pb-24 md:pb-6"
+      className="flex flex-col min-h-[calc(100vh-80px)] md:min-h-screen max-w-lg mx-auto bg-surface relative pb-24 md:pb-6 overflow-x-hidden"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
@@ -686,7 +686,7 @@ export function TrackDetail() {
       <div className="px-8 flex items-center justify-between mb-6">
         <div className="flex flex-col overflow-hidden pr-4">
           <h1 className="text-2xl md:text-3xl font-black headline-font tracking-tight truncate">{track.title}</h1>
-          <p className="text-on-surface-variant font-medium text-sm md:text-base mt-1 flex items-center gap-2">
+          <p className="text-on-surface-variant font-medium text-sm md:text-base mt-1 flex flex-wrap items-center gap-2">
             {track.producers?.id ? (
               <Link 
                 to={`/?agent=${track.producers.id}`}
