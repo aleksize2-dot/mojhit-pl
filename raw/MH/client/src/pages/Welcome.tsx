@@ -85,11 +85,43 @@ function TrackCard({
   );
 }
 
+const welcomeFaqData = [
+  {
+    question: "Jak wygenerować piosenkę AI?",
+    answer: "To dziecinnie proste! Wybierz jednego z naszych wirtualnych wykonawców (każdy ma inny głos i styl muzyczny), opisz swój pomysł w kilku zdaniach (np. «Wesoła piosenka urodzinowa dla Kasi, pop, szybkie tempo») i kliknij przycisk generowania. W 3 minuty otrzymasz w pełni wyprodukowany radiowy hit!"
+  },
+  {
+    question: "Jak działają Monety i co daje rejestracja?",
+    answer: "Każda generacja utworu (która daje Ci 2 unikalne warianty) kosztuje 1 Monetę. Rejestracja jest całkowicie bezpłatna i pozwala na wygodne zapisywanie wszystkich utworów na Twoim koncie, gromadzenie darmowych monet oraz dostęp do pełnego panelu studia."
+  },
+  {
+    question: "Czy mogę używać wygenerowanych piosenek komercyjnie?",
+    answer: "Tak! Wszystkie piosenki, które wygenerujesz przy użyciu platformy, należą w pełni do Ciebie. Możesz bez przeszkód publikować je na YouTube, TikToku, Instagramie, w radiu czy telewizji — również w celach czysto komercyjnych, bez żadnych opłat licencyjnych."
+  },
+  {
+    question: "Jak długo trwa wygenerowanie gotowego utworu?",
+    answer: "Wygenerowanie pełnej, profesjonalnej piosenki wraz z tekstem, wokalem, aranżacją i masteringiem zajmuje wirtualnemu producentowi około 3 minut."
+  },
+  {
+    question: "Czy mogę pobrać piosenkę jako plik MP3?",
+    answer: "Oczywiście! Pod każdym wygenerowanym utworem znajduje się dedykowany przycisk pobierania, który pozwala zapisać utwór bezpośrednio na dysk komputera lub do pamięci telefonu w formacie MP3 wysokiej jakości."
+  },
+  {
+    question: "Czy mogę żądać zwrotu środków?",
+    answer: "Tak, dbamy o zadowolenie naszych klientów. Możesz ubiegać się o zwrot środków za zakupione pakiety monet w ciągu 14 dni od transakcji, pod warunkiem, że zakupione monety nie zostały jeszcze wykorzystane do generowania muzyki."
+  },
+  {
+    question: "Co zrobić, jeśli kupiłem monety, ale nie mogę ich znaleźć?",
+    answer: "Najpierw sprawdź swoją skrzynkę e-mail (w tym folder spam) w poszukiwaniu potwierdzenia transakcji. Wszystkie Twoje monety oraz historia zakupów są automatycznie przypisywane do Twojego profilu i widoczne w panelu po zalogowaniu. Jeśli nadal masz problem, napisz do nas na kontakt@mojhit.pl — sprawdzimy system i pomożemy Ci odzyskać dostęp w kilka minut."
+  }
+];
+
 export function Welcome() {
   const [producers, setProducers] = useState<any[]>([]);
   const [tracks, setTracks] = useState<Track[]>([]);
   const [activeTrack, setActiveTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -305,6 +337,49 @@ export function Welcome() {
               )}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="relative z-10 max-w-4xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <span className="text-xs font-extrabold uppercase tracking-widest text-primary">Najczęściej zadawane pytania</span>
+          <h2 className="text-3xl md:text-5xl font-extrabold headline-font mt-2 leading-tight">
+            Mamy odpowiedź na każde pytanie o MojHit.pl
+          </h2>
+        </div>
+
+        <div className="space-y-4">
+          {welcomeFaqData.map((faq, index) => {
+            const isOpen = openFaqIndex === index;
+            return (
+              <div
+                key={index}
+                className={`bg-surface-container-low/40 backdrop-blur-md rounded-2xl border transition-all duration-300 overflow-hidden ${
+                  isOpen ? 'border-primary/40 bg-surface-container-low/60 shadow-lg shadow-primary/5' : 'border-outline-variant/15 hover:border-primary/20'
+                }`}
+              >
+                <button
+                  onClick={() => setOpenFaqIndex(isOpen ? null : index)}
+                  className="w-full p-6 flex items-center justify-between text-left transition-colors cursor-pointer select-none"
+                >
+                  <span className="font-bold text-sm md:text-base text-on-surface pr-4">{faq.question}</span>
+                  <span className={`material-symbols-outlined text-primary transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                    expand_more
+                  </span>
+                </button>
+                <div
+                  className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                    isOpen ? 'max-h-[300px] opacity-100 border-t border-outline-variant/10' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  <div className="p-6 text-sm md:text-base text-on-surface-variant leading-relaxed">
+                    {faq.answer}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
