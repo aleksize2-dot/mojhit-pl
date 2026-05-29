@@ -51,7 +51,7 @@ export function BankTekstow() {
       case 'żart':
       case 'humor / żart': return 'mood';
       case 'impreza': return 'celebration';
-      case 'miłość': return 'favorite_heart';
+      case 'miłość': return 'favorite';
       case 'do auta': return 'directions_car';
       case 'niespodzianka': return 'featured_seasonal_and_gifts';
       case 'przeprosiny': return 'sentiment_dissatisfied';
