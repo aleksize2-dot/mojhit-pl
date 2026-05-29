@@ -3462,7 +3462,7 @@ app.get('/api/admin/lyrics', requireAuth(), requireAdmin, async (req, res) => {
     // (description is not null, not empty, and length > 100)
     const { data: tracks, error: tracksError } = await supabase
       .from('tracks')
-      .select('id, title, description, created_at, explicit, expired, plays, likes, audio_url')
+      .select('id, title, description, created_at, explicit, expired, plays, likes, audio_url, producer_id, producers(name)')
       .order('created_at', { ascending: false })
       .limit(100);
       
@@ -3527,7 +3527,8 @@ app.get('/api/admin/lyrics', requireAuth(), requireAdmin, async (req, res) => {
         isApproved,
         approvedCategory: approvedItem ? approvedItem.category : occasion,
         approvedIsPremium: approvedItem ? approvedItem.is_premium : false,
-        approvedId: approvedItem ? approvedItem.id : null
+        approvedId: approvedItem ? approvedItem.id : null,
+        producerName: track.producers ? track.producers.name : null
       };
     });
     

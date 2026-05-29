@@ -791,6 +791,12 @@ export function AdminDashboard() {
                             <div className="space-y-1">
                               <div className="flex flex-wrap items-center gap-2">
                                 <h3 className="font-black text-lg headline-font">{item.title}</h3>
+                                {item.producerName && (
+                                  <span className="px-2 py-0.5 bg-tertiary/10 text-tertiary border border-tertiary/20 rounded-full text-[10px] font-bold flex items-center gap-0.5" title="Wykonawca utworu">
+                                    <span className="material-symbols-outlined text-[12px]" style={{fontVariationSettings: "'FILL' 1"}}>mic</span>
+                                    {item.producerName}
+                                  </span>
+                                )}
                                 {item.explicit && (
                                   <span className="px-2 py-0.5 bg-error/10 text-error border border-error/20 rounded-full text-[10px] font-bold flex items-center gap-0.5">
                                     <span className="material-symbols-outlined text-[12px]">warning</span>
