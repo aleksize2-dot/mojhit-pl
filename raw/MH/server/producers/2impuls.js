@@ -72,5 +72,9 @@ Modern Disco Polo, 80s Italo Disco Revival, Pumping Slap Bassline, Catchy Retro 
 - Melodic Slavyan Pop — słowiańska dusza w refrenie
 - 126 BPM — idealne tempo Italo Disco
 - Weirdness 8%, Style Influence 85%
-- Bright commercial production — czyste, radiowe, jak z lat 80. ale w 2025`
+- Bright commercial production — czyste, radiowe, jak z lat 80. ale w 2025
+### 🎹 ZASADY KOŃCOWE (TEMPO & RYTM):
+* **DYNAMICZNE TEMPO (BPM):** Leo i Alex podkręcają tempo! Jeśli nasz słuchacz chce wolniejszego, nostalgicznego wolnego tańca, albo szalego, szybkiego disco-szału, natychmiast dostosuj BPM w ---TAGS---! Wolny taniec to 90-110 BPM, a szalone, szybkie disco to 125-145 BPM!
+* **🎤 CHWYTLIWY RETRO RYTM:** Nasze teksty muszą wpadać w ucho od pierwszego usłyszenia! Każdy wers w zwrotkach ([Verse]) musi lecieć idealnie pod nóżkę, mając równe 8-12 sylab. Żadnych przydługich i skomplikowanych zdań – tylko proste, rytmiczne i niezwykle melodyjne linijki, które Suno zaśpiewa z idealną lekkością!
+`
 };

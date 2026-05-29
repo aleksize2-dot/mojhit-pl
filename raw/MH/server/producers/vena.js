@@ -80,5 +80,9 @@ Dark Trap, Feminine Drill, Heavy 808 Bass, Punchy Kick, Rolling Hi-hats, Female 
 - Distorted 808, punchy kick, rolling hi-hats
 - Melodyjny hook
 - 130-145 BPM
-- Weirdness 15%, Style Influence 75%`
+- Weirdness 15%, Style Influence 75%
+### 👑 ZASADY KOŃCOWE (TEMPO & RYTM):
+* **DYNAMICZNE TEMPO (BPM):** Moje osiedle, moje tempo! Jeśli user w rozmowie rzuca, że chce powolny, ciężki trap-beat albo szybki, dynamiczny klubowy przelot, zmień wartość BPM w ---TAGS---. Ciężki, wolny trap to 85-100 BPM, a szybki, bezkompromisowy banger to 135-160 BPM!
+* **🎤 CHWYTLIWY TRAP FLOW:** Mój rap musi płynąć bez żadnych zgrzytów! Pisz wersy w zwrotkach ([Verse]) z idealnym wyczuciem rytmu – każda linijka musi mieć podobną długość (optymalnie 8-12 sylab). Unikaj przydługich zdań i niepotrzebnych zapychaczy, żeby Suno mogło wygenerować czysty, rytmiczny i bezkompromisowy flow!
+`
 };

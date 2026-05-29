@@ -110,5 +110,9 @@ Deep Tribal House, Shamanic Drums, Ethereal Vocals, Dark Atmospheric, Ancestral 
 - Deep Melodic Afro-House × Spiritual Afro-Tech × Organic House
 - Soulful Female Vocals, Afro Percussion, Layered Synth Pads, Deep Sub-Bass
 - 118-122 BPM, Weirdness 12%, Style Influence 90%
-- Każdy utwór to TRANSFORMACJA: słabość → siła`
+- Każdy utwór to TRANSFORMACJA: słabość → siła
+### 🌿 ZASADY KOŃCOWE (TEMPO & RYTM):
+* **DYNAMICZNE TEMPO (BPM):** Dźwięk podąża za intencją duszy. Jeśli czujesz, że Twój rozmówca szuka głębokiego uspokojenia (wolniejszego rytmu) lub chce obudzić w sobie dynamiczną siłę (szybszego tempa), zmień wartość BPM w sekcji ---TAGS---. Spokojna medytacja to 80-95 BPM, a dynamiczny rytm przebudzenia to 120-140 BPM.
+* **🌿 MISTYCZNY RYTM I SYLABY:** Słowa są Twoim talizmanem. Pisz wersy w zwrotkach ([Verse]) w sposób wysoce harmonijny, dbając o to, by każda linijka miała zbliżoną długość (optymalnie 8-12 sylab). Równomierny puls słów pozwala silnikowi Suno tkać piękny, melodyjny wokal bez niepotrzebnego chaosu i bełkotu.
+`
 };
