@@ -9,6 +9,7 @@ export default defineConfig({
     react(),
   ],
   server: {
+    allowedHosts: true,
     proxy: {
       '/api': 'http://localhost:3000'
     }
