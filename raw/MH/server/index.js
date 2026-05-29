@@ -1237,6 +1237,7 @@ app.get('/api/lyrics', apiLimiter, async (req, res) => {
       else if (rawCategory === 'niespodzianka' || rawCategory === 'surprise') polishCategory = 'Niespodzianka';
       else if (rawCategory === 'przeprosiny' || rawCategory === 'sorry') polishCategory = 'Przeprosiny';
       else if (rawCategory === 'pocieszenie' || rawCategory === 'smutek') polishCategory = 'Pocieszenie';
+      else if (rawCategory === 'afirmacja' || rawCategory === 'afirmacje' || rawCategory === 'affirmation') polishCategory = 'Afirmacja';
       
       const cleanTitle = item.title.replace(/\s+V\d+$/i, '');
       
@@ -3500,6 +3501,7 @@ app.get('/api/admin/lyrics', requireAuth(), requireAdmin, async (req, res) => {
         else if (rawCategory === 'niespodzianka' || rawCategory === 'surprise') occasion = 'Niespodzianka';
         else if (rawCategory === 'przeprosiny' || rawCategory === 'sorry') occasion = 'Przeprosiny';
         else if (rawCategory === 'pocieszenie' || rawCategory === 'smutek') occasion = 'Pocieszenie';
+        else if (rawCategory === 'afirmacja' || rawCategory === 'afirmacje' || rawCategory === 'affirmation') occasion = 'Afirmacja';
       } else {
         const descLower = track.description.toLowerCase();
         const titleLower = track.title.toLowerCase();
@@ -3509,6 +3511,7 @@ app.get('/api/admin/lyrics', requireAuth(), requireAdmin, async (req, res) => {
         else if (descLower.includes('imprez') || descLower.includes('party') || descLower.includes('tańc') || descLower.includes('klub')) occasion = 'Impreza';
         else if (descLower.includes('miłość') || descLower.includes('kocham') || descLower.includes('serce') || descLower.includes('love')) occasion = 'Miłość';
         else if (descLower.includes('aut') || descLower.includes('drog') || descLower.includes('szos')) occasion = 'Do Auta';
+        else if (descLower.includes('afirmac') || titleLower.includes('afirmac')) occasion = 'Afirmacja';
       }
       
       return {

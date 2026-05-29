@@ -34,8 +34,37 @@ export function BankTekstow() {
       });
   }, []);
 
-  // Dynamically extract unique categories present in the lyrics
+  // Predefined category priorities for premium, stable tab ordering
+  const categoryOrder = [
+    'Wszystkie',
+    'Urodziny',
+    'Ślub / Rocznica',
+    'Impreza',
+    'Miłość',
+    'Do Auta',
+    'Afirmacja',
+    'Humor / Żart',
+    'Niespodzianka',
+    'Przeprosiny',
+    'Pocieszenie',
+    'Inne'
+  ];
+
+  // Dynamically extract unique categories present in the lyrics and sort them stably
   const uniqueCategories = ['Wszystkie', ...new Set(lyrics.map(l => l.category))];
+  uniqueCategories.sort((a, b) => {
+    let indexA = categoryOrder.findIndex(cat => cat.toLowerCase() === a.toLowerCase());
+    let indexB = categoryOrder.findIndex(cat => cat.toLowerCase() === b.toLowerCase());
+    
+    if (indexA === -1) {
+      indexA = a.toLowerCase() === 'inne' ? 999 : 500;
+    }
+    if (indexB === -1) {
+      indexB = b.toLowerCase() === 'inne' ? 999 : 500;
+    }
+    
+    return indexA - indexB;
+  });
 
   // Filter lyrics based on active category selection
   const filteredLyrics = activeCategory === 'Wszystkie' 
@@ -53,6 +82,7 @@ export function BankTekstow() {
       case 'impreza': return 'celebration';
       case 'miłość': return 'favorite';
       case 'do auta': return 'directions_car';
+      case 'afirmacja': return 'self_improvement';
       case 'niespodzianka': return 'featured_seasonal_and_gifts';
       case 'przeprosiny': return 'sentiment_dissatisfied';
       case 'pocieszenie': return 'healing';
@@ -71,6 +101,7 @@ export function BankTekstow() {
       case 'impreza': return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
       case 'miłość': return 'bg-red-500/10 text-red-400 border-red-500/20';
       case 'do auta': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+      case 'afirmacja': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
       default: return 'bg-tertiary/10 text-tertiary border-tertiary/20';
     }
   };
