@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Modal } from '../components/ui/Modal';
+import Plyr from 'plyr';
+import 'plyr/dist/plyr.css';
+
 
 type Track = {
   id: string;
@@ -26,6 +29,9 @@ export function TrackDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const plyrRef = useRef<Plyr | null>(null);
+
   
   const [track, setTrack] = useState<Track | null>(null);
   const [allTracks, setAllTracks] = useState<Track[]>([]);
@@ -350,6 +356,51 @@ export function TrackDetail() {
     return () => clearInterval(interval);
   }, [videoStatus, videoDbId]);
 
+  // Keep navigation callbacks updated for Plyr
+  const goToNextRef = useRef(goToNext);
+  useEffect(() => {
+    goToNextRef.current = goToNext;
+  }, [goToNext]);
+
+  // Initialize Plyr video player
+  useEffect(() => {
+    let player: Plyr | null = null;
+
+    if (videoUrl && videoRef.current) {
+      player = new Plyr(videoRef.current, {
+        controls: [
+          'play-large',   // Large play button in center
+          'play',         // Play/pause on bottom bar
+          'progress',     // Progress bar
+          'current-time', // Current time indicator
+          'mute',         // Toggle mute
+          'volume',       // Volume control
+          'fullscreen'    // Toggle fullscreen
+        ],
+        ratio: '1:1',
+        tooltips: { controls: true, seek: true }
+      });
+
+      plyrRef.current = player;
+
+      // Listen for ending event to play next track automatically
+      player.on('ended', () => {
+        console.log('[PLYR] Video ended, playing next track');
+        goToNextRef.current();
+      });
+    }
+
+    return () => {
+      if (player) {
+        player.destroy();
+      }
+      if (plyrRef.current === player) {
+        plyrRef.current = null;
+      }
+    };
+  }, [videoUrl]);
+
+
   if (loading) {
     return (
       <div className="flex flex-col min-h-[calc(100vh-80px)] md:min-h-screen max-w-lg mx-auto bg-surface p-6 animate-pulse">
@@ -537,15 +588,12 @@ export function TrackDetail() {
         {videoUrl ? (
           <div className="w-full rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-surface-container-high aspect-square">
             <video
+              ref={videoRef}
               src={videoUrl}
-              controls
               autoPlay
               playsInline
               className="w-full h-full object-cover bg-black"
               poster={currentCover || undefined}
-              onEnded={() => {
-                if (nextTrack) goToNext();
-              }}
             />
           </div>
         ) : (

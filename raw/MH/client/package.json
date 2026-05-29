@@ -13,6 +13,7 @@
     "@clerk/localizations": "^4.5.1",
     "@clerk/react": "^6.7.2",
     "lucide-react": "^1.11.0",
+    "plyr": "^3.8.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-helmet-async": "^3.0.0",
