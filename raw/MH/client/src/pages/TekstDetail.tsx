@@ -286,17 +286,17 @@ export function TekstDetail() {
                 </div>
               )}
 
-              {/* Dynamic matching tip from DJ Marek */}
+              {/* Dynamic matching tip */}
               {selectedProducer && (
                 <div className="bg-tertiary/5 border border-tertiary/10 rounded-2xl p-4 flex gap-3 items-start">
                   <span className="material-symbols-outlined text-tertiary text-xl shrink-0 mt-0.5" style={{fontVariationSettings: "'FILL' 1"}}>info</span>
                   <div className="space-y-1">
-                    <h4 className="text-xs font-bold text-tertiary">Podpowiedź DJ Marka:</h4>
+                    <h4 className="text-xs font-bold text-tertiary">Podpowiedź:</h4>
                     <p className="text-[11px] text-on-surface-variant leading-relaxed">
                       {originalProducer && originalProducer.id === selectedProducer.id ? (
-                        `Mordo, ten tekst powstał specjalnie pod styl "${selectedProducer.badge}". Wybór idealny, zachowasz oryginalne tempo i rytm utworu! 🔥`
+                        `Ten tekst powstał specjalnie pod styl "${selectedProducer.badge}". Wybór idealny, zachowasz oryginalne tempo i rytm utworu!`
                       ) : (
-                        `Przenosisz tekst do wykonawcy "${selectedProducer.name}". Stworzy on utwór w swoim flagowym klimacie: "${selectedProducer.badge}". Będzie ogień! ⚡`
+                        `Ten tekst zostanie dopasowany do stylu wykonawcy "${selectedProducer.name}". Stworzy on utwór w swoim flagowym klimacie: "${selectedProducer.badge}".`
                       )}
                     </p>
                   </div>
