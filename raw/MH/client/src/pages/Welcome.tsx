@@ -201,21 +201,22 @@ export function Welcome() {
             {/* Intersecting Vibrating Waves behind the star */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
               <svg className="w-20 h-20 overflow-visible" viewBox="0 0 24 24" fill="none">
-                {/* Wave 1 */}
+                {/* Wave 1 - Low Frequency Bass */}
                 <path 
-                  d="M -4,12 C 4,4 8,4 12,12 C 16,20 20,20 28,12" 
+                  d="M -4,12 C 4,-2 8,-2 12,12 C 16,26 20,26 28,12" 
                   stroke="#ff9064" 
                   strokeWidth="1.5" 
                   strokeLinecap="round"
-                  className="animate-wave-vibrate-1 origin-center drop-shadow-[0_0_8px_rgba(255,144,100,0.4)]"
+                  className="animate-wave-bass origin-center drop-shadow-[0_0_8px_rgba(255,144,100,0.4)]"
                 />
-                {/* Wave 2 (opposite phase, intersecting) */}
+                {/* Wave 2 - High Frequency Treble */}
                 <path 
-                  d="M -4,12 C 4,20 8,20 12,12 C 16,4 20,4 28,12" 
+                  d="M -4,12 Q 0,4 3,12 T 7,12 T 11,12 T 15,12 T 19,12 T 23,12 T 28,12" 
                   stroke="#ffa765" 
-                  strokeWidth="1.5" 
+                  strokeWidth="1" 
                   strokeLinecap="round"
-                  className="animate-wave-vibrate-2 origin-center drop-shadow-[0_0_8px_rgba(255,167,101,0.4)]"
+                  strokeLinejoin="round"
+                  className="animate-wave-treble origin-center drop-shadow-[0_0_8px_rgba(255,167,101,0.4)]"
                 />
               </svg>
             </div>
