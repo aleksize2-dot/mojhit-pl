@@ -198,27 +198,32 @@ export function Welcome() {
             {/* Glowing Aura */}
             <div className="absolute inset-0 bg-primary/10 rounded-full blur-md animate-pulse"></div>
 
-            {/* Intersecting Vibrating Waves behind the star */}
+            {/* Radial Sunburst Equalizer behind the star */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-              <svg className="w-20 h-20 overflow-visible" viewBox="0 0 24 24" fill="none">
-                {/* Wave 1 - Low Frequency Bass */}
-                <path 
-                  d="M -4,12 C 4,-2 8,-2 12,12 C 16,26 20,26 28,12" 
-                  stroke="#ff9064" 
-                  strokeWidth="1.5" 
-                  strokeLinecap="round"
-                  className="animate-wave-bass origin-center drop-shadow-[0_0_8px_rgba(255,144,100,0.4)]"
-                />
-                {/* Wave 2 - High Frequency Treble */}
-                <path 
-                  d="M -4,12 Q 0,4 3,12 T 7,12 T 11,12 T 15,12 T 19,12 T 23,12 T 28,12" 
-                  stroke="#ffa765" 
-                  strokeWidth="1" 
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="animate-wave-treble origin-center drop-shadow-[0_0_8px_rgba(255,167,101,0.4)]"
-                />
-              </svg>
+              <div className="relative w-16 h-16 flex items-center justify-center">
+                {Array.from({ length: 24 }).map((_, i) => {
+                  const angle = i * 15; // 360 / 24 = 15
+                  return (
+                    <div
+                      key={i}
+                      className="absolute"
+                      style={{
+                        transform: `rotate(${angle}deg) translateY(-14px)`,
+                        transformOrigin: 'center bottom',
+                      }}
+                    >
+                      <div
+                        className="w-[2px] h-6 bg-gradient-to-t from-primary/80 to-tertiary rounded-full animate-radial-pulse"
+                        style={{
+                          transformOrigin: 'center bottom',
+                          animationDelay: `${(i % 6) * 0.12}s`,
+                          animationDuration: `${0.8 + (i % 4) * 0.15}s`,
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Outer Slow Spinning 4-Point AI Star */}

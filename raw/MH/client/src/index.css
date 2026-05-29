@@ -306,23 +306,11 @@ body {
   animation: float-gentle 3s ease-in-out infinite;
 }
 
-/* ── Hero Intersecting Waves (Bass & Treble Equalizers with Horizontal Stretching) ── */
-@keyframes wave-bass {
-  0%, 100% { transform: scaleY(1) scaleX(1) translateY(0); opacity: 0.2; }
-  50% { transform: scaleY(1.35) scaleX(1.15) translateY(-1px); opacity: 0.55; }
+/* ☀️☀️ Radial Sunburst Equalizer Behind AI Sparkle Star ☀️☀️ */
+@keyframes radial-pulse {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.35; }
+  50% { transform: scaleY(1.3); opacity: 0.85; }
 }
-.animate-wave-bass {
-  animation: wave-bass 2.5s ease-in-out infinite;
+.animate-radial-pulse {
+  animation: radial-pulse 1.2s ease-in-out infinite;
 }
-
-@keyframes wave-treble {
-  0%, 100% { transform: scaleY(0.8) scaleX(0.85); opacity: 0.25; }
-  25% { transform: scaleY(1.3) scaleX(1.2); opacity: 0.65; }
-  50% { transform: scaleY(0.55) scaleX(0.9); opacity: 0.4; }
-  75% { transform: scaleY(1.15) scaleX(1.15); opacity: 0.7; }
-}
-.animate-wave-treble {
-  animation: wave-treble 0.22s linear infinite;
-}
-
-
