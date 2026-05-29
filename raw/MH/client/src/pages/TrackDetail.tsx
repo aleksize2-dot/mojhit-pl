@@ -29,7 +29,7 @@ export function TrackDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const audioRef = useRef<HTMLAudioElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoWrapperRef = useRef<HTMLDivElement>(null);
   const plyrRef = useRef<Plyr | null>(null);
 
   
@@ -47,6 +47,26 @@ export function TrackDetail() {
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   const [isShuffle, setIsShuffle] = useState(false);
+
+  // Helper to proxy audio CDN URLs through backend
+  const proxyAudio = (url: string | null | undefined) => {
+    if (!url) return '';
+    if (url.includes('musicfile.kie.ai') || url.includes('tempfile.aiquickdraw.com')) {
+      return '/api/proxy/audio?url=' + encodeURIComponent(url);
+    }
+    return url;
+  };
+
+  const currentCover = track?.variants && track.variants[activeVariant] && track.variants[activeVariant].image_url 
+    ? track.variants[activeVariant].image_url 
+    : track?.cover_image_url;
+
+  const activeAudioUrl = track 
+    ? proxyAudio(track.variants && track.variants.length > 0 
+        ? (track.variants[activeVariant].audio_url || track.variants[activeVariant].stream_audio_url) 
+        : track.audio_url)
+    : '';
+
   
   // Explicit content warning — one click per session
   const EXPLICIT_KEY = 'mojhit_explicit_ok';
@@ -365,40 +385,68 @@ export function TrackDetail() {
   // Initialize Plyr video player
   useEffect(() => {
     let player: Plyr | null = null;
+    const wrapper = videoWrapperRef.current;
 
-    if (videoUrl && videoRef.current) {
-      player = new Plyr(videoRef.current, {
-        controls: [
-          'play-large',   // Large play button in center
-          'play',         // Play/pause on bottom bar
-          'progress',     // Progress bar
-          'current-time', // Current time indicator
-          'mute',         // Toggle mute
-          'volume',       // Volume control
-          'fullscreen'    // Toggle fullscreen
-        ],
-        ratio: '1:1',
-        tooltips: { controls: true, seek: true }
-      });
+    if (videoUrl && wrapper) {
+      // Clear any previous elements in the wrapper to be 100% clean
+      wrapper.innerHTML = '';
 
-      plyrRef.current = player;
+      // Create a fresh HTML5 video element dynamically
+      const videoEl = document.createElement('video');
+      videoEl.src = videoUrl;
+      videoEl.autoplay = true;
+      videoEl.playsInline = true;
+      videoEl.className = "w-full h-full object-cover bg-black";
+      if (currentCover) {
+        videoEl.poster = currentCover;
+      }
 
-      // Listen for ending event to play next track automatically
-      player.on('ended', () => {
-        console.log('[PLYR] Video ended, playing next track');
-        goToNextRef.current();
-      });
+      // Append it to the wrapper
+      wrapper.appendChild(videoEl);
+
+      try {
+        player = new Plyr(videoEl, {
+          controls: [
+            'play-large',   // Large play button in center
+            'play',         // Play/pause on bottom bar
+            'progress',     // Progress bar
+            'current-time', // Current time indicator
+            'mute',         // Toggle mute
+            'volume',       // Volume control
+            'fullscreen'    // Toggle fullscreen
+          ],
+          ratio: '1:1',
+          tooltips: { controls: true, seek: true }
+        });
+
+        plyrRef.current = player;
+
+        // Listen for ending event to play next track automatically
+        player.on('ended', () => {
+          console.log('[PLYR] Video ended, playing next track');
+          goToNextRef.current();
+        });
+      } catch (err) {
+        console.error('[PLYR] Failed to initialize Plyr:', err);
+      }
     }
 
     return () => {
-      if (player) {
-        player.destroy();
+      try {
+        if (player) {
+          player.destroy();
+        }
+      } catch (err) {
+        console.error('[PLYR] Failed to destroy Plyr:', err);
       }
       if (plyrRef.current === player) {
         plyrRef.current = null;
       }
+      if (wrapper) {
+        wrapper.innerHTML = '';
+      }
     };
-  }, [videoUrl]);
+  }, [videoUrl, currentCover]);
 
 
   if (loading) {
@@ -449,22 +497,7 @@ export function TrackDetail() {
     );
   }
 
-  // Proxy CDN URLs through our backend to fix CORS issues
-  const proxyAudio = (url: string | null | undefined) => {
-    if (!url) return '';
-    if (url.includes('musicfile.kie.ai') || url.includes('tempfile.aiquickdraw.com')) {
-      return '/api/proxy/audio?url=' + encodeURIComponent(url);
-    }
-    return url;
-  };
 
-  const activeAudioUrl = proxyAudio(track.variants && track.variants.length > 0 
-    ? (track.variants[activeVariant].audio_url || track.variants[activeVariant].stream_audio_url) 
-    : track.audio_url);
-    
-  const currentCover = track.variants && track.variants[activeVariant] && track.variants[activeVariant].image_url 
-    ? track.variants[activeVariant].image_url 
-    : track.cover_image_url;
 
   // SEO: Generate meta tags
   const seoTitle = `${track.title} - ${track.producers?.name || 'AI Hit'} | mojhit.pl`;
@@ -587,14 +620,7 @@ export function TrackDetail() {
       <div className="px-6 w-full mb-8">
         {videoUrl ? (
           <div className="w-full rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-surface-container-high aspect-square">
-            <video
-              ref={videoRef}
-              src={videoUrl}
-              autoPlay
-              playsInline
-              className="w-full h-full object-cover bg-black"
-              poster={currentCover || undefined}
-            />
+            <div ref={videoWrapperRef} className="w-full h-full" />
           </div>
         ) : (
           <div className="w-full aspect-square rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-surface-container-high relative group">
