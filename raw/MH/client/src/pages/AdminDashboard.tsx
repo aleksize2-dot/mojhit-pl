@@ -888,6 +888,7 @@ export function AdminDashboard() {
                                 <option value="Impreza">Impreza</option>
                                 <option value="Miłość">Miłość</option>
                                 <option value="Do Auta">Do Auta</option>
+                                <option value="Afirmacja">Afirmacja</option>
                                 <option value="Niespodzianka">Niespodzianka</option>
                                 <option value="Przeprosiny">Przeprosiny</option>
                                 <option value="Pocieszenie">Pocieszenie</option>
