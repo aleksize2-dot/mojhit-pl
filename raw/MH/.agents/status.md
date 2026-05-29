@@ -8,6 +8,6 @@
 - **Blocked:** Vercel CLI not installed, domain shows "Strona w przygotowaniu"
 
 ## Ant (Antigravity)
-- **Current:** Completed final audit cleanups: committed/pushed the chat-composer error.stack fix, untracked development migration scripts (`migrations/run.js` and `migrations/run-sql.js`) from git, and updated `.gitignore`. Documented why CSP is handled on Vercel side instead of Express. Client build verified (519ms) and git main pushed.
+- **Current:** Fixed the guest landing page ("Welcome" page) scroll lock bug on mobile by dynamically applying the 100dvh/overflow-hidden wrapper only when the user is signed in (home page + signed in). Also dynamically hidden/shown the Footer on mobile to ensure legal links are scrollable/visible for guests. Client build verified (succeeded in 649ms) and committed/pushed to GitHub.
 - **Next:** Ready for production deployment steps with Black.
 - **Blocked:** None.
