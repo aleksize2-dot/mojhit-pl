@@ -91,7 +91,7 @@ export function Welcome() {
               </p>
               <SignUpButton mode="modal">
                 <button className="px-6 py-3 rounded-xl bg-tertiary text-on-primary font-bold uppercase tracking-widest text-xs hover:bg-tertiary/90 transition-all shadow-md">
-                  Zakontraktuj ich wszystkich
+                  Zobacz ich wszystkich
                 </button>
               </SignUpButton>
             </div>
