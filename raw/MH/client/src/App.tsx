@@ -1,5 +1,6 @@
 import { Routes, Route, useSearchParams, useLocation } from 'react-router-dom';
 import { useEffect, Suspense, lazy } from 'react';
+import { useAuth } from '@clerk/react';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
 import { Footer } from './components/Footer';
@@ -36,6 +37,7 @@ const GiftTemplatePage = lazy(() => import('./pages/GiftFunnel/GiftTemplatePage'
 function App() {
   const [searchParams] = useSearchParams();
   const { status: ageStatus, verify: ageVerify, block: ageBlock } = useAgeGate();
+  const { isSignedIn } = useAuth();
 
   useEffect(() => {
     const refCode = searchParams.get('ref');
@@ -47,9 +49,10 @@ function App() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
   const isHome = location.pathname === '/';
+  const isScrollLocked = isHome && isSignedIn;
 
   return (
-    <div className={`bg-surface text-on-surface flex flex-col transition-colors duration-300 ${isHome ? 'h-[100dvh] overflow-hidden md:h-auto md:min-h-[100dvh] md:overflow-visible' : 'min-h-[100dvh]'}`}>
+    <div className={`bg-surface text-on-surface flex flex-col transition-colors duration-300 ${isScrollLocked ? 'h-[100dvh] overflow-hidden md:h-auto md:min-h-[100dvh] md:overflow-visible' : 'min-h-[100dvh]'}`}>
       <Header />
 
       <main className={isAdmin ? "w-full pt-6 flex-1 pb-[82px] md:pb-0 flex flex-col min-h-0" : `w-full max-w-7xl mx-auto ${isHome ? 'px-0' : 'px-4'} md:px-6 pt-4 space-y-4 md:space-y-10 flex-1 pb-[82px] md:pb-0 flex flex-col min-h-0`}>
@@ -83,7 +86,7 @@ function App() {
         </Suspense>
       </main>
 
-      <div className={isHome ? "hidden md:block" : ""}>
+      <div className={isScrollLocked ? "hidden md:block" : ""}>
         <Footer />
       </div>
       <BottomNav />
