@@ -306,4 +306,23 @@ body {
   animation: float-gentle 3s ease-in-out infinite;
 }
 
+/* ── Hero Intersecting Waves Animations ── */
+@keyframes wave-vibrate-1 {
+  0%, 100% { transform: scaleY(1) rotate(0deg); opacity: 0.25; }
+  50% { transform: scaleY(1.4) rotate(3deg); opacity: 0.65; }
+}
+
+@keyframes wave-vibrate-2 {
+  0%, 100% { transform: scaleY(1) rotate(0deg); opacity: 0.25; }
+  50% { transform: scaleY(0.6) rotate(-3deg); opacity: 0.65; }
+}
+
+.animate-wave-vibrate-1 {
+  animation: wave-vibrate-1 1.6s ease-in-out infinite;
+}
+
+.animate-wave-vibrate-2 {
+  animation: wave-vibrate-2 1.9s ease-in-out infinite;
+}
+
 

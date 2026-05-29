@@ -198,6 +198,28 @@ export function Welcome() {
             {/* Glowing Aura */}
             <div className="absolute inset-0 bg-primary/10 rounded-full blur-md animate-pulse"></div>
 
+            {/* Intersecting Vibrating Waves behind the star */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+              <svg className="w-20 h-20 overflow-visible" viewBox="0 0 24 24" fill="none">
+                {/* Wave 1 */}
+                <path 
+                  d="M -4,12 C 4,4 8,4 12,12 C 16,20 20,20 28,12" 
+                  stroke="#ff9064" 
+                  strokeWidth="1.5" 
+                  strokeLinecap="round"
+                  className="animate-wave-vibrate-1 origin-center drop-shadow-[0_0_8px_rgba(255,144,100,0.4)]"
+                />
+                {/* Wave 2 (opposite phase, intersecting) */}
+                <path 
+                  d="M -4,12 C 4,20 8,20 12,12 C 16,4 20,4 28,12" 
+                  stroke="#ffa765" 
+                  strokeWidth="1.5" 
+                  strokeLinecap="round"
+                  className="animate-wave-vibrate-2 origin-center drop-shadow-[0_0_8px_rgba(255,167,101,0.4)]"
+                />
+              </svg>
+            </div>
+
             {/* Outer Slow Spinning 4-Point AI Star */}
             <div className="absolute inset-0 animate-spin-slow flex items-center justify-center">
               <svg className="w-12 h-12 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
