@@ -617,7 +617,7 @@ export function TrackDetail() {
       </div>
 
       {/* Visual Content: Video or Album Art */}
-      <div className="px-6 w-full mb-8">
+      <div className="px-6 w-full mb-8 flex justify-center">
         {videoUrl ? (
           <div className="w-full rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-surface-container-high aspect-square">
             <div ref={videoWrapperRef} className="w-full h-full" />
