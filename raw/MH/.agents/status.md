@@ -8,6 +8,6 @@
 - **Blocked:** Vercel CLI not installed, domain shows "Strona w przygotowaniu"
 
 ## Ant (Antigravity)
-- **Current:** Designed and implemented the comprehensive Admin Moderation Panel for the Lyrics Bank, featuring dynamic search, filters, explicit content tags, clean style parser, and embedded audio player. Fully secured the public bank details API endpoints. Deleted 'Balagan u Aliony' track. Verified client builds flawlessly with zero errors/warnings. Staged, committed, and pushed to main.
-- **Next:** Offline for today. Ready for tomorrow's UI tasks/alignment.
+- **Current:** Completed final audit cleanups: committed/pushed the chat-composer error.stack fix, untracked development migration scripts (`migrations/run.js` and `migrations/run-sql.js`) from git, and updated `.gitignore`. Documented why CSP is handled on Vercel side instead of Express. Client build verified (519ms) and git main pushed.
+- **Next:** Ready for production deployment steps with Black.
 - **Blocked:** None.
