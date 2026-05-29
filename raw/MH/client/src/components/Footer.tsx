@@ -74,6 +74,21 @@ export function Footer() {
           </div>
         </div>
       </div>
+
+      {/* Equalizer Horizon Wave */}
+      <div className="w-full mt-10 overflow-hidden h-8 flex items-end justify-between gap-[2px] opacity-40 select-none pointer-events-none">
+        {Array.from({ length: 90 }).map((_, i) => (
+          <span 
+            key={i} 
+            className="flex-1 bg-gradient-to-t from-primary to-tertiary rounded-t-sm"
+            style={{
+              height: '4px',
+              animation: `bar-jump-${(i % 4) + 1} ${0.6 + (i % 7) * 0.15}s ease-in-out infinite alternate`,
+              animationDelay: `${i * 0.02}s`
+            }}
+          />
+        ))}
+      </div>
     </footer>
   );
 }
