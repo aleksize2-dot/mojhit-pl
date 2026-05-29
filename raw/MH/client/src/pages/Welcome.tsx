@@ -1,20 +1,155 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SignUpButton, SignInButton } from '@clerk/react';
+
+interface Track {
+  id: string;
+  title: string;
+  description: string;
+  audio_url: string;
+  cover_image_url: string;
+  likes: number;
+  producer_id: string;
+  producers?: { name: string };
+}
+
+function TrackCard({
+  track,
+  isPlaying,
+  isActive,
+  onPlay
+}: {
+  track: Track;
+  isPlaying: boolean;
+  isActive: boolean;
+  onPlay: () => void;
+}) {
+  return (
+    <div
+      onClick={(e) => {
+        e.stopPropagation();
+        onPlay();
+      }}
+      className={`flex items-center gap-3 bg-surface-container-low/40 backdrop-blur-md border p-3 rounded-2xl w-64 md:w-76 transition-all duration-300 cursor-pointer shadow-sm ${
+        isActive
+          ? 'border-primary/50 shadow-primary/10 shadow-lg bg-surface-container-low/60 scale-[1.02]'
+          : 'border-outline-variant/10 hover:border-primary/30 hover:scale-[1.01]'
+      }`}
+    >
+      {/* Cover Artwork */}
+      <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container-high shadow-md">
+        <img
+          src={track.cover_image_url || '/placeholder.png'}
+          alt={track.title}
+          className="w-full h-full object-cover"
+        />
+        {/* Play/Pause Hover Overlay */}
+        <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity opacity-0 hover:opacity-100">
+          <span className="material-symbols-outlined text-white text-3xl">
+            {isPlaying && isActive ? 'pause' : 'play_arrow'}
+          </span>
+        </div>
+        
+        {/* Neon Equalizer Overlay when playing */}
+        {isPlaying && isActive && (
+          <div className="absolute inset-0 bg-primary/20 backdrop-blur-[1px] flex items-end justify-center gap-[3px] pb-3">
+            <span className="w-[3px] bg-primary rounded-full eq-bar-1" style={{ height: '6px' }}></span>
+            <span className="w-[3px] bg-primary rounded-full eq-bar-2" style={{ height: '18px' }}></span>
+            <span className="w-[3px] bg-primary rounded-full eq-bar-3" style={{ height: '10px' }}></span>
+            <span className="w-[3px] bg-primary rounded-full eq-bar-4" style={{ height: '22px' }}></span>
+          </div>
+        )}
+      </div>
+
+      {/* Info details */}
+      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+        <div>
+          <h4 className="font-bold text-xs md:text-sm text-on-surface truncate">
+            {track.title}
+          </h4>
+          <p className="text-[10px] md:text-xs text-on-surface-variant flex items-center gap-1 font-semibold truncate mt-0.5">
+            <span className="material-symbols-outlined text-[14px] text-primary">mic</span>
+            {track.producers?.name || 'Wirtualny Artysta'}
+          </p>
+        </div>
+        <div className="flex items-center justify-between mt-1">
+          <span className="flex items-center gap-1 text-[10px] text-on-surface-variant font-bold">
+            <span className="material-symbols-outlined text-[12px] text-primary fill-current">favorite</span>
+            {track.likes || 0}
+          </span>
+          <span className="text-[9px] px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-full font-bold uppercase tracking-wider">
+            HIT
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function Welcome() {
   const [producers, setProducers] = useState<any[]>([]);
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [activeTrack, setActiveTrack] = useState<Track | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     fetch('/api/producers?status=active')
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
-          // Get a few top producers
           setProducers(data.slice(0, 3));
         }
       })
       .catch(console.error);
+
+    fetch('/api/tracks/top?limit=10')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setTracks(data);
+        }
+      })
+      .catch(console.error);
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
   }, []);
+
+  const handlePlay = (track: Track) => {
+    if (!audioRef.current) return;
+
+    if (activeTrack?.id === track.id) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play().catch(console.error);
+        setIsPlaying(true);
+      }
+    } else {
+      setActiveTrack(track);
+      audioRef.current.src = track.audio_url;
+      audioRef.current.load();
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch(console.error);
+    }
+  };
+
+  const handleAudioEnded = () => {
+    setIsPlaying(false);
+    if (activeTrack && tracks.length > 0) {
+      const idx = tracks.findIndex(t => t.id === activeTrack.id);
+      if (idx !== -1 && idx < tracks.length - 1) {
+        handlePlay(tracks[idx + 1]);
+      }
+    }
+  };
 
   return (
     <div className="space-y-24 pb-20">
@@ -53,6 +188,68 @@ export function Welcome() {
           </div>
         </div>
       </section>
+
+      {/* Infinity Stream Section */}
+      {tracks.length > 0 && (
+        <section className="relative overflow-hidden py-10 bg-surface-container/10 border-y border-outline-variant/10 marquee-container full-bleed">
+          <div className="text-center mb-8 px-4">
+            <span className="text-xs font-extrabold uppercase tracking-widest text-primary">Odkryj hity społeczności</span>
+            <h2 className="text-3xl md:text-4xl font-extrabold headline-font mt-1">Czego słuchają inni?</h2>
+          </div>
+          
+          <div className="space-y-6">
+            {/* Row 1 (Left to Right) */}
+            <div className="flex overflow-hidden mask-image-fade select-none">
+              <div className="animate-marquee flex gap-4 pr-4">
+                {tracks.map((t, idx) => (
+                  <TrackCard
+                    key={`row1-${t.id}-${idx}`}
+                    track={t}
+                    isPlaying={isPlaying}
+                    isActive={activeTrack?.id === t.id}
+                    onPlay={() => handlePlay(t)}
+                  />
+                ))}
+                {/* Duplicate for seamless loop */}
+                {tracks.map((t, idx) => (
+                  <TrackCard
+                    key={`row1-dup-${t.id}-${idx}`}
+                    track={t}
+                    isPlaying={isPlaying}
+                    isActive={activeTrack?.id === t.id}
+                    onPlay={() => handlePlay(t)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Row 2 (Right to Left) */}
+            <div className="flex overflow-hidden mask-image-fade select-none">
+              <div className="animate-marquee-reverse flex gap-4 pr-4">
+                {[...tracks].reverse().map((t, idx) => (
+                  <TrackCard
+                    key={`row2-${t.id}-${idx}`}
+                    track={t}
+                    isPlaying={isPlaying}
+                    isActive={activeTrack?.id === t.id}
+                    onPlay={() => handlePlay(t)}
+                  />
+                ))}
+                {/* Duplicate for seamless loop */}
+                {[...tracks].reverse().map((t, idx) => (
+                  <TrackCard
+                    key={`row2-dup-${t.id}-${idx}`}
+                    track={t}
+                    isPlaying={isPlaying}
+                    isActive={activeTrack?.id === t.id}
+                    onPlay={() => handlePlay(t)}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Features Section */}
       <section className="relative z-10 max-w-6xl mx-auto px-4">
@@ -121,6 +318,8 @@ export function Welcome() {
         </SignUpButton>
       </section>
 
+      {/* Hidden Audio Element for Track Showcase */}
+      <audio ref={audioRef} onEnded={handleAudioEnded} />
     </div>
   );
 }
