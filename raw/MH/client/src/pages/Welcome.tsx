@@ -64,7 +64,7 @@ export function Welcome() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
             { icon: 'groups', title: 'Wybierz Wykonawcę', desc: 'Każdy ma swój unikalny styl, głos i vibe. Od rapu po disco polo.' },
-            { icon: 'chat', title: 'Opisz swój pomysł', desc: 'Powiedz AI, o czym ma być piosenka. Resztę zrobi za Ciebie.' },
+            { icon: 'chat', title: 'Opisz swój pomysł', desc: 'Nasz wirtualny wykonawca pomoże Ci stworzyć idealny tekst, prowadząc Cię krok po kroku od początku do końca. Szykuj monety i wchodź do studia!' },
             { icon: 'headphones', title: 'Odbierz gotowy hit', desc: 'W kilka minut otrzymujesz w pełni wyprodukowany kawałek.' }
           ].map((feat, i) => (
             <div key={i} className="bg-surface-container-low p-8 rounded-3xl border border-outline-variant/10 text-center hover:border-primary/30 transition-all hover:-translate-y-2 group">
