@@ -194,7 +194,7 @@ export function Welcome() {
         <section className="relative overflow-hidden py-10 bg-surface-container/10 border-y border-outline-variant/10 marquee-container full-bleed">
           <div className="text-center mb-8 px-4">
             <span className="text-xs font-extrabold uppercase tracking-widest text-primary">Odkryj hity społeczności</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold headline-font mt-1">Czego słuchają inni?</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold headline-font mt-1">Hity naszych użytkowników</h2>
           </div>
           
           <div className="space-y-6">
