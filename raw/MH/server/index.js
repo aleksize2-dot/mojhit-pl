@@ -4539,7 +4539,10 @@ ${giftTemplate.base_lyrics}
     res.json(reply);
   } catch (error) {
     console.error('[CHAT COMPOSER] Error:', error);
-    res.status(500).json({ error: error.message, stack: error.stack });
+    res.status(500).json({ 
+      error: error.message, 
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+    });
   }
 });
 

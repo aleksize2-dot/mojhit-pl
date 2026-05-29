@@ -1,4 +1,4 @@
-﻿node_modules/
+node_modules/
 .env
 *.log
 dist/
@@ -15,3 +15,5 @@ server/.env
 client/.env
 migrations/.env
 *.py
+migrations/run.js
+migrations/run-sql.js
