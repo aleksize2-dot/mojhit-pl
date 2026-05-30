@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from 'react';
 import { ChatMessage } from './ChatMessage';
 import { useGeneratorLogic } from './useGeneratorLogic';
 import { useAuth, useUser, SignInButton, SignUpButton } from '@clerk/react';
@@ -54,6 +55,27 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
     handleCancelEdit,
     handleGenerate,
   } = useGeneratorLogic({ giftMode: _props.giftMode, giftTemplate: _props.giftTemplate, isSignedIn });
+
+  const [generatedTrackId, setGeneratedTrackId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (showSuccessModal) {
+      // Fetch the latest generated track from the user's library
+      fetch('/api/tracks/my', { credentials: 'include' })
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            const latest = data[0];
+            if (latest && latest.id) {
+              setGeneratedTrackId(latest.id);
+            }
+          }
+        })
+        .catch(console.error);
+    } else {
+      setGeneratedTrackId(null);
+    }
+  }, [showSuccessModal]);
 
   if (!producers.length || !activeProducer) return <div className="p-8 flex justify-center"><span className="material-symbols-outlined animate-spin text-3xl text-primary">progress_activity</span></div>;
 
@@ -594,40 +616,55 @@ export function Generator(_props: { giftMode?: boolean; giftTemplate?: any } = {
               {videoRenderStatus === 'ready' ? (
                 <span className="material-symbols-outlined text-3xl" style={{fontVariationSettings: "'FILL' 1"}}>check_circle</span>
               ) : (
-                <span className="material-symbols-outlined text-3xl animate-pulse">movie</span>
+                <span className="material-symbols-outlined text-3xl animate-pulse">music_note</span>
               )}
             </div>
             {videoRenderStatus === 'ready' ? (
               <>
                 <h3 className="text-xl md:text-2xl font-black headline-font text-center text-on-surface mb-2">Wszystko gotowe! 🎬</h3>
-                <p className="text-sm text-on-surface-variant text-center mb-6">
-                  Audio i wideo (MP4) dla Twoich utworów są już dostępne w panelu <b>Moje Utwory</b>. <br/><br/>
-                  <span className="flex items-center justify-center gap-2 text-green-500 font-bold"><span className="material-symbols-outlined text-lg" style={{fontVariationSettings: "'FILL' 1"}}>check_circle</span> Wideo gotowe!</span>
+                <p className="text-sm text-on-surface-variant text-center mb-6 leading-relaxed">
+                  Audio i wideo (MP4) dla Twoich utworów są już w pełni gotowe do pobrania i odtworzenia! <br/><br/>
+                  <span className="flex items-center justify-center gap-2 text-green-500 font-bold"><span className="material-symbols-outlined text-lg" style={{fontVariationSettings: "'FILL' 1"}}>check_circle</span> Teledysk gotowy!</span>
                 </p>
               </>
             ) : (
               <>
-                <h3 className="text-xl md:text-2xl font-black headline-font text-center text-on-surface mb-2">Dźwięk gotowy, renderujemy wideo...</h3>
-                <p className="text-sm text-on-surface-variant text-center mb-6">
-                  Audio dla Twoich utworów (V1 i V2) jest gotowe! System automatycznie generuje do nich wideo (MP4). <br/><br/>
-                  <span className="flex items-center justify-center gap-2 text-primary font-bold"><span className="material-symbols-outlined animate-spin text-lg">progress_activity</span> Rendering wideo w tle...</span><br/>
-                  Pojawią się w panelu <b>Moje Utwory</b> za około 1-2 minuty.
+                <h3 className="text-xl md:text-2xl font-black headline-font text-center text-on-surface mb-2">Pierwsza wersja gotowa! 🎵</h3>
+                <p className="text-sm text-on-surface-variant text-center mb-6 leading-relaxed">
+                  Pierwsza wersja Twojego utworu (z dwóch) jest już w pełni gotowa do odsłuchu! <br/><br/>
+                  <span className="flex items-center justify-center gap-2 text-primary font-bold"><span className="material-symbols-outlined animate-spin text-lg">progress_activity</span> Wersja 2 oraz wideo renderują się w tle...</span>
                 </p>
               </>
             )}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2.5">
+              <button 
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  if (generatedTrackId) {
+                    window.location.href = `/track/${generatedTrackId}`;
+                  } else {
+                    window.location.href = '/my-tracks';
+                  }
+                }}
+                className={`w-full py-3.5 rounded-xl font-bold text-white transition-all shadow-md flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0 ${videoRenderStatus === 'ready' ? 'bg-green-500 hover:bg-green-600 shadow-green-500/10' : `${activeProducer.colorBg} hover:opacity-95 shadow-primary/10`}`}
+              >
+                <span className="material-symbols-outlined text-lg" style={{fontVariationSettings: "'FILL' 1"}}>play_circle</span>
+                {videoRenderStatus === 'ready' ? 'Posłuchaj gotowego utworu' : 'Posłuchaj pierwszej wersji'}
+              </button>
+              
               <button 
                 onClick={() => {
                   setShowSuccessModal(false);
                   window.location.href = '/my-tracks';
                 }}
-                className={`w-full py-3.5 rounded-xl font-bold text-white transition-colors ${videoRenderStatus === 'ready' ? 'bg-green-500 hover:bg-green-600' : `${activeProducer.colorBg} hover:opacity-90`}`}
+                className="w-full py-3 rounded-xl font-bold bg-surface-container-high border border-outline-variant/20 text-on-surface hover:bg-surface-container-highest transition-colors text-sm"
               >
                 Przejdź do Moich Utworów
               </button>
+              
               <button 
                 onClick={() => setShowSuccessModal(false)}
-                className="w-full py-3 rounded-xl font-bold bg-transparent border border-outline-variant/30 text-on-surface hover:bg-surface-variant/30 transition-colors"
+                className="w-full py-2.5 text-xs font-bold text-on-surface-variant uppercase tracking-widest hover:text-on-surface transition-colors"
               >
                 Kontynuuj tworzenie
               </button>
