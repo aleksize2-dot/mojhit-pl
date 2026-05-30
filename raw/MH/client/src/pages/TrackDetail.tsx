@@ -306,6 +306,12 @@ export function TrackDetail() {
   const handleDownload = async () => {
     if (!track) return;
     
+    // If video is generated and active, download the video instead of MP3!
+    if (videoUrl) {
+      window.open(videoUrl, '_blank');
+      return;
+    }
+    
     const rawUrl = track.variants && track.variants.length > 0 
       ? (track.variants[activeVariant].audio_url || track.variants[activeVariant].stream_audio_url) 
       : track.audio_url;
