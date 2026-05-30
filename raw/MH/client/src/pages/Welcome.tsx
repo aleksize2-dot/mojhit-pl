@@ -118,7 +118,8 @@ const welcomeFaqData = [
 
 export function Welcome() {
   const [producers, setProducers] = useState<any[]>([]);
-  const [tracks, setTracks] = useState<Track[]>([]);
+  const [topTracks, setTopTracks] = useState<Track[]>([]);
+  const [recentTracks, setRecentTracks] = useState<Track[]>([]);
   const [activeTrack, setActiveTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
@@ -138,7 +139,16 @@ export function Welcome() {
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
-          setTracks(data);
+          setTopTracks(data);
+        }
+      })
+      .catch(console.error);
+
+    fetch('/api/tracks/recent?limit=10')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setRecentTracks(data);
         }
       })
       .catch(console.error);
@@ -175,10 +185,16 @@ export function Welcome() {
 
   const handleAudioEnded = () => {
     setIsPlaying(false);
-    if (activeTrack && tracks.length > 0) {
-      const idx = tracks.findIndex(t => t.id === activeTrack.id);
-      if (idx !== -1 && idx < tracks.length - 1) {
-        handlePlay(tracks[idx + 1]);
+    if (activeTrack) {
+      const topIdx = topTracks.findIndex(t => t.id === activeTrack.id);
+      if (topIdx !== -1 && topIdx < topTracks.length - 1) {
+        handlePlay(topTracks[topIdx + 1]);
+        return;
+      }
+      const recentIdx = recentTracks.findIndex(t => t.id === activeTrack.id);
+      if (recentIdx !== -1 && recentIdx < recentTracks.length - 1) {
+        handlePlay(recentTracks[recentIdx + 1]);
+        return;
       }
     }
   };
@@ -276,63 +292,87 @@ export function Welcome() {
       </section>
 
       {/* Infinity Stream Section */}
-      {tracks.length > 0 && (
-        <section className="relative overflow-hidden py-10 bg-surface-container/10 border-y border-outline-variant/10 marquee-container full-bleed">
-          <div className="text-center mb-8 px-4">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-primary">Odkryj hity społeczności</span>
+      {(topTracks.length > 0 || recentTracks.length > 0) && (
+        <section className="relative overflow-hidden py-12 bg-surface-container/10 border-y border-outline-variant/10 marquee-container full-bleed space-y-10">
+          <div className="text-center mb-4 px-4">
+            <span className="text-xs font-extrabold uppercase tracking-widest text-primary">Odkryj twórczość społeczności</span>
             <h2 className="text-3xl md:text-4xl font-extrabold headline-font mt-1">Hity naszych użytkowników</h2>
           </div>
           
-          <div className="space-y-6">
-            {/* Row 1 (Left to Right) */}
-            <div className="flex overflow-hidden mask-image-fade select-none">
-              <div className="animate-marquee flex gap-4 pr-4">
-                {tracks.map((t, idx) => (
-                  <TrackCard
-                    key={`row1-${t.id}-${idx}`}
-                    track={t}
-                    isPlaying={isPlaying}
-                    isActive={activeTrack?.id === t.id}
-                    onPlay={() => handlePlay(t)}
-                  />
-                ))}
-                {/* Duplicate for seamless loop */}
-                {tracks.map((t, idx) => (
-                  <TrackCard
-                    key={`row1-dup-${t.id}-${idx}`}
-                    track={t}
-                    isPlaying={isPlaying}
-                    isActive={activeTrack?.id === t.id}
-                    onPlay={() => handlePlay(t)}
-                  />
-                ))}
+          <div className="space-y-10">
+            {/* Row 1 (Top 10 Hits) */}
+            {topTracks.length > 0 && (
+              <div className="space-y-3">
+                <div className="px-6 md:px-12 flex flex-col sm:flex-row sm:items-center justify-between gap-1 select-none">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-primary text-xl animate-pulse">trophy</span>
+                    <span className="text-sm font-black uppercase tracking-wider text-on-surface">Top 10 Hity</span>
+                  </div>
+                  <span className="text-xs font-bold text-on-surface-variant/80">Najlepiej oceniane przez społeczność</span>
+                </div>
+                
+                <div className="flex overflow-hidden mask-image-fade select-none">
+                  <div className="animate-marquee flex gap-4 pr-4">
+                    {topTracks.map((t, idx) => (
+                      <TrackCard
+                        key={`row1-${t.id}-${idx}`}
+                        track={t}
+                        isPlaying={isPlaying}
+                        isActive={activeTrack?.id === t.id}
+                        onPlay={() => handlePlay(t)}
+                      />
+                    ))}
+                    {/* Duplicate for seamless loop */}
+                    {topTracks.map((t, idx) => (
+                      <TrackCard
+                        key={`row1-dup-${t.id}-${idx}`}
+                        track={t}
+                        isPlaying={isPlaying}
+                        isActive={activeTrack?.id === t.id}
+                        onPlay={() => handlePlay(t)}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Row 2 (Right to Left) */}
-            <div className="flex overflow-hidden mask-image-fade select-none">
-              <div className="animate-marquee-reverse flex gap-4 pr-4">
-                {[...tracks].reverse().map((t, idx) => (
-                  <TrackCard
-                    key={`row2-${t.id}-${idx}`}
-                    track={t}
-                    isPlaying={isPlaying}
-                    isActive={activeTrack?.id === t.id}
-                    onPlay={() => handlePlay(t)}
-                  />
-                ))}
-                {/* Duplicate for seamless loop */}
-                {[...tracks].reverse().map((t, idx) => (
-                  <TrackCard
-                    key={`row2-dup-${t.id}-${idx}`}
-                    track={t}
-                    isPlaying={isPlaying}
-                    isActive={activeTrack?.id === t.id}
-                    onPlay={() => handlePlay(t)}
-                  />
-                ))}
+            {/* Row 2 (Recently Created Hits) */}
+            {recentTracks.length > 0 && (
+              <div className="space-y-3">
+                <div className="px-6 md:px-12 flex flex-col sm:flex-row sm:items-center justify-between gap-1 select-none">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-tertiary text-xl animate-bounce">local_fire_department</span>
+                    <span className="text-sm font-black uppercase tracking-wider text-on-surface">Ostatnio stworzone</span>
+                  </div>
+                  <span className="text-xs font-bold text-on-surface-variant/80">Hity prosto z pieca AI</span>
+                </div>
+                
+                <div className="flex overflow-hidden mask-image-fade select-none">
+                  <div className="animate-marquee-reverse flex gap-4 pr-4">
+                    {recentTracks.map((t, idx) => (
+                      <TrackCard
+                        key={`row2-${t.id}-${idx}`}
+                        track={t}
+                        isPlaying={isPlaying}
+                        isActive={activeTrack?.id === t.id}
+                        onPlay={() => handlePlay(t)}
+                      />
+                    ))}
+                    {/* Duplicate for seamless loop */}
+                    {recentTracks.map((t, idx) => (
+                      <TrackCard
+                        key={`row2-dup-${t.id}-${idx}`}
+                        track={t}
+                        isPlaying={isPlaying}
+                        isActive={activeTrack?.id === t.id}
+                        onPlay={() => handlePlay(t)}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </section>
       )}
