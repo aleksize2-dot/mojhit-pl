@@ -303,9 +303,38 @@ export function TrackDetail() {
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!track) return;
-    window.open(`/api/tracks/${track.id}/download?variant=${activeVariant}`, '_blank');
+    
+    const rawUrl = track.variants && track.variants.length > 0 
+      ? (track.variants[activeVariant].audio_url || track.variants[activeVariant].stream_audio_url) 
+      : track.audio_url;
+      
+    if (!rawUrl) return;
+    
+    try {
+      // Use our backend proxy to completely avoid CORS blocks
+      const downloadUrl = proxyAudio(rawUrl);
+      
+      const res = await fetch(downloadUrl);
+      if (!res.ok) throw new Error('Network response was not ok');
+      
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      const variantSuffix = track.variants && track.variants.length > 1 ? `_v${activeVariant + 1}` : '';
+      a.download = `${track.title || 'track'}${variantSuffix}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error('Blob download failed, falling back to window.location', err);
+      // Fallback
+      window.location.href = `/api/tracks/${track.id}/download?variant=${activeVariant}`;
+    }
   };
 
   // Video generation

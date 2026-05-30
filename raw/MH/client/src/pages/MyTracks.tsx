@@ -121,13 +121,42 @@ export function MyTracks() {
     );
   }
 
-  const handleDownload = (e: React.MouseEvent, track: Track) => {
+  const handleDownload = async (e: React.MouseEvent, track: Track) => {
     e.preventDefault();
+    e.stopPropagation();
+    if (!track) return;
+
     if (track.video_url) {
       // Video available — download video
       window.open(track.video_url, '_blank');
-    } else {
-      window.open(`/api/tracks/${track.id}/download`, '_blank');
+      return;
+    }
+
+    try {
+      const rawUrl = track.audio_url;
+      if (!rawUrl) return;
+
+      const proxyAudioUrl = rawUrl.includes('musicfile.kie.ai') || rawUrl.includes('tempfile.aiquickdraw.com')
+        ? '/api/proxy/audio?url=' + encodeURIComponent(rawUrl)
+        : rawUrl;
+
+      const res = await fetch(proxyAudioUrl);
+      if (!res.ok) throw new Error('Network response was not ok');
+
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = `${track.title || 'track'}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error('Blob download failed, falling back to redirect', err);
+      // Fallback
+      window.location.href = `/api/tracks/${track.id}/download`;
     }
   };
 
