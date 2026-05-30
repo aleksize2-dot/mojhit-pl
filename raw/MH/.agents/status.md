@@ -8,6 +8,6 @@
 - **Blocked:** Vercel CLI not installed, domain shows "Strona w przygotowaniu"
 
 ## Ant (Antigravity)
-- **Current:** Fixed the guest landing page ("Welcome" page) scroll lock bug on mobile by dynamically applying the 100dvh/overflow-hidden wrapper only when the user is signed in (home page + signed in). Also dynamically hidden/shown the Footer on mobile to ensure legal links are scrollable/visible for guests. Client build verified (succeeded in 649ms) and committed/pushed to GitHub.
-- **Next:** Ready for production deployment steps with Black.
+- **Current:** Successfully replaced the Welcome page hero star/note animation with a GPU-accelerated cybernetic woofer core and flowing bioluminescent wave wings in index.css and Welcome.tsx. Pushed to origin main and verified the production build compiles cleanly in 558ms.
+- **Next:** Ready for production deployment steps with Black or new UI/UX components.
 - **Blocked:** None.
