@@ -306,11 +306,60 @@ body {
   animation: float-gentle 3s ease-in-out infinite;
 }
 
-/* ☀️☀️ Radial Sunburst Equalizer Behind AI Sparkle Star ☀️☀️ */
-@keyframes radial-pulse {
-  0%, 100% { transform: scaleY(0.4); opacity: 0.35; }
-  50% { transform: scaleY(1.3); opacity: 0.85; }
+/* ── Living Cybernetic Speaker Core & Wing Animations ── */
+
+@keyframes organic-breath {
+  0%, 100% {
+    transform: translateY(0) scale(0.97);
+    filter: drop-shadow(0 0 15px rgba(255, 144, 100, 0.15)) drop-shadow(0 0 5px rgba(255, 167, 101, 0.05));
+  }
+  50% {
+    transform: translateY(-6px) scale(1.03);
+    filter: drop-shadow(0 0 25px rgba(255, 144, 100, 0.35)) drop-shadow(0 0 12px rgba(255, 167, 101, 0.15));
+  }
 }
-.animate-radial-pulse {
-  animation: radial-pulse 1.2s ease-in-out infinite;
+.animate-organic-breath {
+  animation: organic-breath 5s ease-in-out infinite;
+}
+
+@keyframes woofer-vibrate {
+  0%, 100% { transform: scale(1); }
+  8% { transform: scale(1.08); }
+  15% { transform: scale(0.95); }
+  22% { transform: scale(1.05); }
+  30% { transform: scale(0.97); }
+  38% { transform: scale(1.03); }
+  45% { transform: scale(0.99); }
+}
+.animate-woofer-vibrate {
+  animation: woofer-vibrate 2.4s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
+  transform-origin: center;
+}
+
+@keyframes core-glow {
+  0%, 100% { opacity: 0.55; filter: brightness(1); }
+  50% { opacity: 1; filter: brightness(1.8) drop-shadow(0 0 10px #ff9064); }
+}
+.animate-core-glow {
+  animation: core-glow 1.4s ease-in-out infinite;
+}
+
+@keyframes wing-ripple-left {
+  0% { stroke-dashoffset: 160; transform: scaleY(0.9); }
+  50% { transform: scaleY(1.1) skewY(1deg); }
+  100% { stroke-dashoffset: 0; transform: scaleY(0.9); }
+}
+.animate-wing-ripple-left {
+  animation: wing-ripple-left 5s linear infinite;
+  transform-origin: right center;
+}
+
+@keyframes wing-ripple-right {
+  0% { stroke-dashoffset: -160; transform: scaleY(0.9); }
+  50% { transform: scaleY(1.1) skewY(-1deg); }
+  100% { stroke-dashoffset: 0; transform: scaleY(0.9); }
+}
+.animate-wing-ripple-right {
+  animation: wing-ripple-right 5s linear infinite;
+  transform-origin: left center;
 }

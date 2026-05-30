@@ -209,58 +209,126 @@ export function Welcome() {
         <div className="absolute top-0 right-0 w-[40%] h-[50%] bg-tertiary/20 rounded-full blur-[100px] pointer-events-none"></div>
 
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
-          {/* AI Sparkle Hero Animation */}
-          <div className="relative w-16 h-16 mb-4 flex items-center justify-center select-none pointer-events-none">
-            {/* Glowing Aura */}
-            <div className="absolute inset-0 bg-primary/10 rounded-full blur-md animate-pulse"></div>
-
-            {/* Radial Sunburst Equalizer behind the star */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-              <div className="relative w-16 h-16 flex items-center justify-center">
-                {Array.from({ length: 24 }).map((_, i) => {
-                  const angle = i * 15; // 360 / 24 = 15
-                  return (
-                    <div
-                      key={i}
-                      className="absolute"
-                      style={{
-                        transform: `rotate(${angle}deg) translateY(-14px)`,
-                        transformOrigin: 'center bottom',
-                      }}
-                    >
-                      <div
-                        className="w-[2px] h-6 bg-gradient-to-t from-primary/80 to-tertiary rounded-full animate-radial-pulse"
-                        style={{
-                          transformOrigin: 'center bottom',
-                          animationDelay: `${(i % 6) * 0.12}s`,
-                          animationDuration: `${0.8 + (i % 4) * 0.15}s`,
-                        }}
-                      />
-                    </div>
-                  );
-                })}
+          {/* AI Cyber-Woofer Hero Animation */}
+          <div className="relative w-full max-w-lg h-36 md:h-40 mb-6 flex items-center justify-center select-none pointer-events-none overflow-visible animate-organic-breath">
+            
+            {/* Bioluminescent Horizontal Energy Wave Wings */}
+            <svg className="absolute w-full h-full inset-0 overflow-visible scale-y-75 md:scale-y-100" viewBox="0 0 500 120" fill="none">
+              <defs>
+                {/* Glowing neon gradients fading out to transparent at the edges */}
+                <linearGradient id="left-wing-grad-1" x1="100%" y1="0%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor="#ff9064" stopOpacity="0.95" />
+                  <stop offset="40%" stopColor="#ffa765" stopOpacity="0.6" />
+                  <stop offset="75%" stopColor="#8b5cf6" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="left-wing-grad-2" x1="100%" y1="0%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor="#ffa765" stopOpacity="0.8" />
+                  <stop offset="45%" stopColor="#22d3ee" stopOpacity="0.45" />
+                  <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+                </linearGradient>
+                
+                <linearGradient id="right-wing-grad-1" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#ff9064" stopOpacity="0.95" />
+                  <stop offset="40%" stopColor="#ffa765" stopOpacity="0.6" />
+                  <stop offset="75%" stopColor="#8b5cf6" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="right-wing-grad-2" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#ffa765" stopOpacity="0.8" />
+                  <stop offset="45%" stopColor="#22d3ee" stopOpacity="0.45" />
+                  <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              
+              {/* Left Wing Wave 1 (Sub-Bass) */}
+              <path
+                d="M 210,60 C 175,20 135,100 95,45 C 55,-10 30,85 0,60"
+                stroke="url(#left-wing-grad-1)"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+                className="animate-wing-ripple-left"
+                strokeDasharray="240"
+                strokeDashoffset="0"
+              />
+              {/* Left Wing Wave 2 (Treble / Energy Stream) */}
+              <path
+                d="M 210,60 C 185,85 155,35 125,85 C 95,35 65,95 0,60"
+                stroke="url(#left-wing-grad-2)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                className="animate-wing-ripple-left"
+                style={{ animationDelay: '0.4s', animationDuration: '4.2s' }}
+                strokeDasharray="200"
+                strokeDashoffset="0"
+              />
+              
+              {/* Right Wing Wave 1 (Sub-Bass) */}
+              <path
+                d="M 290,60 C 325,20 365,100 405,45 C 445,-10 470,85 500,60"
+                stroke="url(#right-wing-grad-1)"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+                className="animate-wing-ripple-right"
+                strokeDasharray="240"
+                strokeDashoffset="0"
+              />
+              {/* Right Wing Wave 2 (Treble / Energy Stream) */}
+              <path
+                d="M 290,60 C 315,85 345,35 375,85 C 405,35 435,95 500,60"
+                stroke="url(#right-wing-grad-2)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                className="animate-wing-ripple-right"
+                style={{ animationDelay: '0.4s', animationDuration: '4.2s' }}
+                strokeDasharray="200"
+                strokeDashoffset="0"
+              />
+            </svg>
+            
+            {/* Center Cybernetic Woofer Assembly */}
+            <div className="absolute w-24 h-24 rounded-full flex items-center justify-center">
+              
+              {/* Bioluminescent Backing Glow */}
+              <div className="absolute w-20 h-20 bg-primary/20 rounded-full blur-xl animate-core-glow"></div>
+              
+              {/* Outer Slow Spinning Technological Ring */}
+              <div className="absolute inset-0 animate-spin-slow">
+                <svg className="w-full h-full text-primary/30" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="46" stroke="currentColor" strokeWidth="1.5" strokeDasharray="6, 8" fill="none" />
+                </svg>
               </div>
+              
+              {/* Outer High-Tech Suspension Rim */}
+              <div className="absolute inset-2 bg-gradient-to-br from-surface-container-high via-surface-container/60 to-surface-container-lowest border border-outline-variant/20 rounded-full shadow-inner flex items-center justify-center">
+                
+                {/* Aggressively Vibrating Speaker Cone */}
+                <div className="absolute w-[82%] h-[82%] rounded-full bg-gradient-to-tr from-surface-container-lowest via-surface-container/90 to-surface-container-high/80 border border-primary/15 flex items-center justify-center shadow-lg shadow-black/40 overflow-hidden animate-woofer-vibrate">
+                  
+                  {/* Internal Sound/Vibration Rings inside the cone */}
+                  <div className="absolute inset-2 rounded-full border border-primary/10"></div>
+                  <div className="absolute inset-4 rounded-full border border-primary/5"></div>
+                  <div className="absolute inset-6 rounded-full border border-primary/5"></div>
+                  
+                  {/* Cybernetic Core (Center Dust Cap & Heartbeat LED) */}
+                  <div className="relative w-8 h-8 rounded-full bg-gradient-to-br from-primary via-primary to-tertiary flex items-center justify-center shadow-md shadow-primary/20">
+                    <div className="absolute inset-0.5 rounded-full bg-surface-container-lowest flex items-center justify-center">
+                      
+                      {/* Pulsing Light inside Dust Cap */}
+                      <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-primary to-tertiary animate-core-glow flex items-center justify-center shadow-[0_0_8px_#ff9064]">
+                        {/* Core light point */}
+                        <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_#fff]"></div>
+                      </div>
+                      
+                    </div>
+                  </div>
+                  
+                </div>
+                
+              </div>
+              
             </div>
-
-            {/* Outer Slow Spinning 4-Point AI Star */}
-            <div className="absolute inset-0 animate-spin-slow flex items-center justify-center">
-              <svg className="w-12 h-12 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="url(#sparkle-grad)" />
-                <defs>
-                  <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#ff9064" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#ffa765" stopOpacity="0.8" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-
-            {/* Inner Floating Music Note */}
-            <div className="relative z-10 flex items-center justify-center animate-float-gentle">
-              <span className="material-symbols-outlined text-primary text-3xl drop-shadow-[0_0_10px_rgba(255,144,100,0.5)] animate-pulse" style={{ fontVariationSettings: "'FILL' 1" }}>
-                music_note
-              </span>
-            </div>
+            
           </div>
 
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-high border border-outline-variant/30 text-xs font-bold uppercase tracking-widest text-primary mb-8 animate-fade-in">
